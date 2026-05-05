@@ -952,13 +952,29 @@
       var startX = 0;
       var startY = 0;
       var LONG_PRESS_MS = 500;
-      var MOVE_TOL = 8;
+      var MOVE_TOL = 12;
 
-      function startPress(x, y) {
+      // jQuery wraps native events but does NOT proxy `touches`/`changedTouches`
+      // onto the wrapper — must read those off `originalEvent`. Reading `e.touches`
+      // directly returns undefined on jQuery touch events and silently breaks the
+      // entire touch path (was the cause of v0.1.1 mobile-tap not working).
+      function getXY(e) {
+        var oe = e.originalEvent || e;
+        if (oe.touches && oe.touches.length) {
+          return [oe.touches[0].clientX, oe.touches[0].clientY];
+        }
+        if (oe.changedTouches && oe.changedTouches.length) {
+          return [oe.changedTouches[0].clientX, oe.changedTouches[0].clientY];
+        }
+        return [e.clientX || 0, e.clientY || 0];
+      }
+
+      function startPress(e) {
+        var p = getXY(e);
         longPressed = false;
         moved = false;
-        startX = x;
-        startY = y;
+        startX = p[0];
+        startY = p[1];
         pressTimer = setTimeout(function () {
           longPressed = true;
           pressTimer = null;
@@ -973,39 +989,22 @@
         }
       }
 
-      function onMouseDown(e) {
-        if (e.button !== undefined && e.button !== 0) {
+      function onPressStart(e) {
+        if (e.type === "mousedown" && e.button !== undefined && e.button !== 0) {
           return;
         }
-        startPress(e.clientX, e.clientY);
+        startPress(e);
       }
 
-      function onTouchStart(e) {
-        if (!e.touches || !e.touches.length) {
-          return;
-        }
-        startPress(e.touches[0].clientX, e.touches[0].clientY);
-      }
-
-      function onMove(x, y) {
-        if (Math.abs(x - startX) > MOVE_TOL || Math.abs(y - startY) > MOVE_TOL) {
-          moved = true;
-          cancelPress();
-        }
-      }
-
-      function onMouseMove(e) {
+      function onPressMove(e) {
         if (pressTimer === null && !longPressed) {
           return;
         }
-        onMove(e.clientX, e.clientY);
-      }
-
-      function onTouchMove(e) {
-        if (!e.touches || !e.touches.length) {
-          return;
+        var p = getXY(e);
+        if (Math.abs(p[0] - startX) > MOVE_TOL || Math.abs(p[1] - startY) > MOVE_TOL) {
+          moved = true;
+          cancelPress();
         }
-        onMove(e.touches[0].clientX, e.touches[0].clientY);
       }
 
       function onRelease(e) {
@@ -1027,10 +1026,8 @@
         }
       }
 
-      $this.on("mousedown.newbornDimmer", onMouseDown);
-      $this.on("touchstart.newbornDimmer", onTouchStart);
-      $this.on("mousemove.newbornDimmer", onMouseMove);
-      $this.on("touchmove.newbornDimmer", onTouchMove);
+      $this.on("mousedown.newbornDimmer touchstart.newbornDimmer", onPressStart);
+      $this.on("mousemove.newbornDimmer touchmove.newbornDimmer", onPressMove);
       $this.on("mouseup.newbornDimmer mouseleave.newbornDimmer touchend.newbornDimmer touchcancel.newbornDimmer", onRelease);
 
       $this.data("destroy", function (id, $widget) {
@@ -1048,7 +1045,7 @@
     };
 
     if (!ns._versionLogged) {
-      console.log("Newborn widgets loaded (vis-newborn 0.1.1)");
+      console.log("Newborn widgets loaded (vis-newborn 0.1.2)");
       ns._versionLogged = true;
     }
   })();

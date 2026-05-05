@@ -2,6 +2,21 @@
 
 Adapter `iobroker.vis-newborn`: ein wachsendes Widget-Set für ioBroker VIS / VIS-2. Aktuell zwei Widgets (`Newborn Toggle (Slide)`, `Newborn Dimmer (Tile)`), erweiterbar.
 
+## ⭐ Neues Widget hinzufügen — die einzige korrekte Vorgehensweise
+
+**Alle Widgets dieses Adapters wohnen gemeinsam in `widgets/newborn.html`.** Niemals eine zweite HTML-Datei in `widgets/` anlegen — VIS würde sie beim Start löschen (siehe „Filename-Stem-Match" unten). Konkrete Schritte für ein neues Widget:
+
+1. **Neuen `<script class="vis-tpl">`-Block** in `widgets/newborn.html` einfügen — mit:
+   - eindeutiger `id="tplNewborn<Widget>"` (Template-IDs sind globaler VIS-Namespace, müssen über alle ioBroker-Adapter eindeutig sein)
+   - `data-vis-set="newborn"` (Palette-Gruppe — bleibt gleich, damit Widget unter „newborn" auftaucht)
+   - eigenem `data-vis-name="..."` und passenden `data-vis-attrs="..."`
+   - einem `data-vis-prev='...'` für die Palette-Vorschau
+2. **Neue Methode auf `vis.binds["newborn"]`** im IIFE-Block am Ende der Datei — z. B. `ns.<widget> = function (el) { ... }`. Closure-private Helper bleiben in derselben IIFE.
+3. **CSS-Klassen pro Widget eindeutig prefixen** (`vis-newborn-<widget>-…`) im `<style>`-Block — keine generischen Namen, kein Conflict mit existierenden Toggle/Dimmer-Klassen.
+4. **Keine Änderung** an `io-package.json` / `package.json` / Dateistruktur nötig — der einzige `visWidgets`-Eintrag in `io-package.json` zeigt bereits auf `widgets/newborn.html`. Nur Version bumpen + News-Entry für die Release-Note.
+
+Vorbild für „mehrere Widgets in einer Datei": `iobroker.vis/www/widgets/basic.html` listet dutzende Widgets als separate `<script class="vis-tpl">`-Blöcke.
+
 ## Struktur
 
 | Pfad | Zweck |

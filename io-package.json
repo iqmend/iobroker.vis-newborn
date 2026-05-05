@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "news": {
+      "0.1.2": {
+        "en": "Fix: Dimmer tile now responds to touch on mobile. Root cause was reading e.touches off the jQuery event wrapper, which doesn't proxy touch coordinate fields — they live on e.originalEvent. The tile-level handlers now normalize via a getXY(e) helper, fixing tap-to-toggle and long-press-to-open-slider on touch devices. Also raised movement tolerance from 8 to 12 px to be more lenient with finger wobble.",
+        "de": "Fix: Dimmer-Kachel reagiert jetzt auf Touch am Handy. Ursache: e.touches wurde direkt vom jQuery-Event-Wrapper gelesen — jQuery proxied diese Felder aber nicht, sie liegen auf e.originalEvent. Die Tile-Handler normalisieren jetzt über einen getXY(e)-Helper. Damit funktionieren Tap-zum-Toggeln und Long-Press-für-Slider auf Touch-Geräten. Bewegungs-Toleranz zudem von 8 auf 12 px erhöht (Finger-Wackeln)."
+      },
       "0.1.1": {
         "en": "Fix: widgets now actually appear in the VIS palette. Both templates (Toggle, Dimmer) are now bundled inside a single widgets/newborn.html — that filename stem (newborn) matches the adapter suffix (iobroker.vis-newborn), which is required by iobroker.vis/lib/install.js (syncWidgetSets) — files with non-matching stems are deleted from vis/www/widgets/ on every restart.",
         "de": "Fix: Widgets erscheinen jetzt tatsächlich in der VIS-Palette. Beide Templates (Toggle, Dimmer) sind nun in einer einzigen widgets/newborn.html gebündelt — der Dateiname-Stem (newborn) muss exakt zum Adapter-Suffix (iobroker.vis-newborn) passen, sonst löscht iobroker.vis/lib/install.js (syncWidgetSets) die Datei bei jedem VIS-Start aus vis/www/widgets/."
