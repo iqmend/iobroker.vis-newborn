@@ -50,32 +50,48 @@ Erkenntnisse aus der Entwicklung des Adapters `iobroker.vis-newborn` (Vorläufer
 3. `iobroker url https://github.com/<user>/iobroker.vis-<setname>` zur Installation
 4. Bei Updates: Repo pushen → `iobroker url ...` erneut, oder Adapter-Updates über Admin-UI
 
-## Konsolidierung zu Multi-Widget-Adapter (`iobroker.vis-newborn`)
+## Konsolidierung zu Multi-Widget-Adapter `iobroker.vis-newborn` — und der Filename-Stem-Trap
 
-Die ehemals zwei getrennten Adapter (`iobroker.vis-newborn-toggle`, `iobroker.vis-newborn-dimmer`) wurden in **einen** Adapter `iobroker.vis-newborn` zusammengeführt. Lessons:
+Die ehemals zwei getrennten Adapter (`iobroker.vis-newborn-toggle`, `iobroker.vis-newborn-dimmer`) wurden in **einen** Adapter `iobroker.vis-newborn` zusammengeführt. Im **ersten Anlauf (v0.1.0)** habe ich das falsch gebaut: zwei separate `widgets/newborn-toggle.html` + `widgets/newborn-dimmer.html`, jeweils ein eigener `visWidgets`-Eintrag. Resultat: `<host>:8082/vis-newborn/widgets/*.html` lieferte 404, VIS-Palette blieb leer — auch nach Anlegen der Adapter-Instanz.
 
-- **`data-vis-set` ist der Palette-Gruppierungs-Schlüssel**, nicht der Adaptername. Mehrere Widget-HTML-Dateien mit demselben `data-vis-set="newborn"` erscheinen zusammen unter einer Palette-Sektion „newborn".
-- **`io-package.json` `common.visWidgets` listet jede Widget-Datei separat.** Mehrere Einträge sind erlaubt; jeder bekommt einen eigenen Key (`newbornToggle`, `newbornDimmer`, …) und seine eigene `url`.
-- **`vis.binds["<set>"]` ist EIN gemeinsames Objekt** — wird die zweite Widget-Datei mit `vis.binds["newborn"] = { ... }` initialisiert, überschreibt sie die erste. Lösung: idempotente Init in IIFE-Closure:
+### Smoking Gun (v0.1.1-Fix)
+
+`iobroker.vis/lib/install.js` Funktion `syncWidgetSets` löscht beim VIS-Start jede `widgets/*.html` aus `iobroker.vis/www/widgets/`, deren Stem nicht zu einem installierten Adapter passt. Match-Regel:
+```js
+ssName === `iobroker.vis-${name}` || ssName === `iobroker.${name}`
+```
+wobei `name = filename.replace('.html','')`. Stems `newborn-toggle` und `newborn-dimmer` matchen weder `iobroker.vis-newborn` noch `iobroker.newborn` → beide gelöscht → 404.
+
+**Fix:** beide Templates in **einer** `widgets/newborn.html` (Stem `newborn` matcht `iobroker.vis-newborn`), kanonisches VIS-Pattern wie `iobroker.vis/www/widgets/basic.html` — dutzende Widgets in einer Datei. Der `visWidgets`-Eintrag in `io-package.json` ist genau einer, auch wenn die Datei mehrere `<script class="vis-tpl">`-Templates enthält.
+
+### Aktuelles Pattern (v0.1.1+)
+
+- **Eine** `widgets/<stem>.html` für ALLE Widgets eines Adapters; Stem matcht Adapter-Suffix nach `iobroker.vis-` (oder `iobroker.`).
+- Pro Widget ein `<script class="vis-tpl">`-Block mit eindeutiger `id="tpl…"`, eigenem `data-vis-name`, allen mit demselben `data-vis-set` (= Palette-Gruppe).
+- Genau **ein** `<script type="text/javascript">`-IIFE-Block, in dem `vis.binds["<set>"]` einmalig befüllt wird:
   ```js
   (function () {
     vis.binds["newborn"] = vis.binds["newborn"] || {};
     var ns = vis.binds["newborn"];
     function isOn(val) { /* closure-private */ }
-    ns.toggle = function (el) { /* ... */ };
+    ns.toggle = function (el) { /* widget 1 */ };
+    ns.dimmer = function (el) { /* widget 2 */ };
   })();
   ```
-- **CSS-Klassen pro Widget eindeutig prefixen** (`.vis-newborn-toggle-*` vs. `.vis-newborn-dimmer-*`) — sonst kommen sich Größen-Klassen wie `.vis-newborn-size-small` zwischen Widgets in die Quere.
-- **Template-IDs (`<script id="tpl…">`) sind globaler VIS-Namespace** — über alle Widget-Dateien hinweg eindeutig halten.
-- **Long-Press + Click sauber trennen** (siehe `widgets/newborn-dimmer.html`): mousedown/touchstart starten Timer (≥500 ms = long-press, sonst short-tap), `touchmove`/`mousemove` über Toleranz (~8 px) cancelt Press → kein versehentliches Toggling beim Scrollen.
-- **KNX-Bus-Throttling beim Slider-Drag**: Setter mit ~100 ms Throttle (setTimeout-Coalesce + final flush bei Release), sonst überrennt der Drag-Stream den Bus.
+- **CSS-Klassen pro Widget eindeutig prefixen** (`.vis-newborn-toggle-*` vs. `.vis-newborn-dimmer-*`).
+- **Template-IDs (`tpl…`) global eindeutig** — VIS verwendet sie als Schlüssel.
+
+### Sonstige Lessons aus dem Dimmer
+
+- **Long-Press + Click sauber trennen:** mousedown/touchstart starten Timer (≥500 ms = long-press, sonst short-tap), `touchmove`/`mousemove` über Toleranz (~8 px) cancelt Press → kein versehentliches Toggling beim Scrollen.
+- **KNX-Bus-Throttling beim Slider-Drag:** Setter mit ~100 ms Throttle (setTimeout-Coalesce + final flush bei Release), sonst überrennt der Drag-Stream den Bus.
 - **Ein gemeinsamer Popup-DOM-Knoten** (lazy-erstellt + an `document.body` angehängt + zwischen allen Dimmer-Instanzen geteilt) ist ressourcenschonender als ein Popup pro Widget.
 
-## Workflow (Multi-Widget-Adapter)
+## Workflow
 
 1. Adapter lokal entwickeln (`D:\Claude\Projekte\iobroker-vis-newborn\`)
 2. Public GitHub-Repo `iobroker.vis-<setname>` (hier: `iqmend/iobroker.vis-newborn`)
-3. Neues Widget = neue `widgets/<name>.html` + zusätzlicher Eintrag in `io-package.json` `common.visWidgets`. Bestehende Widgets bleiben unangetastet.
+3. **Neues Widget = neuer `<script class="vis-tpl">`-Block in der bestehenden `widgets/<stem>.html`** + neue Methode auf `vis.binds["<set>"]`. **Keine** neue HTML-Datei — die würde gelöscht.
 4. Installation in ioBroker: Admin → Adapter → Stiftsymbol → „Aus eigener URL installieren" → Repo-URL
 5. Updates: Repo pushen → `iobroker url ...` erneut oder Adapter-Update über Admin-UI
 

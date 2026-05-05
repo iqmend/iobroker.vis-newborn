@@ -1,9 +1,209 @@
 <!--
-  Newborn Dimmer Widget — part of the iobroker.vis-newborn widget set
+  iobroker.vis-newborn — Newborn Widget Set for ioBroker VIS / VIS-2
   https://github.com/iqmend/iobroker.vis-newborn
+
+  IMPORTANT: filename stem 'newborn' MUST match the suffix of the adapter
+  name 'iobroker.vis-newborn'. Otherwise iobroker.vis/lib/install.js
+  (syncWidgetSets) deletes this file from vis/www/widgets/ on every restart.
+  All future widgets are added INSIDE this file as additional
+  <script class="vis-tpl"> blocks (canonical pattern, see basic.html).
 -->
 
 <style>
+  /* ============================================================== */
+  /*  Toggle widget (vis-newborn-toggle-*)                          */
+  /* ============================================================== */
+  .vis-newborn-toggle,
+  .vis-newborn-toggle *,
+  .vis-newborn-toggle *::before,
+  .vis-newborn-toggle *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-toggle {
+    --tg-w: 132px;
+    --tg-h: 56px;
+    --tg-pad: 5px;
+    --tg-radius: 999px;
+
+    --tg-off-bg: #e2453c;
+    --tg-off-bg-deep: #b6332b;
+    --tg-on-bg: #9ec9e8;
+    --tg-on-bg-deep: #6fa9d0;
+
+    --tg-handle: #d8d8dc;
+    --tg-handle-deep: #9a9aa1;
+
+    --tg-label: #ffffff;
+    --tg-label-on: #1d3a52;
+
+    position: relative;
+    display: inline-block;
+    width: var(--tg-w);
+    height: var(--tg-h);
+    border-radius: var(--tg-radius);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    background: linear-gradient(180deg, var(--tg-off-bg) 0%, var(--tg-off-bg-deep) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -2px 6px rgba(0, 0, 0, 0.18),
+      0 6px 18px -6px rgba(226, 69, 60, 0.55);
+    transition:
+      background 420ms cubic-bezier(.65, .05, .36, 1),
+      box-shadow 420ms cubic-bezier(.65, .05, .36, 1);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .vis-newborn-toggle .vis-newborn-toggle-label {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+    pointer-events: none;
+    transition:
+      opacity 280ms cubic-bezier(.65, .05, .36, 1),
+      transform 420ms cubic-bezier(.65, .05, .36, 1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .vis-newborn-toggle .vis-newborn-toggle-label.is-off {
+    right: 16px;
+    color: var(--tg-label);
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .vis-newborn-toggle .vis-newborn-toggle-label.is-on {
+    left: 18px;
+    color: var(--tg-label-on);
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+
+  .vis-newborn-toggle .vis-newborn-toggle-handle {
+    position: absolute;
+    top: var(--tg-pad);
+    left: var(--tg-pad);
+    width: calc(var(--tg-h) - var(--tg-pad) * 2);
+    height: calc(var(--tg-h) - var(--tg-pad) * 2);
+    border-radius: 999px;
+    background: radial-gradient(circle at 30% 28%, #f1f1f4 0%, var(--tg-handle) 55%, var(--tg-handle-deep) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.18),
+      0 3px 8px rgba(0, 0, 0, 0.28),
+      0 1px 2px rgba(0, 0, 0, 0.18);
+    transition:
+      transform 480ms cubic-bezier(.65, .05, .36, 1),
+      width 380ms cubic-bezier(.65, .05, .36, 1);
+    will-change: transform, width;
+  }
+
+  .vis-newborn-toggle .vis-newborn-toggle-handle::after {
+    content: '';
+    position: absolute;
+    inset: 30%;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.06) 0%, transparent 70%);
+  }
+
+  .vis-newborn-toggle:hover .vis-newborn-toggle-handle {
+    width: calc(var(--tg-h) - var(--tg-pad) * 2 + 8px);
+  }
+
+  .vis-newborn-toggle.is-on:hover .vis-newborn-toggle-handle {
+    width: calc(var(--tg-h) - var(--tg-pad) * 2 + 8px);
+    transform: translateX(calc(var(--tg-w) - var(--tg-h) - 8px));
+  }
+
+  .vis-newborn-toggle:active .vis-newborn-toggle-handle {
+    width: calc(var(--tg-h) - var(--tg-pad) * 2 + 14px);
+  }
+
+  .vis-newborn-toggle.is-on:active .vis-newborn-toggle-handle {
+    width: calc(var(--tg-h) - var(--tg-pad) * 2 + 14px);
+    transform: translateX(calc(var(--tg-w) - var(--tg-h) - 14px));
+  }
+
+  .vis-newborn-toggle.is-on {
+    background: linear-gradient(180deg, var(--tg-on-bg) 0%, var(--tg-on-bg-deep) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      inset 0 -2px 6px rgba(0, 0, 0, 0.10),
+      0 6px 18px -6px rgba(158, 201, 232, 0.65);
+  }
+
+  .vis-newborn-toggle.is-on .vis-newborn-toggle-handle {
+    transform: translateX(calc(var(--tg-w) - var(--tg-h)));
+  }
+
+  .vis-newborn-toggle.is-on .vis-newborn-toggle-label.is-off {
+    opacity: 0;
+    transform: translateX(6px);
+  }
+
+  .vis-newborn-toggle.is-on .vis-newborn-toggle-label.is-on {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .vis-newborn-toggle:focus-visible {
+    outline: 2px solid #9ec9e8;
+    outline-offset: 3px;
+  }
+
+  .vis-newborn-toggle.size-small  { --tg-w:  96px; --tg-h: 42px; }
+  .vis-newborn-toggle.size-medium { --tg-w: 132px; --tg-h: 56px; }
+  .vis-newborn-toggle.size-large  { --tg-w: 180px; --tg-h: 76px; }
+
+  .vis-newborn-toggle.size-small .vis-newborn-toggle-label {
+    font-size: 12px;
+  }
+  .vis-newborn-toggle.size-small .vis-newborn-toggle-label.is-off {
+    right: 12px;
+  }
+  .vis-newborn-toggle.size-small .vis-newborn-toggle-label.is-on {
+    left: 14px;
+  }
+
+  .vis-newborn-toggle.size-large .vis-newborn-toggle-label {
+    font-size: 19px;
+  }
+  .vis-newborn-toggle.size-large .vis-newborn-toggle-label.is-off {
+    right: 22px;
+  }
+  .vis-newborn-toggle.size-large .vis-newborn-toggle-label.is-on {
+    left: 24px;
+  }
+
+  .vis-widget.vis-newborn-toggle-size-small  { width: 110px !important; height:  56px !important; }
+  .vis-widget.vis-newborn-toggle-size-medium { width: 150px !important; height:  72px !important; }
+  .vis-widget.vis-newborn-toggle-size-large  { width: 200px !important; height:  96px !important; }
+
+  .vis-newborn-toggle-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  body.vis-edit-active .vis-widget.vis-newborn-toggle-wrap .vis-newborn-toggle-inner,
+  body.vis-edit-active .vis-widget.vis-newborn-toggle-wrap .vis-newborn-toggle-inner * {
+    pointer-events: none !important;
+  }
+
+  /* ============================================================== */
+  /*  Dimmer widget (vis-newborn-dimmer-*)                          */
+  /* ============================================================== */
   .vis-newborn-dimmer-tile,
   .vis-newborn-dimmer-tile *,
   .vis-newborn-dimmer-tile *::before,
@@ -15,7 +215,6 @@
     box-sizing: border-box;
   }
 
-  /* ============== Tile ============== */
   .vis-newborn-dimmer-tile {
     --nd-radius: 22px;
     --nd-tile-bg-off-1: #2a2a2e;
@@ -123,7 +322,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Sizes — Container forced via class so the editor inline-style does not override */
   .vis-widget.vis-newborn-dimmer-size-small  { width: 100px !important; height: 100px !important; }
   .vis-widget.vis-newborn-dimmer-size-medium { width: 130px !important; height: 130px !important; }
   .vis-widget.vis-newborn-dimmer-size-large  { width: 160px !important; height: 160px !important; }
@@ -172,13 +370,11 @@
     bottom: 14px;
   }
 
-  /* Editor: keep widget selectable / movable */
   body.vis-edit-active .vis-widget.vis-newborn-dimmer-wrap .vis-newborn-dimmer-tile,
   body.vis-edit-active .vis-widget.vis-newborn-dimmer-wrap .vis-newborn-dimmer-tile * {
     pointer-events: none !important;
   }
 
-  /* ============== Popup ============== */
   .vis-newborn-dimmer-popup {
     position: fixed;
     inset: 0;
@@ -323,6 +519,40 @@
   }
 </style>
 
+<!-- ====================================================================
+     Toggle template
+     ==================================================================== -->
+<script id="tplNewbornToggle"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:60px;"><div class="vis-newborn-toggle size-small is-on"><span class="vis-newborn-toggle-label is-off">aus</span><span class="vis-newborn-toggle-label is-on">an</span><span class="vis-newborn-toggle-handle"></span></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Toggle (Slide)"
+        data-vis-attrs="oid/id;size/select,small,medium,large;knx/checkbox;oid_status/id;invert_status/checkbox">
+<div class="vis-widget vis-newborn-toggle-wrap vis-newborn-toggle-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
+     style="width: 150px; height: 72px; padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid="<%= this.data.attr('oid') %>"
+     data-oid-status="<%= this.data.attr('oid_status') %>"
+     data-knx="<%= this.data.attr('knx') %>"
+     data-invert="<%= this.data.attr('invert_status') %>"
+     <%= (el) -> vis.binds['newborn'].toggle(el) %>>
+  <div class="vis-newborn-toggle-inner">
+    <div class="vis-newborn-toggle size-<%= (this.data.attr('size') || 'medium') %>"
+         role="switch"
+         tabindex="-1"
+         aria-checked="false">
+      <span class="vis-newborn-toggle-label is-off">aus</span>
+      <span class="vis-newborn-toggle-label is-on">an</span>
+      <span class="vis-newborn-toggle-handle"></span>
+    </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Dimmer template
+     ==================================================================== -->
 <script id="tplNewbornDimmer"
         type="text/ejs"
         class="vis-tpl"
@@ -355,11 +585,15 @@
 </div>
 </script>
 
+<!-- ====================================================================
+     Shared JS — vis.binds["newborn"]
+     ==================================================================== -->
 <script type="text/javascript">
   (function () {
     vis.binds["newborn"] = vis.binds["newborn"] || {};
     var ns = vis.binds["newborn"];
 
+    // ===== Helpers (closure-private) =====
     function isOn(val) {
       if (val && typeof val === "object" && "val" in val) {
         val = val.val;
@@ -384,12 +618,81 @@
       return Math.round(n);
     }
 
+    // ===== Toggle handler =====
+    /**
+     * Bound per element via CanJS arrow syntax inside the EJS template:
+     *   <%= (el) -> vis.binds['newborn'].toggle(el) %>
+     *
+     * State subscription is automatic: visUtils.getUsedObjectIDs picks up
+     * any widget.data attribute matching /^oid/ (also `oid_status`).
+     */
+    ns.toggle = function (el) {
+      var $this = $(el);
+      var oid       = $this.data("oid");
+      var oidStatus = $this.data("oid-status");
+      var knx       = ($this.data("knx") === true || $this.data("knx") === "true");
+      var invert    = ($this.data("invert") === true || $this.data("invert") === "true");
+
+      if (!oid || vis.editMode) {
+        return;
+      }
+
+      var oidRead = (knx && oidStatus) ? oidStatus : oid;
+      var $tgl = $this.find(".vis-newborn-toggle");
+      var moved = false;
+
+      function applyState(rawVal) {
+        var on = isOn(rawVal);
+        if (knx && invert) {
+          on = !on;
+        }
+        $tgl.toggleClass("is-on", on);
+        $tgl.attr("aria-checked", on ? "true" : "false");
+      }
+
+      function onStateChange(e, newVal) {
+        applyState(newVal);
+      }
+
+      applyState(vis.states[oidRead + ".val"]);
+      vis.states.bind(oidRead + ".val", onStateChange);
+
+      $this.on("click.newbornToggle touchend.newbornToggle", function () {
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        if (moved) {
+          return;
+        }
+
+        var current = vis.states[oidRead + ".val"];
+        var on = isOn(current);
+        if (knx && invert) {
+          on = !on;
+        }
+        var next = !on;
+        var writeValue = (knx && invert) ? !next : next;
+
+        vis.setValue(oid, writeValue);
+      });
+      $this.on("touchmove.newbornToggle", function () {
+        moved = true;
+      });
+      $this.on("touchstart.newbornToggle", function () {
+        moved = false;
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornToggle");
+        if (vis.states.unbind) {
+          vis.states.unbind(oidRead + ".val", onStateChange);
+        }
+      });
+    };
+
+    // ===== Dimmer handler (long-press → vertical slider popup) =====
     var sharedPopup = null;
 
-    /**
-     * Lazy-creates a single shared popup element appended to body.
-     * Reused across all dimmer instances on the page.
-     */
     function ensurePopup() {
       if (sharedPopup) {
         return sharedPopup;
@@ -422,11 +725,6 @@
       pctEl.textContent = pct;
     }
 
-    /**
-     * Opens the slider overlay for a tile. ctx carries OIDs and the lamp name.
-     * Sets ctx.popupOnExternalUpdate so the tile's state-change handler can
-     * push live updates into the popup while it is open (unless dragging).
-     */
     function openPopup(ctx) {
       var popup = ensurePopup();
       var slider = popup.querySelector(".nd-slider");
@@ -591,16 +889,6 @@
       });
     }
 
-    /**
-     * Per-element handler registered via CanJS arrow syntax in the EJS template.
-     * Wires up:
-     *   - live class+text updates from oid_switch_state and oid_dim_state
-     *   - short-tap to toggle on/off
-     *   - long-press (>=500ms) to open the slider overlay
-     *
-     * State subscription is automatic: visUtils.getUsedObjectIDs picks up any
-     * widget.data attribute matching /^oid/, see docs/vis/state-subscription.md.
-     */
     ns.dimmer = function (el) {
       var $this = $(el);
       var oidSwitchCmd   = $this.data("oid-switch-cmd");
@@ -730,7 +1018,6 @@
           moved = false;
           return;
         }
-        // Short tap → toggle switch
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
           return;
         }
@@ -760,9 +1047,9 @@
       });
     };
 
-    if (!ns._dimmerVersionLogged) {
-      console.log("Newborn Dimmer widget loaded (vis-newborn 0.1.0)");
-      ns._dimmerVersionLogged = true;
+    if (!ns._versionLogged) {
+      console.log("Newborn widgets loaded (vis-newborn 0.1.1)");
+      ns._versionLogged = true;
     }
   })();
 </script>

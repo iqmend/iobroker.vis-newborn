@@ -91,9 +91,16 @@ size             = medium
 
 ## Architektur
 
-Der Adapter liefert pro Widget eine eigene HTML-Datei in `widgets/`. Beide Dateien deklarieren `data-vis-set="newborn"` — dadurch erscheinen alle Widgets unter einer gemeinsamen Palette-Sektion. Neue Widgets werden hinzugefügt, indem in `widgets/` eine weitere HTML-Datei abgelegt und in `io-package.json` unter `common.visWidgets` als zusätzlicher Eintrag registriert wird.
+Alle Widgets liegen in **einer** Datei `widgets/newborn.html` als separate `<script class="vis-tpl">`-Templates (kanonisches VIS-Pattern, vgl. `iobroker.vis/www/widgets/basic.html`). Diese Datei muss exakt `newborn.html` heißen — VIS löscht andernfalls beim Start jede `widgets/*.html`, deren Stem nicht zum Adapter-Suffix passt (Quelle: `iobroker.vis/lib/install.js`, Funktion `syncWidgetSets`).
 
-`vis.binds["newborn"]` ist der gemeinsame Namespace aller Widget-Handler (`toggle`, `dimmer`, …). Jede Widget-Datei initialisiert ihre Funktion idempotent (`vis.binds["newborn"] = vis.binds["newborn"] || {};`), die Ladereihenfolge der Dateien ist daher egal.
+Alle Templates deklarieren `data-vis-set="newborn"` und erscheinen dadurch unter einer gemeinsamen Palette-Sektion „newborn". `vis.binds["newborn"]` ist der gemeinsame JS-Namespace aller Handler (`toggle`, `dimmer`, …).
+
+**Neues Widget hinzufügen:**
+1. Neuen `<script class="vis-tpl">`-Block in `widgets/newborn.html` einfügen (mit eindeutiger `id="tpl…"`, `data-vis-set="newborn"`, eigenem `data-vis-name`, eigenen `data-vis-attrs`)
+2. Neue Methode auf `vis.binds["newborn"]` im IIFE-Block am Ende der Datei
+3. CSS-Klassen mit eigenem Prefix (`vis-newborn-<widget>-…`) in den `<style>`-Block
+
+**Niemals** eine zweite HTML-Datei in `widgets/` ablegen — die würde gelöscht.
 
 ## Lizenz
 

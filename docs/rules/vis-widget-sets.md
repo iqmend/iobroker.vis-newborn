@@ -140,43 +140,95 @@ Symptom: Im DOM erscheint eine Klasse wie `vis-newborn-size-[object Object]`, un
 
 `onlyWWW: true` + `mode: "once"` → Adapter-Prozess terminiert nach Start; nur die Dateien aus `widgets/` werden ausgeliefert.
 
-## Multi-Widget-Adapter — mehrere Widgets unter einer Palette-Sektion
+## ⚠️ Filename-Stem-Match — KRITISCHE Regel
 
-Sollen mehrere Widgets unter einer gemeinsamen Sektion in der VIS-Editor-Palette erscheinen (wie `iobroker.vis-newborn`), gilt:
+**Der Stem jeder `widgets/*.html` MUSS exakt dem Suffix entsprechen, der nach `iobroker.vis-` (oder `iobroker.`) im Adapternamen steht. Sonst löscht VIS die Datei beim nächsten Restart.**
 
-1. **Pro Widget eine eigene HTML-Datei** in `widgets/`. Trennt CSS, EJS-Template und JS-Handler je Widget — Erweiterbarkeit, kein Merge-Konflikt-Risiko.
-2. **Alle HTML-Dateien deklarieren denselben `data-vis-set`-Wert** im `<script class="vis-tpl">`-Tag. VIS gruppiert in der Palette nach `data-vis-set` — gleicher Wert → gleiche Sektion.
-3. **`io-package.json` `common.visWidgets` listet jede Datei separat** unter einem eigenen Key:
-   ```json
-   "visWidgets": {
-     "newbornToggle": {
-       "name": "newborn-toggle",
-       "url": "vis-newborn/widgets/newborn-toggle.html"
-     },
-     "newbornDimmer": {
-       "name": "newborn-dimmer",
-       "url": "vis-newborn/widgets/newborn-dimmer.html"
-     }
-   }
-   ```
-4. **Gemeinsamer JS-Namespace `vis.binds["<set>"]` mit idempotentem Init**, sonst überschreibt die zweite Datei die erste:
-   ```js
-   (function () {
-     vis.binds["newborn"] = vis.binds["newborn"] || {};
-     var ns = vis.binds["newborn"];
+Quelle: `iobroker.vis/lib/install.js` Funktion `syncWidgetSets`:
 
-     // closure-private Helper (kein Konflikt mit anderen Widget-Dateien)
-     function isOn(val) { /* ... */ }
+```js
+const installed = fs.readdirSync(`${__dirname}/../www/widgets/`);
+for (let d = 0; d < installed.length; d++) {
+    if (installed[d].match(/\.html$/)) {
+        name = installed[d].replace('.html', '');
+        ...
+        found = !!sets.find(s => {
+            const ssName = s.name.toLowerCase();
+            return ssName === `iobroker.vis-${name}` || ssName === `iobroker.${name}`;
+        });
+        if (!found) {
+            fs.unlinkSync(`${__dirname}/../www/widgets/${name}.html`);  // <-- DELETE
+        }
+```
 
-     // nur die eigene Methode an den Namespace anhängen
-     ns.toggle = function (el) { /* ... */ };
-   })();
-   ```
-   Jede Widget-Datei kapselt ihre Helper in einer eigenen IIFE-Closure und hängt nur ihre Public-Methode an `ns` an. Reihenfolge des Datei-Loads ist dadurch egal.
-5. **Klassennamen pro Widget eindeutig prefixen** (`vis-<set>-<widget>-…`), damit CSS sich nicht beißt — auch zwischen Widgets desselben Sets (siehe `vis-newborn-toggle-*` vs. `vis-newborn-dimmer-*`).
-6. **Template-IDs (`<script id="tpl…">`) und `data-vis-name`-Werte über alle Widget-HTMLs hinweg eindeutig** — `tpl`-IDs sind globaler VIS-Namespace.
+Konsequenz für die Adapter-Benennung:
 
-Neue Widgets ergänzt man, indem man eine weitere `widgets/<name>.html` ablegt und in `visWidgets` einen neuen Eintrag erzeugt — bestehende Dateien bleiben unangetastet.
+| Adapter-Name (`common.name`) | Erlaubter Datei-Stem |
+|---|---|
+| `iobroker.vis-newborn` | `newborn.html` ODER `vis-newborn.html` |
+| `iobroker.vis-newborn-toggle` | `newborn-toggle.html` |
+| `iobroker.vis-jqui-mfd` | `jqui-mfd.html` |
+
+Symptom bei Verstoß: `<host>:8082/<adapter-name>/widgets/<file>.html` liefert 404, VIS-Palette ist leer, Dateien sind in `iobroker.vis/www/widgets/` nach jedem VIS-Restart wieder weg. **Auch eine korrekt angelegte Adapter-Instanz heilt das nicht** — der Filesystem-Sync läuft beim VIS-Start und entfernt orphan-stems unbedingt.
+
+## Mehrere Widgets pro Adapter — kanonisches Pattern
+
+Mehrere Widgets unter einer gemeinsamen VIS-Palette-Sektion → **alle Widgets in EINER `widgets/<stem>.html` mit mehreren `<script class="vis-tpl">`-Blöcken**. Vorbild: `iobroker.vis/www/widgets/basic.html` listet dutzende Widgets im selben File.
+
+Layout:
+
+```html
+<style>
+  /* CSS für alle Widgets, mit pro-Widget-Prefix (vis-<set>-<widget>-…) */
+</style>
+
+<!-- Widget 1 -->
+<script id="tplFooBar" type="text/ejs" class="vis-tpl"
+        data-vis-set="<set>" data-vis-name="Foo Bar" ...>
+  ...
+</script>
+
+<!-- Widget 2 -->
+<script id="tplFooBaz" type="text/ejs" class="vis-tpl"
+        data-vis-set="<set>" data-vis-name="Foo Baz" ...>
+  ...
+</script>
+
+<script type="text/javascript">
+  (function () {
+    vis.binds["<set>"] = vis.binds["<set>"] || {};
+    var ns = vis.binds["<set>"];
+    // closure-private Helper
+    function isOn(val) { /* ... */ }
+    // pro Widget eine Methode
+    ns.bar = function (el) { /* ... */ };
+    ns.baz = function (el) { /* ... */ };
+  })();
+</script>
+```
+
+Und in `io-package.json` **EIN** `visWidgets`-Eintrag (nicht einer pro Widget):
+
+```json
+"visWidgets": {
+  "<set>": {
+    "name": "<set>",
+    "url": "vis-<setname>/widgets/<stem>.html"
+  }
+}
+```
+
+VIS lädt die HTML einmal, scannt sie nach allen `<script class="vis-tpl">`-Blöcken und registriert pro Block ein Widget. `data-vis-set` bestimmt die Palette-Gruppierung.
+
+**Anti-Pattern** (führt zu 404 + leerer Palette): mehrere `widgets/foo.html`, `widgets/bar.html` mit jeweils eigenen `visWidgets`-Einträgen — Stems passen nicht zum Adapternamen → werden gelöscht.
+
+## Klassennamen + Template-IDs pro Widget eindeutig
+
+Auch wenn alle Widgets in einer Datei wohnen, müssen sie sich nicht in die Quere kommen:
+
+- **CSS-Klassen pro Widget eindeutig prefixen** (`vis-<set>-<widget>-…`, z. B. `vis-newborn-toggle-*` vs. `vis-newborn-dimmer-*`).
+- **Template-IDs (`<script id="tpl…">`) global eindeutig** — VIS verwendet die ID als Schlüssel.
+- **`data-vis-name`** unterschiedlich, sonst sieht man in der Palette zwei identisch beschriftete Einträge.
 
 ## Installation
 

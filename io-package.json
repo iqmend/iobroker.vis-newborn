@@ -1,11 +1,15 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "Fix: widgets now actually appear in the VIS palette. Both templates (Toggle, Dimmer) are now bundled inside a single widgets/newborn.html — that filename stem (newborn) matches the adapter suffix (iobroker.vis-newborn), which is required by iobroker.vis/lib/install.js (syncWidgetSets) — files with non-matching stems are deleted from vis/www/widgets/ on every restart.",
+        "de": "Fix: Widgets erscheinen jetzt tatsächlich in der VIS-Palette. Beide Templates (Toggle, Dimmer) sind nun in einer einzigen widgets/newborn.html gebündelt — der Dateiname-Stem (newborn) muss exakt zum Adapter-Suffix (iobroker.vis-newborn) passen, sonst löscht iobroker.vis/lib/install.js (syncWidgetSets) die Datei bei jedem VIS-Start aus vis/www/widgets/."
+      },
       "0.1.0": {
-        "en": "Initial release of the unified Newborn widget set. Bundled widgets: Newborn Toggle (slide switch, 1- or 2-DP KNX mode, 3 sizes) and Newborn Dimmer (HomeKit-style square tile, short-tap toggle, long-press vertical slider overlay, 4-DP KNX). Both widgets appear under one shared 'newborn' palette section in VIS, so future widgets can be added without touching existing ones.",
-        "de": "Erstes Release des vereinigten Newborn-Widget-Sets. Enthaltene Widgets: Newborn Toggle (Slide-Schalter, 1- oder 2-DP-KNX-Modus, 3 Größen) und Newborn Dimmer (HomeKit-Style-Kachel, kurzer Tap = Toggle, langes Drücken öffnet Vertikal-Slider-Overlay, 4-DP-KNX). Beide Widgets erscheinen unter einer gemeinsamen Palette-Sektion 'newborn' im VIS-Editor, sodass neue Widgets später ohne Eingriff an bestehenden ergänzt werden können."
+        "en": "Initial release of the unified Newborn widget set. Bundled widgets: Newborn Toggle and Newborn Dimmer.",
+        "de": "Erstes Release des vereinigten Newborn-Widget-Sets. Enthaltene Widgets: Newborn Toggle und Newborn Dimmer."
       }
     },
     "title": "Newborn Widgets",
@@ -39,13 +43,9 @@
       { "vis": ">=1.4.0" }
     ],
     "visWidgets": {
-      "newbornToggle": {
-        "name": "newborn-toggle",
-        "url": "vis-newborn/widgets/newborn-toggle.html"
-      },
-      "newbornDimmer": {
-        "name": "newborn-dimmer",
-        "url": "vis-newborn/widgets/newborn-dimmer.html"
+      "newborn": {
+        "name": "newborn",
+        "url": "vis-newborn/widgets/newborn.html"
       }
     }
   },

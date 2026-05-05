@@ -6,10 +6,10 @@ Adapter `iobroker.vis-newborn`: ein wachsendes Widget-Set für ioBroker VIS / VI
 
 | Pfad | Zweck |
 |------|-------|
-| `widgets/` | Widget-HTML-Dateien (eine pro Widget). Alle deklarieren `data-vis-set="newborn"` → erscheinen unter gemeinsamer Palette-Sektion. |
+| `widgets/newborn.html` | **Eine** HTML-Datei mit allen Widgets als `<script class="vis-tpl">`-Blöcken. Filename-Stem `newborn` muss zum Adapter-Suffix `iobroker.vis-newborn` passen — sonst löscht VIS die Datei (siehe Pflichtregel unten). |
 | `admin/` | Adapter-Admin-Page (leer; reines Widget-Set hat keine Konfiguration). |
 | `main.js` | Adapter-Stub, terminiert sofort nach Start (`onlyWWW: true` + `mode: "once"`). |
-| `io-package.json` | `common.visWidgets` listet jede Widget-Datei. Neuer Eintrag pro neuem Widget. |
+| `io-package.json` | `common.visWidgets` enthält **EINEN** Eintrag mit URL auf `widgets/newborn.html`. Neue Widgets werden in dieselbe Datei geschrieben, nicht als neue Datei angelegt. |
 | `docs/rules/` | Geltende Projektregeln. |
 | `docs/vis/` | Kanonische Source-Auszüge aus iobroker.vis (Subscription-Mechanik, Toggle-Pattern, Spec). |
 | `memory/` | Langfristiges Projektwissen (Lessons Learned, Projektkontext). |
@@ -20,25 +20,43 @@ Adapter `iobroker.vis-newborn`: ein wachsendes Widget-Set für ioBroker VIS / VI
 - **Widget-Set-Adapter:** [docs/rules/vis-widget-sets.md](docs/rules/vis-widget-sets.md) — EJS-Pflichtstruktur, `<%= %>`-Delimiter, `class="vis-widget"` am Root, literale `style="width;height"`, `class-binding` und `data-oid`-Carrier-Pattern, **Multi-Widget-Adapter-Abschnitt** (idempotenter Namespace).
 - **Sicherheit:** [docs/rules/security.md](docs/rules/security.md) — kein `eval`, keine Secrets im HTML.
 
-## Multi-Widget-Architektur (Kernpunkt)
+## ⚠️ KRITISCH: Filename-Stem-Match
 
-Der Adapter folgt dem Multi-Widget-Pattern:
+`iobroker.vis/lib/install.js` (Funktion `syncWidgetSets`) **löscht** beim VIS-Start jede `widgets/*.html` aus `iobroker.vis/www/widgets/`, deren Stem nicht exakt zu einem installierten Adapter passt:
+```js
+const ssName = s.name.toLowerCase();
+return ssName === `iobroker.vis-${name}` || ssName === `iobroker.${name}`;
+```
 
-1. Eine HTML-Datei pro Widget in `widgets/`
-2. Alle deklarieren `data-vis-set="newborn"` → eine Palette-Sektion
-3. Gemeinsamer JS-Namespace `vis.binds["newborn"]`, idempotent initialisiert in IIFE-Closure pro Datei:
+Für diesen Adapter `iobroker.vis-newborn` heißt das: **die Widget-Datei MUSS `widgets/newborn.html` heißen** (oder `widgets/vis-newborn.html`). Andere Stems → Datei wird gelöscht → 404 + leere Palette.
+
+Konsequenz: **alle Widgets dieses Adapters wohnen in der einen Datei `widgets/newborn.html`**, jeweils als eigener `<script class="vis-tpl">`-Block. Vorbild: `iobroker.vis/www/widgets/basic.html` (dutzende Widgets in einer Datei).
+
+## Architektur des Multi-Widget-Files
+
+`widgets/newborn.html` enthält:
+
+1. Einen `<style>`-Block mit allen Widget-CSS (pro-Widget-Klassen-Prefixe `vis-newborn-toggle-*`, `vis-newborn-dimmer-*` zur Konfliktvermeidung)
+2. Pro Widget einen `<script id="tplNewborn<Widget>" type="text/ejs" class="vis-tpl" data-vis-set="newborn" data-vis-name="..." data-vis-attrs="...">`-Block
+3. **Einen** `<script type="text/javascript">`-IIFE-Block mit dem gemeinsamen JS-Namespace:
    ```js
    (function () {
      vis.binds["newborn"] = vis.binds["newborn"] || {};
      var ns = vis.binds["newborn"];
-     // closure-private Helpers ...
-     ns.<widgetName> = function (el) { /* ... */ };
+     // closure-private Helpers (isOn, toPct, ...)
+     ns.toggle = function (el) { /* widget 1 */ };
+     ns.dimmer = function (el) { /* widget 2 */ };
    })();
    ```
-4. CSS-Klassen pro Widget eindeutig prefixen (`vis-newborn-toggle-*` / `vis-newborn-dimmer-*`)
-5. Template-IDs (`tpl…`) global eindeutig
 
-Neues Widget hinzufügen: neue `widgets/<name>.html` ablegen + zusätzlichen Eintrag in `io-package.json` `common.visWidgets`. Bestehende Dateien bleiben unangetastet.
+`io-package.json` listet einen einzigen `visWidgets`-Eintrag, der auf diese Datei zeigt:
+```json
+"visWidgets": {
+  "newborn": { "name": "newborn", "url": "vis-newborn/widgets/newborn.html" }
+}
+```
+
+**Neues Widget hinzufügen:** neuen `<script class="vis-tpl">`-Block in `widgets/newborn.html` einfügen + neue Methode auf `vis.binds["newborn"]` im IIFE-Block. **NICHT** eine neue HTML-Datei anlegen — die würde gelöscht.
 
 ## Quellen & Lessons Learned
 - [memory/vis-widget-development.md](memory/vis-widget-development.md) — Lessons aus zwei Vorgänger-Adaptern + Konsolidierung
