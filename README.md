@@ -29,16 +29,17 @@ Alle Widgets erscheinen im VIS-Editor unter einer gemeinsamen Palette-Sektion **
 - 3 Größen: small, medium, large
 
 ### Newborn Jalousie (Tile)
-- Hochformat-Kachel im **hellgrauen Light-Theme** mit großen Tasten
-- Zwei Reihen mit Auf/Ab-Tasten (Jalousie + Lamellen) und zentralem Stop-Button
+- Hochformat-Kachel im **hellen Cream/Weiß-Theme** mit weißen Outline-Tasten
+- Icon + Status-Badge in einer Zeile, Lampenname auf eigener Zeile darunter (bricht auf 2 Zeilen um)
+- Zwei Reihen mit Auf/Ab-Tasten (Jalousie + Lamellen) und Stop-Button (so breit wie die Auf/Ab-Tasten zusammen)
 - Klick/Tap auf eine Taste → entsprechende Aktion (Jalousie auf/ab, Lamellen auf/ab, Stop)
 - Langes Drücken (≥500 ms) irgendwo auf der Kachel → Popup mit **zwei** vertikalen Slidern (Jalousie %, Lamellen %)
 - **Slider schreibt erst beim Loslassen** — nicht während des Ziehens (genau ein KNX-Telegramm pro Geste)
 - 7 Datenpunkte: Jalousie-Schalt + Position-Cmd/Status, Lamellen-Schalt + Position-Cmd/Status, optional Fenster-Status
 - KNX-Konvention: Jalousie/Lamellen `true/1` = ab, `false/0` = auf. Stop-Button schreibt `true` auf den Lamellen-Schalt-DP (KNX: stoppt die Bewegung, bewegt Lamellen einen Schritt)
-- **Optional Fenster-Badge** oben rechts: `oid_window_state` ausfüllen → rotes „offen" wenn `true`, grünes „zu" wenn `false`. Leer lassen = kein Badge.
+- **Optional Fenster-Badge** oben rechts: `oid_window_state` ausfüllen → solides rotes „offen" wenn `true`, solides grünes „zu" wenn `false`. Leer lassen = kein Badge.
 - Live-Prozente unten auf der Kachel sichtbar
-- 3 Größen: small (130×190), medium (160×230), large (200×280)
+- 3 Größen: small (140×220), medium (170×260), large (210×320)
 
 ## Installation
 

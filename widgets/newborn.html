@@ -696,20 +696,22 @@
 
   .vis-newborn-blinds-tile {
     --bl-radius: 22px;
-    --bl-bg-1: #ebebee;
-    --bl-bg-2: #d8d8dc;
+    --bl-bg-1: #ffffff;
+    --bl-bg-2: #f5f5f8;
     --bl-text: #1c1c1e;
-    --bl-text-muted: #6e6e74;
-    --bl-btn-bg: rgba(0,0,0,0.05);
-    --bl-btn-bg-hover: rgba(0,0,0,0.10);
-    --bl-btn-bg-active: rgba(0,0,0,0.18);
-    --bl-stop-bg: rgba(220,40,40,0.10);
-    --bl-stop-bg-hover: rgba(220,40,40,0.18);
-    --bl-stop-color: #c52a2a;
-    --bl-badge-open-bg: rgba(220,40,40,0.14);
-    --bl-badge-open-color: #c52a2a;
-    --bl-badge-closed-bg: rgba(40,170,80,0.16);
-    --bl-badge-closed-color: #1f7a3a;
+    --bl-text-muted: #8e8e93;
+    --bl-btn-bg: #ffffff;
+    --bl-btn-border: rgba(0,0,0,0.08);
+    --bl-btn-bg-hover: #f2f2f7;
+    --bl-btn-bg-active: #e5e5ea;
+    --bl-stop-bg: rgba(232,83,74,0.10);
+    --bl-stop-bg-hover: rgba(232,83,74,0.18);
+    --bl-stop-border: rgba(232,83,74,0.22);
+    --bl-stop-color: #d12824;
+    --bl-badge-open-bg: #e8534a;
+    --bl-badge-open-color: #ffffff;
+    --bl-badge-closed-bg: #3ec168;
+    --bl-badge-closed-color: #ffffff;
 
     position: relative;
     width: 100%;
@@ -722,27 +724,28 @@
     -webkit-tap-highlight-color: transparent;
     background: linear-gradient(160deg, var(--bl-bg-1) 0%, var(--bl-bg-2) 100%);
     box-shadow:
-      0 1px 0 rgba(255,255,255,0.45) inset,
+      0 1px 0 rgba(255,255,255,0.7) inset,
       0 0 0 1px rgba(0,0,0,0.04) inset,
-      0 6px 18px -6px rgba(0,0,0,0.18);
+      0 4px 14px -4px rgba(0,0,0,0.10);
     color: var(--bl-text);
     font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
-    padding: 12px;
+    padding: 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
-  .vis-newborn-blinds-tile .bl-header {
+  .vis-newborn-blinds-tile .bl-top {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     flex-shrink: 0;
   }
 
   .vis-newborn-blinds-tile .bl-icon {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 999px;
     display: flex;
     align-items: center;
@@ -753,8 +756,8 @@
   }
 
   .vis-newborn-blinds-tile .bl-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     stroke: currentColor;
     fill: none;
     stroke-width: 1.8;
@@ -762,26 +765,10 @@
     stroke-linejoin: round;
   }
 
-  .vis-newborn-blinds-tile .bl-name {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-    line-height: 1.2;
-    flex: 1;
-    min-width: 0;
-    color: var(--bl-text);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    word-break: break-word;
-  }
-
   .vis-newborn-blinds-tile .bl-badge {
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 3px 7px;
+    padding: 4px 11px;
     border-radius: 999px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -801,10 +788,25 @@
     color: var(--bl-badge-closed-color);
   }
 
+  .vis-newborn-blinds-tile .bl-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: 1.25;
+    color: var(--bl-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    flex-shrink: 0;
+  }
+
   .vis-newborn-blinds-tile .bl-row {
     display: grid;
-    grid-template-columns: auto 1fr 1fr;
-    gap: 5px;
+    grid-template-columns: 30px 1fr 1fr;
+    gap: 6px;
     align-items: center;
   }
 
@@ -821,6 +823,7 @@
     height: 38px;
     border-radius: 10px;
     background: var(--bl-btn-bg);
+    border: 1px solid var(--bl-btn-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -834,7 +837,7 @@
   }
   .vis-newborn-blinds-tile .bl-btn:active {
     background: var(--bl-btn-bg-active);
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
 
   .vis-newborn-blinds-tile .bl-btn svg {
@@ -847,18 +850,21 @@
     stroke-linejoin: round;
   }
 
-  .vis-newborn-blinds-tile .bl-btn-stop {
+  /* Stop sits in its own bl-row, but spans cols 2+3 only — same width
+     as the up+down buttons above, NOT full-width. */
+  .vis-newborn-blinds-tile .bl-row-stop .bl-btn-stop {
+    grid-column: 2 / span 2;
     width: 100%;
     height: 34px;
-    margin-top: 2px;
     background: var(--bl-stop-bg);
+    border: 1px solid var(--bl-stop-border);
     color: var(--bl-stop-color);
     border-radius: 10px;
   }
-  .vis-newborn-blinds-tile .bl-btn-stop:hover {
+  .vis-newborn-blinds-tile .bl-row-stop .bl-btn-stop:hover {
     background: var(--bl-stop-bg-hover);
   }
-  .vis-newborn-blinds-tile .bl-btn-stop svg {
+  .vis-newborn-blinds-tile .bl-row-stop .bl-btn-stop svg {
     width: 14px;
     height: 14px;
     fill: currentColor;
@@ -869,9 +875,9 @@
     display: flex;
     justify-content: space-around;
     margin-top: auto;
-    padding-top: 4px;
-    font-size: 12px;
-    font-weight: 600;
+    padding-top: 6px;
+    font-size: 13px;
+    font-weight: 700;
     color: var(--bl-text);
     font-variant-numeric: tabular-nums;
     line-height: 1;
@@ -879,41 +885,42 @@
   .vis-newborn-blinds-tile .bl-pct-row .bl-pct-key {
     color: var(--bl-text-muted);
     font-weight: 500;
-    margin-right: 3px;
+    margin-right: 4px;
   }
 
-  /* Sizes — portrait, room for the bigger buttons */
-  .vis-widget.vis-newborn-blinds-size-small  { width: 130px !important; height: 190px !important; }
-  .vis-widget.vis-newborn-blinds-size-medium { width: 160px !important; height: 230px !important; }
-  .vis-widget.vis-newborn-blinds-size-large  { width: 200px !important; height: 280px !important; }
+  /* Sizes — bumped to fit the title row and bigger buttons */
+  .vis-widget.vis-newborn-blinds-size-small  { width: 140px !important; height: 220px !important; }
+  .vis-widget.vis-newborn-blinds-size-medium { width: 170px !important; height: 260px !important; }
+  .vis-widget.vis-newborn-blinds-size-large  { width: 210px !important; height: 320px !important; }
 
   .vis-newborn-blinds-tile.size-small {
-    padding: 10px;
-    gap: 5px;
+    padding: 12px;
+    gap: 6px;
   }
-  .vis-newborn-blinds-tile.size-small .bl-icon { width: 22px; height: 22px; }
-  .vis-newborn-blinds-tile.size-small .bl-name { font-size: 11px; }
-  .vis-newborn-blinds-tile.size-small .bl-badge { font-size: 8px; padding: 2px 5px; }
+  .vis-newborn-blinds-tile.size-small .bl-icon { width: 24px; height: 24px; }
+  .vis-newborn-blinds-tile.size-small .bl-icon svg { width: 14px; height: 14px; }
+  .vis-newborn-blinds-tile.size-small .bl-name { font-size: 13px; }
+  .vis-newborn-blinds-tile.size-small .bl-badge { font-size: 10px; padding: 3px 9px; }
   .vis-newborn-blinds-tile.size-small .bl-row-label { font-size: 9px; }
   .vis-newborn-blinds-tile.size-small .bl-btn { height: 32px; }
   .vis-newborn-blinds-tile.size-small .bl-btn svg { width: 16px; height: 16px; }
-  .vis-newborn-blinds-tile.size-small .bl-btn-stop { height: 30px; }
-  .vis-newborn-blinds-tile.size-small .bl-pct-row { font-size: 11px; }
+  .vis-newborn-blinds-tile.size-small .bl-row-stop .bl-btn-stop { height: 30px; }
+  .vis-newborn-blinds-tile.size-small .bl-pct-row { font-size: 12px; }
 
   .vis-newborn-blinds-tile.size-large {
-    padding: 16px;
-    gap: 8px;
+    padding: 18px;
+    gap: 10px;
   }
-  .vis-newborn-blinds-tile.size-large .bl-icon { width: 30px; height: 30px; }
-  .vis-newborn-blinds-tile.size-large .bl-icon svg { width: 17px; height: 17px; }
-  .vis-newborn-blinds-tile.size-large .bl-name { font-size: 15px; }
-  .vis-newborn-blinds-tile.size-large .bl-badge { font-size: 10px; padding: 4px 9px; }
+  .vis-newborn-blinds-tile.size-large .bl-icon { width: 32px; height: 32px; }
+  .vis-newborn-blinds-tile.size-large .bl-icon svg { width: 18px; height: 18px; }
+  .vis-newborn-blinds-tile.size-large .bl-name { font-size: 16px; }
+  .vis-newborn-blinds-tile.size-large .bl-badge { font-size: 12px; padding: 5px 12px; }
   .vis-newborn-blinds-tile.size-large .bl-row-label { font-size: 12px; }
   .vis-newborn-blinds-tile.size-large .bl-btn { height: 50px; border-radius: 12px; }
   .vis-newborn-blinds-tile.size-large .bl-btn svg { width: 22px; height: 22px; }
-  .vis-newborn-blinds-tile.size-large .bl-btn-stop { height: 42px; border-radius: 12px; }
-  .vis-newborn-blinds-tile.size-large .bl-btn-stop svg { width: 16px; height: 16px; }
-  .vis-newborn-blinds-tile.size-large .bl-pct-row { font-size: 14px; padding-top: 8px; }
+  .vis-newborn-blinds-tile.size-large .bl-row-stop .bl-btn-stop { height: 42px; border-radius: 12px; }
+  .vis-newborn-blinds-tile.size-large .bl-row-stop .bl-btn-stop svg { width: 16px; height: 16px; }
+  .vis-newborn-blinds-tile.size-large .bl-pct-row { font-size: 15px; padding-top: 10px; }
 
   body.vis-edit-active .vis-widget.vis-newborn-blinds-wrap .vis-newborn-blinds-tile,
   body.vis-edit-active .vis-widget.vis-newborn-blinds-wrap .vis-newborn-blinds-tile * {
@@ -1235,14 +1242,14 @@ var lcStyle = lcCustom ? ('width:' + lcW + 'px !important;height:' + lcH + 'px !
 <script id="tplNewbornBlinds"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:140px;"><div style="width:100px;height:130px;border-radius:14px;background:linear-gradient(160deg,#ebebee 0%, #d8d8dc 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;gap:5px;"><div style="display:flex;align-items:center;gap:5px;"><div style="width:14px;height:14px;border-radius:999px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#6e6e74;"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-weight:600;flex:1;">Jalousie</div><div style="font-size:6px;font-weight:700;padding:2px 5px;border-radius:999px;background:rgba(40,170,80,0.16);color:#1f7a3a;text-transform:uppercase;">zu</div></div><div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#6e6e74;text-transform:uppercase;font-weight:700;">Jal</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#6e6e74;text-transform:uppercase;font-weight:700;">Lam</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="height:14px;border-radius:5px;background:rgba(220,40,40,0.10);color:#c52a2a;display:flex;align-items:center;justify-content:center;font-weight:700;">⏹</div><div style="display:flex;justify-content:space-around;font-size:7px;color:#1c1c1e;font-weight:600;margin-top:auto;">75 %<span>50 %</span></div></div></div>'
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:150px;"><div style="width:100px;height:140px;border-radius:14px;background:linear-gradient(160deg,#ffffff 0%, #f5f5f8 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;gap:5px;"><div style="width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#8e8e93;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-size:7px;font-weight:700;padding:2px 6px;border-radius:999px;background:#3ec168;color:#fff;text-transform:uppercase;">zu</div></div><div style="font-weight:700;font-size:9px;line-height:1.2;">Jalousie</div><div style="display:grid;grid-template-columns:18px 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#8e8e93;text-transform:uppercase;font-weight:700;">Jal</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:18px 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#8e8e93;text-transform:uppercase;font-weight:700;">Lam</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:18px 1fr 1fr;gap:3px;align-items:center;"><span></span><div style="grid-column:2 / span 2;height:14px;border-radius:4px;background:rgba(232,83,74,0.10);border:1px solid rgba(232,83,74,0.22);color:#d12824;display:flex;align-items:center;justify-content:center;font-weight:700;">⏹</div></div><div style="display:flex;justify-content:space-around;font-size:7px;color:#1c1c1e;font-weight:700;margin-top:auto;">75 %<span>50 %</span></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Jalousie (Tile)"
         data-vis-attrs="oid_blinds_cmd/id;oid_blinds_pos_cmd/id;oid_blinds_pos_state/id;oid_slats_cmd/id;oid_slats_pos_cmd/id;oid_slats_pos_state/id;oid_window_state/id;name/text;size/select,small,medium,large;width/number;height/number">
 <%
 var bcSize = this.data.attr('size') || 'medium';
-var bcDefW = bcSize === 'small' ? 130 : bcSize === 'large' ? 200 : 160;
-var bcDefH = bcSize === 'small' ? 190 : bcSize === 'large' ? 280 : 230;
+var bcDefW = bcSize === 'small' ? 140 : bcSize === 'large' ? 210 : 170;
+var bcDefH = bcSize === 'small' ? 220 : bcSize === 'large' ? 320 : 260;
 var bcW = parseInt(this.data.attr('width'), 10);
 var bcH = parseInt(this.data.attr('height'), 10);
 var bcCustomW = isFinite(bcW) && bcW > 0;
@@ -1250,10 +1257,10 @@ var bcCustomH = isFinite(bcH) && bcH > 0;
 var bcCustom = bcCustomW || bcCustomH;
 if (bcCustom && !bcCustomW) bcW = bcDefW;
 if (bcCustom && !bcCustomH) bcH = bcDefH;
-if (bcCustom && bcW < 130) bcW = 130;
-if (bcCustom && bcH < 190) bcH = 190;
+if (bcCustom && bcW < 140) bcW = 140;
+if (bcCustom && bcH < 220) bcH = 220;
 var bcSizeClass = bcCustom ? '' : ('vis-newborn-blinds-size-' + bcSize);
-var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !important;') : 'width:160px;height:230px;';
+var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !important;') : 'width:170px;height:260px;';
 %>
 <div class="vis-widget vis-newborn-blinds-wrap <%= bcSizeClass %> <%== this.data.attr('class') %>"
      style="<%= bcStyle %> padding: 0px;"
@@ -1270,7 +1277,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
   <div class="vis-newborn-blinds-tile size-<%= (this.data.attr('size') || 'medium') %>"
        role="group"
        aria-label="Jalousie">
-    <div class="bl-header">
+    <div class="bl-top">
       <div class="bl-icon">
         <svg viewBox="0 0 24 24">
           <rect x="4" y="4" width="16" height="16" rx="2"/>
@@ -1279,9 +1286,10 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
           <line x1="4" y1="19" x2="20" y2="19"/>
         </svg>
       </div>
-      <div class="bl-name"><%= this.data.attr('name') || 'Jalousie' %></div>
       <div class="bl-badge" aria-hidden="true">zu</div>
     </div>
+
+    <div class="bl-name"><%= this.data.attr('name') || 'Jalousie' %></div>
 
     <div class="bl-row">
       <span class="bl-row-label">Jal</span>
@@ -1303,8 +1311,11 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       </div>
     </div>
 
-    <div class="bl-btn bl-btn-stop" data-bl-action="stop" role="button" aria-label="Stop">
-      <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+    <div class="bl-row bl-row-stop">
+      <span class="bl-row-label"></span>
+      <div class="bl-btn bl-btn-stop" data-bl-action="stop" role="button" aria-label="Stop">
+        <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+      </div>
     </div>
 
     <div class="bl-pct-row">
@@ -2248,7 +2259,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.10 ready");
+      console.log("vis-newborn 0.1.11 ready");
       ns._versionLogged = true;
     }
   })();
