@@ -690,15 +690,20 @@
 
   .vis-newborn-blinds-tile {
     --bl-radius: 22px;
-    --bl-bg-1: #2a2a2e;
-    --bl-bg-2: #1d1d20;
-    --bl-text: #d0d0d4;
-    --bl-text-muted: #8e8e93;
-    --bl-btn-bg: rgba(255,255,255,0.06);
-    --bl-btn-bg-hover: rgba(255,255,255,0.12);
-    --bl-btn-bg-active: rgba(255,255,255,0.20);
-    --bl-stop-bg: rgba(255,90,90,0.15);
-    --bl-stop-color: #ff8a8a;
+    --bl-bg-1: #ebebee;
+    --bl-bg-2: #d8d8dc;
+    --bl-text: #1c1c1e;
+    --bl-text-muted: #6e6e74;
+    --bl-btn-bg: rgba(0,0,0,0.05);
+    --bl-btn-bg-hover: rgba(0,0,0,0.10);
+    --bl-btn-bg-active: rgba(0,0,0,0.18);
+    --bl-stop-bg: rgba(220,40,40,0.10);
+    --bl-stop-bg-hover: rgba(220,40,40,0.18);
+    --bl-stop-color: #c52a2a;
+    --bl-badge-open-bg: rgba(220,40,40,0.14);
+    --bl-badge-open-color: #c52a2a;
+    --bl-badge-closed-bg: rgba(40,170,80,0.16);
+    --bl-badge-closed-color: #1f7a3a;
 
     position: relative;
     width: 100%;
@@ -711,21 +716,21 @@
     -webkit-tap-highlight-color: transparent;
     background: linear-gradient(160deg, var(--bl-bg-1) 0%, var(--bl-bg-2) 100%);
     box-shadow:
-      0 1px 0 rgba(255,255,255,0.06) inset,
-      0 0 0 1px rgba(255,255,255,0.04) inset,
-      0 6px 18px -6px rgba(0,0,0,0.45);
+      0 1px 0 rgba(255,255,255,0.45) inset,
+      0 0 0 1px rgba(0,0,0,0.04) inset,
+      0 6px 18px -6px rgba(0,0,0,0.18);
     color: var(--bl-text);
     font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
     padding: 12px;
     display: flex;
     flex-direction: column;
+    gap: 6px;
   }
 
   .vis-newborn-blinds-tile .bl-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
     flex-shrink: 0;
   }
 
@@ -736,8 +741,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.06);
-    color: #b0b0b6;
+    background: rgba(0,0,0,0.05);
+    color: var(--bl-text-muted);
     flex-shrink: 0;
   }
 
@@ -759,80 +764,94 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: 1.2;
+    flex: 1;
+    min-width: 0;
+    color: var(--bl-text);
   }
 
-  .vis-newborn-blinds-tile .bl-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin-bottom: 6px;
-  }
-
-  .vis-newborn-blinds-tile .bl-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .vis-newborn-blinds-tile .bl-col-label {
+  .vis-newborn-blinds-tile .bl-badge {
     font-size: 9px;
-    font-weight: 500;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    line-height: 1;
+    display: none;
+  }
+  .vis-newborn-blinds-tile .bl-badge.is-shown {
+    display: inline-flex;
+  }
+  .vis-newborn-blinds-tile .bl-badge.is-open {
+    background: var(--bl-badge-open-bg);
+    color: var(--bl-badge-open-color);
+  }
+  .vis-newborn-blinds-tile .bl-badge.is-closed {
+    background: var(--bl-badge-closed-bg);
+    color: var(--bl-badge-closed-color);
+  }
+
+  .vis-newborn-blinds-tile .bl-row {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .vis-newborn-blinds-tile .bl-row-label {
+    font-size: 10px;
+    font-weight: 700;
     color: var(--bl-text-muted);
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    padding-right: 2px;
   }
 
   .vis-newborn-blinds-tile .bl-btn {
-    width: 32px;
-    height: 28px;
-    border-radius: 8px;
+    height: 38px;
+    border-radius: 10px;
     background: var(--bl-btn-bg);
     display: flex;
     align-items: center;
     justify-content: center;
     transition:
-      background 180ms ease,
-      transform 120ms ease;
+      background 160ms ease,
+      transform 100ms ease;
     color: var(--bl-text);
   }
-
   .vis-newborn-blinds-tile .bl-btn:hover {
     background: var(--bl-btn-bg-hover);
   }
-
   .vis-newborn-blinds-tile .bl-btn:active {
     background: var(--bl-btn-bg-active);
-    transform: scale(0.94);
+    transform: scale(0.95);
   }
 
   .vis-newborn-blinds-tile .bl-btn svg {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     stroke: currentColor;
     fill: none;
-    stroke-width: 2.2;
+    stroke-width: 2.4;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
   .vis-newborn-blinds-tile .bl-btn-stop {
-    align-self: center;
-    width: 38px;
-    height: 28px;
-    margin: 4px auto 0;
+    width: 100%;
+    height: 34px;
+    margin-top: 2px;
     background: var(--bl-stop-bg);
     color: var(--bl-stop-color);
-    border-radius: 8px;
+    border-radius: 10px;
   }
-
   .vis-newborn-blinds-tile .bl-btn-stop:hover {
-    background: rgba(255,90,90,0.25);
+    background: var(--bl-stop-bg-hover);
   }
-
   .vis-newborn-blinds-tile .bl-btn-stop svg {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     fill: currentColor;
     stroke: none;
   }
@@ -841,34 +860,51 @@
     display: flex;
     justify-content: space-around;
     margin-top: auto;
-    padding-top: 6px;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--bl-text-muted);
+    padding-top: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--bl-text);
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
+  .vis-newborn-blinds-tile .bl-pct-row .bl-pct-key {
+    color: var(--bl-text-muted);
+    font-weight: 500;
+    margin-right: 3px;
+  }
 
-  /* Sizes — portrait orientation; controls need vertical room */
-  .vis-widget.vis-newborn-blinds-size-small  { width: 120px !important; height: 170px !important; }
-  .vis-widget.vis-newborn-blinds-size-medium { width: 150px !important; height: 210px !important; }
-  .vis-widget.vis-newborn-blinds-size-large  { width: 180px !important; height: 250px !important; }
+  /* Sizes — portrait, room for the bigger buttons */
+  .vis-widget.vis-newborn-blinds-size-small  { width: 130px !important; height: 190px !important; }
+  .vis-widget.vis-newborn-blinds-size-medium { width: 160px !important; height: 230px !important; }
+  .vis-widget.vis-newborn-blinds-size-large  { width: 200px !important; height: 280px !important; }
 
+  .vis-newborn-blinds-tile.size-small {
+    padding: 10px;
+    gap: 5px;
+  }
+  .vis-newborn-blinds-tile.size-small .bl-icon { width: 22px; height: 22px; }
   .vis-newborn-blinds-tile.size-small .bl-name { font-size: 11px; }
-  .vis-newborn-blinds-tile.size-small .bl-btn { width: 28px; height: 24px; }
-  .vis-newborn-blinds-tile.size-small .bl-btn-stop { width: 34px; height: 24px; }
-  .vis-newborn-blinds-tile.size-small .bl-pct-row { font-size: 10px; }
+  .vis-newborn-blinds-tile.size-small .bl-badge { font-size: 8px; padding: 2px 5px; }
+  .vis-newborn-blinds-tile.size-small .bl-row-label { font-size: 9px; }
+  .vis-newborn-blinds-tile.size-small .bl-btn { height: 32px; }
+  .vis-newborn-blinds-tile.size-small .bl-btn svg { width: 16px; height: 16px; }
+  .vis-newborn-blinds-tile.size-small .bl-btn-stop { height: 30px; }
+  .vis-newborn-blinds-tile.size-small .bl-pct-row { font-size: 11px; }
 
   .vis-newborn-blinds-tile.size-large {
     padding: 16px;
+    gap: 8px;
   }
-  .vis-newborn-blinds-tile.size-large .bl-icon { width: 28px; height: 28px; }
-  .vis-newborn-blinds-tile.size-large .bl-icon svg { width: 16px; height: 16px; }
-  .vis-newborn-blinds-tile.size-large .bl-name { font-size: 14px; }
-  .vis-newborn-blinds-tile.size-large .bl-btn { width: 40px; height: 34px; }
-  .vis-newborn-blinds-tile.size-large .bl-btn svg { width: 16px; height: 16px; }
-  .vis-newborn-blinds-tile.size-large .bl-btn-stop { width: 48px; height: 34px; }
-  .vis-newborn-blinds-tile.size-large .bl-pct-row { font-size: 13px; padding-top: 10px; }
+  .vis-newborn-blinds-tile.size-large .bl-icon { width: 30px; height: 30px; }
+  .vis-newborn-blinds-tile.size-large .bl-icon svg { width: 17px; height: 17px; }
+  .vis-newborn-blinds-tile.size-large .bl-name { font-size: 15px; }
+  .vis-newborn-blinds-tile.size-large .bl-badge { font-size: 10px; padding: 4px 9px; }
+  .vis-newborn-blinds-tile.size-large .bl-row-label { font-size: 12px; }
+  .vis-newborn-blinds-tile.size-large .bl-btn { height: 50px; border-radius: 12px; }
+  .vis-newborn-blinds-tile.size-large .bl-btn svg { width: 22px; height: 22px; }
+  .vis-newborn-blinds-tile.size-large .bl-btn-stop { height: 42px; border-radius: 12px; }
+  .vis-newborn-blinds-tile.size-large .bl-btn-stop svg { width: 16px; height: 16px; }
+  .vis-newborn-blinds-tile.size-large .bl-pct-row { font-size: 14px; padding-top: 8px; }
 
   body.vis-edit-active .vis-widget.vis-newborn-blinds-wrap .vis-newborn-blinds-tile,
   body.vis-edit-active .vis-widget.vis-newborn-blinds-wrap .vis-newborn-blinds-tile * {
@@ -1144,12 +1180,12 @@
 <script id="tplNewbornBlinds"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:100px;height:130px;"><div style="width:90px;height:120px;border-radius:14px;background:linear-gradient(160deg,#2a2a2e 0%, #1d1d20 100%);color:#d0d0d4;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:7px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;"><div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;"><div style="width:14px;height:14px;border-radius:999px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:#b0b0b6;"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-weight:600;">Jalousie</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:6px;color:#8e8e93;text-transform:uppercase;">Jal</div><div style="width:18px;height:14px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;">▲</div><div style="width:18px;height:14px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;">▼</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:6px;color:#8e8e93;text-transform:uppercase;">Lam</div><div style="width:18px;height:14px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;">▲</div><div style="width:18px;height:14px;border-radius:4px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;">▼</div></div></div><div style="text-align:center;margin-top:4px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:13px;border-radius:4px;background:rgba(255,90,90,0.15);color:#ff8a8a;">⏹</span></div><div style="display:flex;justify-content:space-around;font-size:7px;color:#8e8e93;margin-top:auto;">75 %<span>50 %</span></div></div></div>'
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:140px;"><div style="width:100px;height:130px;border-radius:14px;background:linear-gradient(160deg,#ebebee 0%, #d8d8dc 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;gap:5px;"><div style="display:flex;align-items:center;gap:5px;"><div style="width:14px;height:14px;border-radius:999px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#6e6e74;"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-weight:600;flex:1;">Jalousie</div><div style="font-size:6px;font-weight:700;padding:2px 5px;border-radius:999px;background:rgba(40,170,80,0.16);color:#1f7a3a;text-transform:uppercase;">zu</div></div><div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#6e6e74;text-transform:uppercase;font-weight:700;">Jal</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#6e6e74;text-transform:uppercase;font-weight:700;">Lam</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="height:14px;border-radius:5px;background:rgba(220,40,40,0.10);color:#c52a2a;display:flex;align-items:center;justify-content:center;font-weight:700;">⏹</div><div style="display:flex;justify-content:space-around;font-size:7px;color:#1c1c1e;font-weight:600;margin-top:auto;">75 %<span>50 %</span></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Jalousie (Tile)"
-        data-vis-attrs="oid_blinds_cmd/id;oid_blinds_pos_cmd/id;oid_blinds_pos_state/id;oid_slats_cmd/id;oid_slats_pos_cmd/id;oid_slats_pos_state/id;name/text;size/select,small,medium,large">
+        data-vis-attrs="oid_blinds_cmd/id;oid_blinds_pos_cmd/id;oid_blinds_pos_state/id;oid_slats_cmd/id;oid_slats_pos_cmd/id;oid_slats_pos_state/id;oid_window_state/id;name/text;size/select,small,medium,large">
 <div class="vis-widget vis-newborn-blinds-wrap vis-newborn-blinds-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
-     style="width: 150px; height: 210px; padding: 0px;"
+     style="width: 160px; height: 230px; padding: 0px;"
      id="<%= this.data.attr('wid') %>"
      data-oid-blinds-cmd="<%= this.data.attr('oid_blinds_cmd') %>"
      data-oid-blinds-pos-cmd="<%= this.data.attr('oid_blinds_pos_cmd') %>"
@@ -1157,6 +1193,7 @@
      data-oid-slats-cmd="<%= this.data.attr('oid_slats_cmd') %>"
      data-oid-slats-pos-cmd="<%= this.data.attr('oid_slats_pos_cmd') %>"
      data-oid-slats-pos-state="<%= this.data.attr('oid_slats_pos_state') %>"
+     data-oid-window-state="<%= this.data.attr('oid_window_state') %>"
      data-bl-name="<%= this.data.attr('name') %>"
      <%= (el) -> vis.binds['newborn'].blinds(el) %>>
   <div class="vis-newborn-blinds-tile size-<%= (this.data.attr('size') || 'medium') %>"
@@ -1172,26 +1209,26 @@
         </svg>
       </div>
       <div class="bl-name"><%= this.data.attr('name') || 'Jalousie' %></div>
+      <div class="bl-badge" aria-hidden="true">zu</div>
     </div>
 
-    <div class="bl-controls">
-      <div class="bl-col">
-        <div class="bl-col-label">Jalousie</div>
-        <div class="bl-btn" data-bl-action="jal-up" role="button" aria-label="Jalousie auf">
-          <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
-        </div>
-        <div class="bl-btn" data-bl-action="jal-down" role="button" aria-label="Jalousie ab">
-          <svg viewBox="0 0 24 24"><polyline points="6 10 12 16 18 10"/></svg>
-        </div>
+    <div class="bl-row">
+      <span class="bl-row-label">Jal</span>
+      <div class="bl-btn" data-bl-action="jal-up" role="button" aria-label="Jalousie auf">
+        <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
       </div>
-      <div class="bl-col">
-        <div class="bl-col-label">Lamellen</div>
-        <div class="bl-btn" data-bl-action="lam-up" role="button" aria-label="Lamellen auf">
-          <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
-        </div>
-        <div class="bl-btn" data-bl-action="lam-down" role="button" aria-label="Lamellen ab">
-          <svg viewBox="0 0 24 24"><polyline points="6 10 12 16 18 10"/></svg>
-        </div>
+      <div class="bl-btn" data-bl-action="jal-down" role="button" aria-label="Jalousie ab">
+        <svg viewBox="0 0 24 24"><polyline points="6 10 12 16 18 10"/></svg>
+      </div>
+    </div>
+
+    <div class="bl-row">
+      <span class="bl-row-label">Lam</span>
+      <div class="bl-btn" data-bl-action="lam-up" role="button" aria-label="Lamellen auf">
+        <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
+      </div>
+      <div class="bl-btn" data-bl-action="lam-down" role="button" aria-label="Lamellen ab">
+        <svg viewBox="0 0 24 24"><polyline points="6 10 12 16 18 10"/></svg>
       </div>
     </div>
 
@@ -1200,8 +1237,8 @@
     </div>
 
     <div class="bl-pct-row">
-      <span><span class="bl-pct-jal">0</span> %</span>
-      <span><span class="bl-pct-lam">0</span> %</span>
+      <span><span class="bl-pct-key">Jal</span><span class="bl-pct-jal">0</span> %</span>
+      <span><span class="bl-pct-key">Lam</span><span class="bl-pct-lam">0</span> %</span>
     </div>
   </div>
 </div>
@@ -1362,8 +1399,6 @@
 
       var dragging = false;
       var lastWritten = -1;
-      var pendingValue = null;
-      var writeTimer = null;
 
       function clamp(v) {
         if (v < 0) {
@@ -1389,47 +1424,14 @@
         return clamp(Math.round(rel * 100));
       }
 
-      function flushWrite() {
-        if (writeTimer) {
-          clearTimeout(writeTimer);
-          writeTimer = null;
-        }
-        if (pendingValue !== null && pendingValue !== lastWritten && ctx.oidDimCmd) {
-          vis.setValue(ctx.oidDimCmd, pendingValue);
-          lastWritten = pendingValue;
-        }
-        pendingValue = null;
-      }
-
-      function scheduleWrite(p) {
-        pendingValue = p;
-        if (writeTimer) {
-          return;
-        }
-        writeTimer = setTimeout(function () {
-          writeTimer = null;
-          if (pendingValue !== null && pendingValue !== lastWritten && ctx.oidDimCmd) {
-            vis.setValue(ctx.oidDimCmd, pendingValue);
-            lastWritten = pendingValue;
-          }
-          pendingValue = null;
-        }, 100);
-      }
-
-      function setPct(p, write) {
-        renderPopup(popup, p);
-        if (write) {
-          scheduleWrite(p);
-        }
-      }
-
+      // Visual-only update during drag — vis.setValue is called once on
+      // pointerUp. Avoids spamming the bus while the user moves the slider.
       function onPointerDown(e) {
         dragging = true;
         if (e.cancelable) {
           e.preventDefault();
         }
-        var p = pctFromEvent(e);
-        setPct(p, true);
+        renderPopup(popup, pctFromEvent(e));
       }
 
       function onPointerMove(e) {
@@ -1439,8 +1441,7 @@
         if (e.cancelable) {
           e.preventDefault();
         }
-        var p = pctFromEvent(e);
-        setPct(p, true);
+        renderPopup(popup, pctFromEvent(e));
       }
 
       function onPointerUp(e) {
@@ -1450,8 +1451,10 @@
         dragging = false;
         var p = pctFromEvent(e);
         renderPopup(popup, p);
-        pendingValue = p;
-        flushWrite();
+        if (p !== lastWritten && ctx.oidDimCmd) {
+          vis.setValue(ctx.oidDimCmd, p);
+          lastWritten = p;
+        }
       }
 
       var passiveFalse = {
@@ -1477,10 +1480,6 @@
         document.removeEventListener("touchcancel", onPointerUp);
         popup.removeEventListener("click", onBackdropClick);
         closeBtn.removeEventListener("click", onCloseClick);
-        if (writeTimer) {
-          clearTimeout(writeTimer);
-          writeTimer = null;
-        }
         ctx.popupOnExternalUpdate = null;
       }
 
@@ -1821,9 +1820,6 @@
       var dragging = null;
       var lastWrittenBlinds = -1;
       var lastWrittenSlats = -1;
-      var pendingBlinds = null;
-      var pendingSlats = null;
-      var writeTimer = null;
 
       function pctFromEvent(slider, e) {
         var rect = slider.getBoundingClientRect();
@@ -1839,44 +1835,18 @@
         return clampPct(Math.round(rel * 100));
       }
 
-      function flushPending() {
-        if (writeTimer) {
-          clearTimeout(writeTimer);
-          writeTimer = null;
-        }
-        if (pendingBlinds !== null && pendingBlinds !== lastWrittenBlinds && ctx.oidBlindsPosCmd) {
-          vis.setValue(ctx.oidBlindsPosCmd, pendingBlinds);
-          lastWrittenBlinds = pendingBlinds;
-        }
-        if (pendingSlats !== null && pendingSlats !== lastWrittenSlats && ctx.oidSlatsPosCmd) {
-          vis.setValue(ctx.oidSlatsPosCmd, pendingSlats);
-          lastWrittenSlats = pendingSlats;
-        }
-        pendingBlinds = null;
-        pendingSlats = null;
-      }
-
-      function schedulePending() {
-        if (writeTimer) {
-          return;
-        }
-        writeTimer = setTimeout(function () {
-          writeTimer = null;
-          flushPending();
-        }, 100);
-      }
-
-      function applyPending(which, p) {
+      // Visual-only update during drag — the actual vis.setValue write
+      // happens once on pointerUp. Avoids spamming the KNX bus with every
+      // intermediate slider position; user sees it as a smooth UI but
+      // gets exactly one write per gesture.
+      function previewDrag(which, p) {
         if (which === "blinds") {
-          pendingBlinds = p;
           ctx.popupCurrentBlinds = p;
           renderBlindsPopup(popup, p, ctx.popupCurrentSlats);
         } else {
-          pendingSlats = p;
           ctx.popupCurrentSlats = p;
           renderBlindsPopup(popup, ctx.popupCurrentBlinds, p);
         }
-        schedulePending();
       }
 
       ctx.popupCurrentBlinds = blindsPct;
@@ -1890,7 +1860,7 @@
           e.preventDefault();
         }
         var p = pctFromEvent(slider, e);
-        applyPending(which, p);
+        previewDrag(which, p);
       }
 
       function onPointerMove(e) {
@@ -1902,7 +1872,7 @@
         }
         var slider = dragging === "blinds" ? blindsSlider : slatsSlider;
         var p = pctFromEvent(slider, e);
-        applyPending(dragging, p);
+        previewDrag(dragging, p);
       }
 
       function onPointerUp(e) {
@@ -1911,16 +1881,17 @@
         }
         var slider = dragging === "blinds" ? blindsSlider : slatsSlider;
         var p = pctFromEvent(slider, e);
-        if (dragging === "blinds") {
-          pendingBlinds = p;
-          ctx.popupCurrentBlinds = p;
-        } else {
-          pendingSlats = p;
-          ctx.popupCurrentSlats = p;
-        }
-        renderBlindsPopup(popup, ctx.popupCurrentBlinds, ctx.popupCurrentSlats);
+        var which = dragging;
+        previewDrag(which, p);
         dragging = null;
-        flushPending();
+        // Single write per gesture, on release only.
+        if (which === "blinds" && p !== lastWrittenBlinds && ctx.oidBlindsPosCmd) {
+          vis.setValue(ctx.oidBlindsPosCmd, p);
+          lastWrittenBlinds = p;
+        } else if (which === "slats" && p !== lastWrittenSlats && ctx.oidSlatsPosCmd) {
+          vis.setValue(ctx.oidSlatsPosCmd, p);
+          lastWrittenSlats = p;
+        }
       }
 
       var passiveFalse = {
@@ -1950,10 +1921,6 @@
         document.removeEventListener("touchcancel", onPointerUp);
         popup.removeEventListener("click", onBackdropClick);
         closeBtn.removeEventListener("click", onCloseClick);
-        if (writeTimer) {
-          clearTimeout(writeTimer);
-          writeTimer = null;
-        }
         ctx.popupOnExternalUpdate = null;
       }
 
@@ -2001,6 +1968,7 @@
       var oidSlatsCmd       = $this.data("oid-slats-cmd");
       var oidSlatsPosCmd    = $this.data("oid-slats-pos-cmd");
       var oidSlatsPosState  = $this.data("oid-slats-pos-state");
+      var oidWindowState    = $this.data("oid-window-state");
       var name              = $this.data("bl-name") || "Jalousie";
 
       if (vis.editMode) {
@@ -2026,6 +1994,7 @@
 
       var $pctJal = $this.find(".bl-pct-jal");
       var $pctLam = $this.find(".bl-pct-lam");
+      var $badge  = $this.find(".bl-badge");
 
       function applyState() {
         var bp = 0;
@@ -2037,6 +2006,16 @@
         if (readSlats) {
           sp = toPct(vis.states[readSlats + ".val"]);
           $pctLam.text(sp);
+        }
+        if (oidWindowState) {
+          var open = isOn(vis.states[oidWindowState + ".val"]);
+          $badge
+            .addClass("is-shown")
+            .toggleClass("is-open", open)
+            .toggleClass("is-closed", !open)
+            .text(open ? "offen" : "zu");
+        } else {
+          $badge.removeClass("is-shown is-open is-closed").text("");
         }
         if (ctx.popupOnExternalUpdate) {
           ctx.popupOnExternalUpdate(bp, sp);
@@ -2054,6 +2033,9 @@
       }
       if (readSlats && readSlats !== readBlinds) {
         vis.states.bind(readSlats + ".val", onStateChange);
+      }
+      if (oidWindowState) {
+        vis.states.bind(oidWindowState + ".val", onStateChange);
       }
 
       // ===== Press detection (click button vs. long-press popup) =====
@@ -2117,31 +2099,36 @@
         }
       }
 
+      // KNX convention (per user spec):
+      //   Jalousien true/1 = ab,  false/0 = auf
+      //   Lamellen  true/1 = ab,  false/0 = auf  (any value also stops the blind)
+      // The Stop button writes `true` to the slats DP (= "ab"), which on KNX
+      // stops a moving blind and steps the slats slightly down.
       function performAction(action) {
         switch (action) {
           case "jal-up":
             if (oidBlindsCmd) {
-              vis.setValue(oidBlindsCmd, true);
+              vis.setValue(oidBlindsCmd, false);
             }
             break;
           case "jal-down":
             if (oidBlindsCmd) {
-              vis.setValue(oidBlindsCmd, false);
+              vis.setValue(oidBlindsCmd, true);
             }
             break;
           case "lam-up":
             if (oidSlatsCmd) {
-              vis.setValue(oidSlatsCmd, true);
+              vis.setValue(oidSlatsCmd, false);
             }
             break;
           case "lam-down":
             if (oidSlatsCmd) {
-              vis.setValue(oidSlatsCmd, false);
+              vis.setValue(oidSlatsCmd, true);
             }
             break;
           case "stop":
             if (oidSlatsCmd) {
-              vis.setValue(oidSlatsCmd, false);
+              vis.setValue(oidSlatsCmd, true);
             }
             break;
         }
@@ -2182,12 +2169,15 @@
           if (readSlats && readSlats !== readBlinds) {
             vis.states.unbind(readSlats + ".val", onStateChange);
           }
+          if (oidWindowState) {
+            vis.states.unbind(oidWindowState + ".val", onStateChange);
+          }
         }
       });
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.8 ready");
+      console.log("vis-newborn 0.1.9 ready");
       ns._versionLogged = true;
     }
   })();
