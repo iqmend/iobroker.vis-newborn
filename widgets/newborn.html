@@ -305,10 +305,13 @@
     font-size: 13px;
     font-weight: 600;
     letter-spacing: -0.2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
   }
 
   .vis-newborn-dimmer-tile .nd-percent {
@@ -621,10 +624,13 @@
     font-size: 13px;
     font-weight: 600;
     letter-spacing: -0.2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
   }
 
   .vis-widget.vis-newborn-light-size-small  { width: 100px !important; height: 100px !important; }
@@ -760,13 +766,16 @@
     font-size: 12px;
     font-weight: 600;
     letter-spacing: -0.2px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     line-height: 1.2;
     flex: 1;
     min-width: 0;
     color: var(--bl-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
   }
 
   .vis-newborn-blinds-tile .bl-badge {
@@ -1078,9 +1087,25 @@
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:60px;"><div class="vis-newborn-toggle size-small is-on"><span class="vis-newborn-toggle-label is-off">aus</span><span class="vis-newborn-toggle-label is-on">an</span><span class="vis-newborn-toggle-handle"></span></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Toggle (Slide)"
-        data-vis-attrs="oid/id;size/select,small,medium,large;knx/checkbox;oid_status/id;invert_status/checkbox">
-<div class="vis-widget vis-newborn-toggle-wrap vis-newborn-toggle-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
-     style="width: 150px; height: 72px; padding: 0px;"
+        data-vis-attrs="oid/id;size/select,small,medium,large;knx/checkbox;oid_status/id;invert_status/checkbox;width/number;height/number">
+<%
+var tcSize = this.data.attr('size') || 'medium';
+var tcDefW = tcSize === 'small' ? 110 : tcSize === 'large' ? 200 : 150;
+var tcDefH = tcSize === 'small' ? 56 : tcSize === 'large' ? 96 : 72;
+var tcW = parseInt(this.data.attr('width'), 10);
+var tcH = parseInt(this.data.attr('height'), 10);
+var tcCustomW = isFinite(tcW) && tcW > 0;
+var tcCustomH = isFinite(tcH) && tcH > 0;
+var tcCustom = tcCustomW || tcCustomH;
+if (tcCustom && !tcCustomW) tcW = tcDefW;
+if (tcCustom && !tcCustomH) tcH = tcDefH;
+if (tcCustom && tcW < 110) tcW = 110;
+if (tcCustom && tcH < 56) tcH = 56;
+var tcSizeClass = tcCustom ? '' : ('vis-newborn-toggle-size-' + tcSize);
+var tcStyle = tcCustom ? ('width:' + tcW + 'px !important;height:' + tcH + 'px !important;') : 'width:150px;height:72px;';
+%>
+<div class="vis-widget vis-newborn-toggle-wrap <%= tcSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= tcStyle %> padding: 0px;"
      id="<%= this.data.attr('wid') %>"
      data-oid="<%= this.data.attr('oid') %>"
      data-oid-status="<%= this.data.attr('oid_status') %>"
@@ -1109,9 +1134,24 @@
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:90px;"><div class="vis-newborn-dimmer-tile size-small is-on" style="width:80px;height:80px;position:relative;border-radius:18px;background:linear-gradient(160deg,#ffd66b 0%, #f5b042 100%);box-shadow:0 1px 0 rgba(255,255,255,0.35) inset, 0 8px 22px -8px rgba(255,198,80,0.55);color:#2a1a06;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:999px;background:rgba(255,255,255,0.55);color:#b85c00;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div style="position:absolute;left:8px;right:8px;bottom:22px;font-size:11px;font-weight:600;">Lampe</div><div style="position:absolute;left:8px;bottom:8px;font-size:10px;font-weight:500;opacity:0.85;">75%</div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Dimmer (Tile)"
-        data-vis-attrs="oid_switch_cmd/id;oid_switch_state/id;oid_dim_cmd/id;oid_dim_state/id;name/text;size/select,small,medium,large">
-<div class="vis-widget vis-newborn-dimmer-wrap vis-newborn-dimmer-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
-     style="width: 130px; height: 130px; padding: 0px;"
+        data-vis-attrs="oid_switch_cmd/id;oid_switch_state/id;oid_dim_cmd/id;oid_dim_state/id;name/text;size/select,small,medium,large;width/number;height/number">
+<%
+var dcSize = this.data.attr('size') || 'medium';
+var dcDef = dcSize === 'small' ? 100 : dcSize === 'large' ? 160 : 130;
+var dcW = parseInt(this.data.attr('width'), 10);
+var dcH = parseInt(this.data.attr('height'), 10);
+var dcCustomW = isFinite(dcW) && dcW > 0;
+var dcCustomH = isFinite(dcH) && dcH > 0;
+var dcCustom = dcCustomW || dcCustomH;
+if (dcCustom && !dcCustomW) dcW = dcDef;
+if (dcCustom && !dcCustomH) dcH = dcDef;
+if (dcCustom && dcW < 100) dcW = 100;
+if (dcCustom && dcH < 100) dcH = 100;
+var dcSizeClass = dcCustom ? '' : ('vis-newborn-dimmer-size-' + dcSize);
+var dcStyle = dcCustom ? ('width:' + dcW + 'px !important;height:' + dcH + 'px !important;') : 'width:130px;height:130px;';
+%>
+<div class="vis-widget vis-newborn-dimmer-wrap <%= dcSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= dcStyle %> padding: 0px;"
      id="<%= this.data.attr('wid') %>"
      data-oid-switch-cmd="<%= this.data.attr('oid_switch_cmd') %>"
      data-oid-switch-state="<%= this.data.attr('oid_switch_state') %>"
@@ -1147,9 +1187,24 @@
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:90px;"><div class="vis-newborn-light-tile size-small is-on" style="width:80px;height:80px;position:relative;border-radius:18px;background:linear-gradient(160deg,#ffd66b 0%, #f5b042 100%);box-shadow:0 1px 0 rgba(255,255,255,0.35) inset, 0 8px 22px -8px rgba(255,198,80,0.55);color:#2a1a06;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:999px;background:rgba(255,255,255,0.55);color:#b85c00;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div style="position:absolute;left:8px;right:8px;bottom:8px;font-size:11px;font-weight:600;">Licht</div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Licht (Tile)"
-        data-vis-attrs="oid/id;oid_status/id;invert_status/checkbox;name/text;size/select,small,medium,large">
-<div class="vis-widget vis-newborn-light-wrap vis-newborn-light-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
-     style="width: 130px; height: 130px; padding: 0px;"
+        data-vis-attrs="oid/id;oid_status/id;invert_status/checkbox;name/text;size/select,small,medium,large;width/number;height/number">
+<%
+var lcSize = this.data.attr('size') || 'medium';
+var lcDef = lcSize === 'small' ? 100 : lcSize === 'large' ? 160 : 130;
+var lcW = parseInt(this.data.attr('width'), 10);
+var lcH = parseInt(this.data.attr('height'), 10);
+var lcCustomW = isFinite(lcW) && lcW > 0;
+var lcCustomH = isFinite(lcH) && lcH > 0;
+var lcCustom = lcCustomW || lcCustomH;
+if (lcCustom && !lcCustomW) lcW = lcDef;
+if (lcCustom && !lcCustomH) lcH = lcDef;
+if (lcCustom && lcW < 100) lcW = 100;
+if (lcCustom && lcH < 100) lcH = 100;
+var lcSizeClass = lcCustom ? '' : ('vis-newborn-light-size-' + lcSize);
+var lcStyle = lcCustom ? ('width:' + lcW + 'px !important;height:' + lcH + 'px !important;') : 'width:130px;height:130px;';
+%>
+<div class="vis-widget vis-newborn-light-wrap <%= lcSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= lcStyle %> padding: 0px;"
      id="<%= this.data.attr('wid') %>"
      data-oid="<%= this.data.attr('oid') %>"
      data-oid-status="<%= this.data.attr('oid_status') %>"
@@ -1183,9 +1238,25 @@
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:140px;"><div style="width:100px;height:130px;border-radius:14px;background:linear-gradient(160deg,#ebebee 0%, #d8d8dc 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;gap:5px;"><div style="display:flex;align-items:center;gap:5px;"><div style="width:14px;height:14px;border-radius:999px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#6e6e74;"><svg viewBox="0 0 24 24" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-weight:600;flex:1;">Jalousie</div><div style="font-size:6px;font-weight:700;padding:2px 5px;border-radius:999px;background:rgba(40,170,80,0.16);color:#1f7a3a;text-transform:uppercase;">zu</div></div><div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#6e6e74;text-transform:uppercase;font-weight:700;">Jal</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#6e6e74;text-transform:uppercase;font-weight:700;">Lam</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:18px;border-radius:5px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="height:14px;border-radius:5px;background:rgba(220,40,40,0.10);color:#c52a2a;display:flex;align-items:center;justify-content:center;font-weight:700;">⏹</div><div style="display:flex;justify-content:space-around;font-size:7px;color:#1c1c1e;font-weight:600;margin-top:auto;">75 %<span>50 %</span></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Jalousie (Tile)"
-        data-vis-attrs="oid_blinds_cmd/id;oid_blinds_pos_cmd/id;oid_blinds_pos_state/id;oid_slats_cmd/id;oid_slats_pos_cmd/id;oid_slats_pos_state/id;oid_window_state/id;name/text;size/select,small,medium,large">
-<div class="vis-widget vis-newborn-blinds-wrap vis-newborn-blinds-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
-     style="width: 160px; height: 230px; padding: 0px;"
+        data-vis-attrs="oid_blinds_cmd/id;oid_blinds_pos_cmd/id;oid_blinds_pos_state/id;oid_slats_cmd/id;oid_slats_pos_cmd/id;oid_slats_pos_state/id;oid_window_state/id;name/text;size/select,small,medium,large;width/number;height/number">
+<%
+var bcSize = this.data.attr('size') || 'medium';
+var bcDefW = bcSize === 'small' ? 130 : bcSize === 'large' ? 200 : 160;
+var bcDefH = bcSize === 'small' ? 190 : bcSize === 'large' ? 280 : 230;
+var bcW = parseInt(this.data.attr('width'), 10);
+var bcH = parseInt(this.data.attr('height'), 10);
+var bcCustomW = isFinite(bcW) && bcW > 0;
+var bcCustomH = isFinite(bcH) && bcH > 0;
+var bcCustom = bcCustomW || bcCustomH;
+if (bcCustom && !bcCustomW) bcW = bcDefW;
+if (bcCustom && !bcCustomH) bcH = bcDefH;
+if (bcCustom && bcW < 130) bcW = 130;
+if (bcCustom && bcH < 190) bcH = 190;
+var bcSizeClass = bcCustom ? '' : ('vis-newborn-blinds-size-' + bcSize);
+var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !important;') : 'width:160px;height:230px;';
+%>
+<div class="vis-widget vis-newborn-blinds-wrap <%= bcSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= bcStyle %> padding: 0px;"
      id="<%= this.data.attr('wid') %>"
      data-oid-blinds-cmd="<%= this.data.attr('oid_blinds_cmd') %>"
      data-oid-blinds-pos-cmd="<%= this.data.attr('oid_blinds_pos_cmd') %>"

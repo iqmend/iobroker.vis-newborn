@@ -59,6 +59,15 @@ Nach der Installation läuft die Adapter-Instanz `vis-newborn.0` *nicht dauerhaf
 3. Gewünschtes Widget auf eine View ziehen
 4. Rechts in den Eigenschaften die Datenpunkte und Optionen setzen
 
+## Eigene Größen (alle Widgets)
+
+Jedes Widget hat zusätzlich zu `size` (small/medium/large) zwei Felder `width` und `height`:
+
+- **Beide Felder leer** → das `size`-Dropdown bestimmt Außenmaße.
+- **Eines oder beide gefüllt** → die Custom-Werte gewinnen, das fehlende Feld wird auf den `size`-Default gesetzt.
+- **Untergrenze** = jeweilige `small`-Größe (Toggle 110×56, Light/Dimmer 100×100, Jalousie 130×190). Kleinere Werte werden hochgeklemmt.
+- Das `size`-Dropdown bestimmt weiterhin die Skalierung der **inneren** Elemente (Icon, Schriftgrößen), damit z. B. `size=medium` mit größeren Außenmaßen sinnvoll kombiniert werden kann.
+
 ## Eigenschaften
 
 ### Newborn Toggle (Slide)
