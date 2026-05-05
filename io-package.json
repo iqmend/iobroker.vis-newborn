@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "news": {
+      "0.1.4": {
+        "en": "Revert v0.1.3: rolled the dimmer touch handler back to the v0.1.2 known-working state. The synth-mouse guard added in v0.1.3 broke clicks AND long-press on both PC and mobile. The marking-on-long-press and the rare 'toggle plus popup' race are documented and will be addressed properly in a follow-up after researching how canonical VIS widgets handle this — no more speculative fixes.",
+        "de": "Revert v0.1.3: Dimmer-Touch-Handler zurück auf den bekannt-funktionierenden v0.1.2-Stand. Der Synth-Mouse-Guard aus v0.1.3 hat Klick UND Long-Press auf PC und Mobile zerschossen. Die zwei Restprobleme (Markieren beim Halten + seltener 'Toggle plus Popup'-Race) sind dokumentiert und werden im Folge-Release sauber behoben — nach Recherche wie kanonische VIS-Widgets das machen, keine spekulativen Fixes mehr."
+      },
       "0.1.3": {
         "en": "Dimmer mobile polish: (1) suppress iOS/Android selection callout and tap-highlight on long-press via CSS (-webkit-touch-callout: none, touch-action: manipulation, user-select: none on the wrap and tile); (2) drop synthesized mousedown/mouseup that mobile browsers fire ~300ms after touchend — without the guard, after long-press → popup → touchend the synthetic mousedown re-entered startPress, reset longPressed=false, and the synthetic mouseup then fired an unwanted toggle (the rare 1-in-10 'toggle and popup at the same time' bug).",
         "de": "Dimmer Mobile-Polish: (1) iOS/Android-Selection-Callout und Tap-Highlight beim Long-Press unterdrückt (CSS -webkit-touch-callout, touch-action: manipulation, user-select: none auf Wrap und Tile); (2) synthesisierte Mousedown/Mouseup-Events, die Mobile-Browser ~300ms nach touchend feuern, werden jetzt verworfen — ohne den Guard kam nach Long-Press → Popup → touchend der synth. mousedown durch, hat longPressed=false zurückgesetzt, und der synth. mouseup hat versehentlich getoggelt (der seltene 1-von-10 'Toggle UND Popup gleichzeitig'-Bug)."
