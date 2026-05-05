@@ -35,6 +35,19 @@ Detail siehe [vis-widget-development.md](vis-widget-development.md) und [../docs
 | 2026-05-05 | Vorläufer-Repo `iobroker.vis-newborn-dimmer` lokal aufgebaut (HomeKit-Style Kachel, Long-Press, Vertikal-Slider) | abgelöst |
 | 2026-05-05 | Konsolidierung beider Widgets zu `iobroker.vis-newborn` (gemeinsamer Adapter, Palette-Sektion `newborn`, idempotenter JS-Namespace) | erledigt |
 | 2026-05-05 | Repo `iobroker.vis-newborn` initialisiert + erster Push auf GitHub | erledigt |
+| 2026-05-05 | v0.1.0 → v0.1.1: Filename-Stem-Match-Bug behoben (beide Widgets in einer `widgets/newborn.html`) | erledigt |
+| 2026-05-05 | v0.1.2: jQuery `e.touches`-Bug behoben (`getXY(e)` mit `e.originalEvent`) — Mobile-Touch funktioniert | erledigt |
+| 2026-05-05 | v0.1.3: spekulativer Synth-Mouse-Guard + doppelte CSS — zerschossen Klick auf PC und Mobile | abgelöst |
+| 2026-05-05 | v0.1.4: Revert auf v0.1.2 funktional | erledigt |
+| 2026-05-05 | v0.1.5: Pointer-Events-Migration — Widget rendert nicht mehr in Live-View, SyntaxError im VM-Eval-Kontext (Ursache nicht identifiziert) | abgelöst |
+| 2026-05-05 | v0.1.6: Revert auf v0.1.4 funktional → bestätigt funktionierend | **aktiv** |
+
+## Bekannte offene Issues (v0.1.6)
+
+- **A. Long-Press-Selection-Callout am Handy** — beim Halten zeigt iOS/Android kurz einen Selection-Highlight, danach öffnet das Popup. Funktion intakt, nur kosmetisch.
+- **B. 1-von-10 Toggle+Popup-Race am Handy** — gelegentlich (~10%) wird beim Long-Press zusätzlich zum Popup auch der Toggle ausgelöst. Vermutlich synthesisierte Mouse-Events nach `touchend`.
+
+Diese werden **nicht** angefasst, bevor der VM-Eval-Pfad in vis 1.5.6 verstanden ist (siehe Lessons unten).
 
 ## Offene Aufgaben
 
