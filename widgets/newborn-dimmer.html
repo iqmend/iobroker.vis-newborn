@@ -1,0 +1,768 @@
+<!--
+  Newborn Dimmer Widget — part of the iobroker.vis-newborn widget set
+  https://github.com/iqmend/iobroker.vis-newborn
+-->
+
+<style>
+  .vis-newborn-dimmer-tile,
+  .vis-newborn-dimmer-tile *,
+  .vis-newborn-dimmer-tile *::before,
+  .vis-newborn-dimmer-tile *::after,
+  .vis-newborn-dimmer-popup,
+  .vis-newborn-dimmer-popup *,
+  .vis-newborn-dimmer-popup *::before,
+  .vis-newborn-dimmer-popup *::after {
+    box-sizing: border-box;
+  }
+
+  /* ============== Tile ============== */
+  .vis-newborn-dimmer-tile {
+    --nd-radius: 22px;
+    --nd-tile-bg-off-1: #2a2a2e;
+    --nd-tile-bg-off-2: #1d1d20;
+    --nd-tile-bg-on-1: #ffd66b;
+    --nd-tile-bg-on-2: #f5b042;
+    --nd-text-off: #d0d0d4;
+    --nd-text-on: #2a1a06;
+    --nd-icon-bg-off: rgba(255,255,255,0.06);
+    --nd-icon-bg-on: rgba(255,255,255,0.55);
+    --nd-icon-off: #6e6e74;
+    --nd-icon-on: #b85c00;
+    --nd-glow-on: rgba(255,198,80,0.55);
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--nd-radius);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(160deg, var(--nd-tile-bg-off-1) 0%, var(--nd-tile-bg-off-2) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 0 0 1px rgba(255,255,255,0.04) inset,
+      0 6px 18px -6px rgba(0,0,0,0.45);
+    transition:
+      background 360ms cubic-bezier(.65,.05,.36,1),
+      box-shadow 360ms cubic-bezier(.65,.05,.36,1),
+      transform 220ms cubic-bezier(.65,.05,.36,1),
+      color 360ms cubic-bezier(.65,.05,.36,1);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--nd-text-off);
+  }
+
+  .vis-newborn-dimmer-tile:active {
+    transform: scale(0.97);
+  }
+
+  .vis-newborn-dimmer-tile.is-on {
+    background: linear-gradient(160deg, var(--nd-tile-bg-on-1) 0%, var(--nd-tile-bg-on-2) 100%);
+    color: var(--nd-text-on);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.35) inset,
+      0 0 0 1px rgba(255,255,255,0.18) inset,
+      0 8px 26px -8px var(--nd-glow-on);
+  }
+
+  .vis-newborn-dimmer-tile .nd-icon {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--nd-icon-bg-off);
+    color: var(--nd-icon-off);
+    transition:
+      background 360ms cubic-bezier(.65,.05,.36,1),
+      color 360ms cubic-bezier(.65,.05,.36,1);
+  }
+
+  .vis-newborn-dimmer-tile.is-on .nd-icon {
+    background: var(--nd-icon-bg-on);
+    color: var(--nd-icon-on);
+  }
+
+  .vis-newborn-dimmer-tile .nd-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .vis-newborn-dimmer-tile .nd-name {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 32px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  .vis-newborn-dimmer-tile .nd-percent {
+    position: absolute;
+    left: 14px;
+    bottom: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.85;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Sizes — Container forced via class so the editor inline-style does not override */
+  .vis-widget.vis-newborn-dimmer-size-small  { width: 100px !important; height: 100px !important; }
+  .vis-widget.vis-newborn-dimmer-size-medium { width: 130px !important; height: 130px !important; }
+  .vis-widget.vis-newborn-dimmer-size-large  { width: 160px !important; height: 160px !important; }
+
+  .vis-newborn-dimmer-tile.size-small .nd-icon {
+    width: 26px;
+    height: 26px;
+    top: 10px;
+    left: 10px;
+  }
+  .vis-newborn-dimmer-tile.size-small .nd-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .vis-newborn-dimmer-tile.size-small .nd-name {
+    font-size: 12px;
+    left: 10px;
+    right: 10px;
+    bottom: 26px;
+  }
+  .vis-newborn-dimmer-tile.size-small .nd-percent {
+    font-size: 11px;
+    left: 10px;
+    bottom: 10px;
+  }
+
+  .vis-newborn-dimmer-tile.size-large .nd-icon {
+    width: 36px;
+    height: 36px;
+    top: 18px;
+    left: 18px;
+  }
+  .vis-newborn-dimmer-tile.size-large .nd-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .vis-newborn-dimmer-tile.size-large .nd-name {
+    font-size: 15px;
+    left: 18px;
+    right: 18px;
+    bottom: 38px;
+  }
+  .vis-newborn-dimmer-tile.size-large .nd-percent {
+    font-size: 15px;
+    left: 18px;
+    bottom: 14px;
+  }
+
+  /* Editor: keep widget selectable / movable */
+  body.vis-edit-active .vis-widget.vis-newborn-dimmer-wrap .vis-newborn-dimmer-tile,
+  body.vis-edit-active .vis-widget.vis-newborn-dimmer-wrap .vis-newborn-dimmer-tile * {
+    pointer-events: none !important;
+  }
+
+  /* ============== Popup ============== */
+  .vis-newborn-dimmer-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0);
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    transition:
+      background 220ms cubic-bezier(.65,.05,.36,1),
+      backdrop-filter 220ms cubic-bezier(.65,.05,.36,1),
+      -webkit-backdrop-filter 220ms cubic-bezier(.65,.05,.36,1);
+    pointer-events: none;
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .vis-newborn-dimmer-popup.is-open {
+    background: rgba(0,0,0,0.55);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-card {
+    position: relative;
+    width: 240px;
+    background: #ffffff;
+    color: #1c1c1e;
+    border-radius: 28px;
+    padding: 22px 22px 26px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    transition:
+      transform 280ms cubic-bezier(.2,.9,.3,1.2),
+      opacity 220ms cubic-bezier(.65,.05,.36,1);
+  }
+
+  .vis-newborn-dimmer-popup.is-open .nd-popup-card {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f2f2f7;
+    color: #6e6e74;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.18s ease, color 0.18s ease;
+    font-family: inherit;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-close:hover {
+    background: #e5e5ea;
+    color: #1c1c1e;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin: 0 30px 16px 0;
+    letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-percent {
+    font-size: 38px;
+    font-weight: 200;
+    text-align: center;
+    color: #1c1c1e;
+    letter-spacing: -2px;
+    margin: 0 0 18px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-percent .nd-popup-pct {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .vis-newborn-dimmer-popup .nd-popup-percent .nd-popup-unit {
+    font-size: 22px;
+    margin-left: 2px;
+    color: #8e8e93;
+  }
+
+  .vis-newborn-dimmer-popup .nd-slider {
+    position: relative;
+    width: 110px;
+    height: 280px;
+    margin: 0 auto;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #f2f2f7 0%, #e5e5ea 100%);
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+    touch-action: none;
+  }
+
+  .vis-newborn-dimmer-popup .nd-slider-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0%;
+    background: linear-gradient(180deg, #ffd66b 0%, #f5b042 100%);
+    transition: height 0.06s linear;
+    pointer-events: none;
+  }
+
+  .vis-newborn-dimmer-popup .nd-slider-handle {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 0%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    pointer-events: none;
+    transform: translateY(50%);
+    transition: bottom 0.06s linear, opacity 0.18s ease;
+    opacity: 0;
+  }
+</style>
+
+<script id="tplNewbornDimmer"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:90px;"><div class="vis-newborn-dimmer-tile size-small is-on" style="width:80px;height:80px;position:relative;border-radius:18px;background:linear-gradient(160deg,#ffd66b 0%, #f5b042 100%);box-shadow:0 1px 0 rgba(255,255,255,0.35) inset, 0 8px 22px -8px rgba(255,198,80,0.55);color:#2a1a06;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:999px;background:rgba(255,255,255,0.55);color:#b85c00;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div style="position:absolute;left:8px;right:8px;bottom:22px;font-size:11px;font-weight:600;">Lampe</div><div style="position:absolute;left:8px;bottom:8px;font-size:10px;font-weight:500;opacity:0.85;">75%</div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Dimmer (Tile)"
+        data-vis-attrs="oid_switch_cmd/id;oid_switch_state/id;oid_dim_cmd/id;oid_dim_state/id;name/text;size/select,small,medium,large">
+<div class="vis-widget vis-newborn-dimmer-wrap vis-newborn-dimmer-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
+     style="width: 130px; height: 130px; padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid-switch-cmd="<%= this.data.attr('oid_switch_cmd') %>"
+     data-oid-switch-state="<%= this.data.attr('oid_switch_state') %>"
+     data-oid-dim-cmd="<%= this.data.attr('oid_dim_cmd') %>"
+     data-oid-dim-state="<%= this.data.attr('oid_dim_state') %>"
+     data-nd-name="<%= this.data.attr('name') %>"
+     <%= (el) -> vis.binds['newborn'].dimmer(el) %>>
+  <div class="vis-newborn-dimmer-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="button"
+       aria-label="Dimmer">
+    <div class="nd-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M9 18h6"/>
+        <path d="M10 21h4"/>
+        <path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/>
+      </svg>
+    </div>
+    <div class="nd-name"><%= this.data.attr('name') || 'Lampe' %></div>
+    <div class="nd-percent"><span class="nd-pct">0</span>%</div>
+  </div>
+</div>
+</script>
+
+<script type="text/javascript">
+  (function () {
+    vis.binds["newborn"] = vis.binds["newborn"] || {};
+    var ns = vis.binds["newborn"];
+
+    function isOn(val) {
+      if (val && typeof val === "object" && "val" in val) {
+        val = val.val;
+      }
+      return val === true || val === "true" || val === 1 || val === "1" || val === "ON" || val === "on";
+    }
+
+    function toPct(val) {
+      if (val && typeof val === "object" && "val" in val) {
+        val = val.val;
+      }
+      var n = parseFloat(val);
+      if (!isFinite(n)) {
+        n = 0;
+      }
+      if (n < 0) {
+        n = 0;
+      }
+      if (n > 100) {
+        n = 100;
+      }
+      return Math.round(n);
+    }
+
+    var sharedPopup = null;
+
+    /**
+     * Lazy-creates a single shared popup element appended to body.
+     * Reused across all dimmer instances on the page.
+     */
+    function ensurePopup() {
+      if (sharedPopup) {
+        return sharedPopup;
+      }
+      var popup = document.createElement("div");
+      popup.className = "vis-newborn-dimmer-popup";
+      popup.innerHTML = [
+        '<div class="nd-popup-card">',
+        '  <button type="button" class="nd-popup-close" aria-label="Schliessen">&times;</button>',
+        '  <div class="nd-popup-title">Lampe</div>',
+        '  <div class="nd-popup-percent"><span class="nd-popup-pct">0</span><span class="nd-popup-unit">%</span></div>',
+        '  <div class="nd-slider">',
+        '    <div class="nd-slider-fill"></div>',
+        '    <div class="nd-slider-handle"></div>',
+        '  </div>',
+        '</div>'
+      ].join("");
+      document.body.appendChild(popup);
+      sharedPopup = popup;
+      return popup;
+    }
+
+    function renderPopup(popup, pct) {
+      var fill = popup.querySelector(".nd-slider-fill");
+      var handle = popup.querySelector(".nd-slider-handle");
+      var pctEl = popup.querySelector(".nd-popup-pct");
+      fill.style.height = pct + "%";
+      handle.style.bottom = pct + "%";
+      handle.style.opacity = pct > 0 ? "1" : "0";
+      pctEl.textContent = pct;
+    }
+
+    /**
+     * Opens the slider overlay for a tile. ctx carries OIDs and the lamp name.
+     * Sets ctx.popupOnExternalUpdate so the tile's state-change handler can
+     * push live updates into the popup while it is open (unless dragging).
+     */
+    function openPopup(ctx) {
+      var popup = ensurePopup();
+      var slider = popup.querySelector(".nd-slider");
+      var closeBtn = popup.querySelector(".nd-popup-close");
+      var titleEl = popup.querySelector(".nd-popup-title");
+
+      titleEl.textContent = ctx.name || "Lampe";
+
+      var on = isOn(vis.states[ctx.readOn + ".val"]);
+      var pct = toPct(vis.states[ctx.readPct + ".val"]);
+      var displayed = on ? pct : 0;
+      renderPopup(popup, displayed);
+
+      var dragging = false;
+      var lastWritten = -1;
+      var pendingValue = null;
+      var writeTimer = null;
+
+      function clamp(v) {
+        if (v < 0) {
+          return 0;
+        }
+        if (v > 100) {
+          return 100;
+        }
+        return v;
+      }
+
+      function pctFromEvent(e) {
+        var rect = slider.getBoundingClientRect();
+        var clientY;
+        if (e.touches && e.touches.length) {
+          clientY = e.touches[0].clientY;
+        } else if (e.changedTouches && e.changedTouches.length) {
+          clientY = e.changedTouches[0].clientY;
+        } else {
+          clientY = e.clientY;
+        }
+        var rel = (rect.bottom - clientY) / rect.height;
+        return clamp(Math.round(rel * 100));
+      }
+
+      function flushWrite() {
+        if (writeTimer) {
+          clearTimeout(writeTimer);
+          writeTimer = null;
+        }
+        if (pendingValue !== null && pendingValue !== lastWritten && ctx.oidDimCmd) {
+          vis.setValue(ctx.oidDimCmd, pendingValue);
+          lastWritten = pendingValue;
+        }
+        pendingValue = null;
+      }
+
+      function scheduleWrite(p) {
+        pendingValue = p;
+        if (writeTimer) {
+          return;
+        }
+        writeTimer = setTimeout(function () {
+          writeTimer = null;
+          if (pendingValue !== null && pendingValue !== lastWritten && ctx.oidDimCmd) {
+            vis.setValue(ctx.oidDimCmd, pendingValue);
+            lastWritten = pendingValue;
+          }
+          pendingValue = null;
+        }, 100);
+      }
+
+      function setPct(p, write) {
+        renderPopup(popup, p);
+        if (write) {
+          scheduleWrite(p);
+        }
+      }
+
+      function onPointerDown(e) {
+        dragging = true;
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        var p = pctFromEvent(e);
+        setPct(p, true);
+      }
+
+      function onPointerMove(e) {
+        if (!dragging) {
+          return;
+        }
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        var p = pctFromEvent(e);
+        setPct(p, true);
+      }
+
+      function onPointerUp(e) {
+        if (!dragging) {
+          return;
+        }
+        dragging = false;
+        var p = pctFromEvent(e);
+        renderPopup(popup, p);
+        pendingValue = p;
+        flushWrite();
+      }
+
+      var passiveFalse = {
+        passive: false
+      };
+
+      slider.addEventListener("mousedown", onPointerDown);
+      slider.addEventListener("touchstart", onPointerDown, passiveFalse);
+      document.addEventListener("mousemove", onPointerMove);
+      document.addEventListener("touchmove", onPointerMove, passiveFalse);
+      document.addEventListener("mouseup", onPointerUp);
+      document.addEventListener("touchend", onPointerUp);
+      document.addEventListener("touchcancel", onPointerUp);
+
+      function close() {
+        popup.classList.remove("is-open");
+        slider.removeEventListener("mousedown", onPointerDown);
+        slider.removeEventListener("touchstart", onPointerDown, passiveFalse);
+        document.removeEventListener("mousemove", onPointerMove);
+        document.removeEventListener("touchmove", onPointerMove, passiveFalse);
+        document.removeEventListener("mouseup", onPointerUp);
+        document.removeEventListener("touchend", onPointerUp);
+        document.removeEventListener("touchcancel", onPointerUp);
+        popup.removeEventListener("click", onBackdropClick);
+        closeBtn.removeEventListener("click", onCloseClick);
+        if (writeTimer) {
+          clearTimeout(writeTimer);
+          writeTimer = null;
+        }
+        ctx.popupOnExternalUpdate = null;
+      }
+
+      function onBackdropClick(e) {
+        if (e.target === popup) {
+          close();
+        }
+      }
+
+      function onCloseClick(e) {
+        e.stopPropagation();
+        close();
+      }
+
+      popup.addEventListener("click", onBackdropClick);
+      closeBtn.addEventListener("click", onCloseClick);
+
+      ctx.popupOnExternalUpdate = function (newPct, isStillOn) {
+        if (dragging) {
+          return;
+        }
+        var v = isStillOn ? newPct : 0;
+        renderPopup(popup, v);
+      };
+
+      requestAnimationFrame(function () {
+        popup.classList.add("is-open");
+      });
+    }
+
+    /**
+     * Per-element handler registered via CanJS arrow syntax in the EJS template.
+     * Wires up:
+     *   - live class+text updates from oid_switch_state and oid_dim_state
+     *   - short-tap to toggle on/off
+     *   - long-press (>=500ms) to open the slider overlay
+     *
+     * State subscription is automatic: visUtils.getUsedObjectIDs picks up any
+     * widget.data attribute matching /^oid/, see docs/vis/state-subscription.md.
+     */
+    ns.dimmer = function (el) {
+      var $this = $(el);
+      var oidSwitchCmd   = $this.data("oid-switch-cmd");
+      var oidSwitchState = $this.data("oid-switch-state");
+      var oidDimCmd      = $this.data("oid-dim-cmd");
+      var oidDimState    = $this.data("oid-dim-state");
+      var name           = $this.data("nd-name") || "Lampe";
+
+      if (vis.editMode) {
+        return;
+      }
+      if (!oidSwitchCmd && !oidDimCmd) {
+        return;
+      }
+
+      var readOn  = oidSwitchState || oidSwitchCmd;
+      var readPct = oidDimState    || oidDimCmd;
+
+      var ctx = {
+        oidSwitchCmd: oidSwitchCmd,
+        oidSwitchState: oidSwitchState,
+        oidDimCmd: oidDimCmd,
+        oidDimState: oidDimState,
+        name: name,
+        readOn: readOn,
+        readPct: readPct,
+        popupOnExternalUpdate: null
+      };
+
+      var $tile = $this.find(".vis-newborn-dimmer-tile");
+      var $pct  = $this.find(".nd-pct");
+
+      function applyState() {
+        var on  = isOn(vis.states[readOn  + ".val"]);
+        var pct = toPct(vis.states[readPct + ".val"]);
+        $tile.toggleClass("is-on", on);
+        $tile.attr("aria-pressed", on ? "true" : "false");
+        $pct.text(on ? pct : 0);
+        if (ctx.popupOnExternalUpdate) {
+          ctx.popupOnExternalUpdate(pct, on);
+        }
+      }
+
+      function onStateChange(e, val) {
+        applyState();
+      }
+
+      applyState();
+
+      if (readOn) {
+        vis.states.bind(readOn + ".val", onStateChange);
+      }
+      if (readPct && readPct !== readOn) {
+        vis.states.bind(readPct + ".val", onStateChange);
+      }
+
+      // ===== Long-press detection =====
+      var pressTimer = null;
+      var longPressed = false;
+      var moved = false;
+      var startX = 0;
+      var startY = 0;
+      var LONG_PRESS_MS = 500;
+      var MOVE_TOL = 8;
+
+      function startPress(x, y) {
+        longPressed = false;
+        moved = false;
+        startX = x;
+        startY = y;
+        pressTimer = setTimeout(function () {
+          longPressed = true;
+          pressTimer = null;
+          openPopup(ctx);
+        }, LONG_PRESS_MS);
+      }
+
+      function cancelPress() {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      }
+
+      function onMouseDown(e) {
+        if (e.button !== undefined && e.button !== 0) {
+          return;
+        }
+        startPress(e.clientX, e.clientY);
+      }
+
+      function onTouchStart(e) {
+        if (!e.touches || !e.touches.length) {
+          return;
+        }
+        startPress(e.touches[0].clientX, e.touches[0].clientY);
+      }
+
+      function onMove(x, y) {
+        if (Math.abs(x - startX) > MOVE_TOL || Math.abs(y - startY) > MOVE_TOL) {
+          moved = true;
+          cancelPress();
+        }
+      }
+
+      function onMouseMove(e) {
+        if (pressTimer === null && !longPressed) {
+          return;
+        }
+        onMove(e.clientX, e.clientY);
+      }
+
+      function onTouchMove(e) {
+        if (!e.touches || !e.touches.length) {
+          return;
+        }
+        onMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+
+      function onRelease(e) {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+        if (longPressed || moved) {
+          longPressed = false;
+          moved = false;
+          return;
+        }
+        // Short tap → toggle switch
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        var current = isOn(vis.states[readOn + ".val"]);
+        if (oidSwitchCmd) {
+          vis.setValue(oidSwitchCmd, !current);
+        }
+      }
+
+      $this.on("mousedown.newbornDimmer", onMouseDown);
+      $this.on("touchstart.newbornDimmer", onTouchStart);
+      $this.on("mousemove.newbornDimmer", onMouseMove);
+      $this.on("touchmove.newbornDimmer", onTouchMove);
+      $this.on("mouseup.newbornDimmer mouseleave.newbornDimmer touchend.newbornDimmer touchcancel.newbornDimmer", onRelease);
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornDimmer");
+        cancelPress();
+        if (vis.states.unbind) {
+          if (readOn) {
+            vis.states.unbind(readOn + ".val", onStateChange);
+          }
+          if (readPct && readPct !== readOn) {
+            vis.states.unbind(readPct + ".val", onStateChange);
+          }
+        }
+      });
+    };
+
+    if (!ns._dimmerVersionLogged) {
+      console.log("Newborn Dimmer widget loaded (vis-newborn 0.1.0)");
+      ns._dimmerVersionLogged = true;
+    }
+  })();
+</script>

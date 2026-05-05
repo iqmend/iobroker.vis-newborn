@@ -1,0 +1,55 @@
+{
+  "common": {
+    "name": "vis-newborn",
+    "version": "0.1.0",
+    "news": {
+      "0.1.0": {
+        "en": "Initial release of the unified Newborn widget set. Bundled widgets: Newborn Toggle (slide switch, 1- or 2-DP KNX mode, 3 sizes) and Newborn Dimmer (HomeKit-style square tile, short-tap toggle, long-press vertical slider overlay, 4-DP KNX). Both widgets appear under one shared 'newborn' palette section in VIS, so future widgets can be added without touching existing ones.",
+        "de": "Erstes Release des vereinigten Newborn-Widget-Sets. Enthaltene Widgets: Newborn Toggle (Slide-Schalter, 1- oder 2-DP-KNX-Modus, 3 Größen) und Newborn Dimmer (HomeKit-Style-Kachel, kurzer Tap = Toggle, langes Drücken öffnet Vertikal-Slider-Overlay, 4-DP-KNX). Beide Widgets erscheinen unter einer gemeinsamen Palette-Sektion 'newborn' im VIS-Editor, sodass neue Widgets später ohne Eingriff an bestehenden ergänzt werden können."
+      }
+    },
+    "title": "Newborn Widgets",
+    "titleLang": {
+      "en": "Newborn Widgets",
+      "de": "Newborn Widgets"
+    },
+    "desc": {
+      "en": "A growing collection of modern, minimalistic smart home widgets for ioBroker VIS / VIS-2 (toggle, dimmer, …).",
+      "de": "Eine wachsende Sammlung moderner, minimalistischer Smart-Home-Widgets für ioBroker VIS / VIS-2 (Toggle, Dimmer, …)."
+    },
+    "authors": ["Armend Aliu <armend.aliu@hotmail.de>"],
+    "keywords": ["vis", "widgets", "toggle", "dimmer", "knx", "homekit"],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "vis-newborn.png",
+    "extIcon": "https://raw.githubusercontent.com/iqmend/iobroker.vis-newborn/main/admin/vis-newborn.png",
+    "readme": "https://github.com/iqmend/iobroker.vis-newborn/blob/main/README.md",
+    "loglevel": "info",
+    "mode": "once",
+    "type": "visualization-widgets",
+    "noConfig": true,
+    "singleton": true,
+    "onlyWWW": true,
+    "restartAdapters": ["vis", "vis-2"],
+    "dependencies": [
+      { "js-controller": ">=4.0.0" }
+    ],
+    "globalDependencies": [
+      { "vis": ">=1.4.0" }
+    ],
+    "visWidgets": {
+      "newbornToggle": {
+        "name": "newborn-toggle",
+        "url": "vis-newborn/widgets/newborn-toggle.html"
+      },
+      "newbornDimmer": {
+        "name": "newborn-dimmer",
+        "url": "vis-newborn/widgets/newborn-dimmer.html"
+      }
+    }
+  },
+  "objects": [],
+  "instanceObjects": [],
+  "native": {}
+}

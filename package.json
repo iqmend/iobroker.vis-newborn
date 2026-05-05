@@ -1,0 +1,34 @@
+{
+  "name": "iobroker.vis-newborn",
+  "version": "0.1.0",
+  "description": "Newborn widget set for ioBroker VIS / VIS-2 — a growing collection of modern, minimalistic smart home widgets (toggle, dimmer, …).",
+  "author": {
+    "name": "Armend Aliu",
+    "email": "armend.aliu@hotmail.de"
+  },
+  "homepage": "https://github.com/iqmend/iobroker.vis-newborn",
+  "license": "MIT",
+  "keywords": ["ioBroker", "vis", "vis-2", "widget", "widgets", "toggle", "dimmer", "knx", "homekit"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iqmend/iobroker.vis-newborn.git"
+  },
+  "bugs": {
+    "url": "https://github.com/iqmend/iobroker.vis-newborn/issues"
+  },
+  "main": "main.js",
+  "files": [
+    "admin/",
+    "widgets/",
+    "main.js",
+    "io-package.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
