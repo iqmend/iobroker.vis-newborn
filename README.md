@@ -28,6 +28,16 @@ Alle Widgets erscheinen im VIS-Editor unter einer gemeinsamen Palette-Sektion **
 - Optional `invert_status` (im 2-DP-Modus spiegelt es beide Richtungen)
 - 3 Größen: small, medium, large
 
+### Newborn Jalousie (Tile)
+- Hochformat-Kachel für Jalousien/Rolladen
+- Zwei Spalten mit Auf/Ab-Tasten (Jalousie + Lamellen) und zentralem Stop-Button
+- Klick/Tap auf eine Taste → entsprechende Aktion (Jalousie auf/ab, Lamellen auf/ab, Stop)
+- Langes Drücken (≥500 ms) irgendwo auf der Kachel → Popup mit **zwei** vertikalen Slidern (Jalousie %, Lamellen %)
+- 6 Datenpunkte (KNX-tauglich): Jalousie-Schalt + Position-Cmd/Status, Lamellen-Schalt + Position-Cmd/Status
+- Stop-Button schreibt `false` auf den Lamellen-Schalt-DP (KNX: stoppt die Bewegung, bewegt Lamellen einen Schritt)
+- Live-Prozente unten auf der Kachel sichtbar
+- 3 Größen: small, medium, large
+
 ## Installation
 
 ioBroker-Admin → **Adapter** → Stiftsymbol (oben rechts) → **Aus eigener URL installieren** → URL eingeben:
@@ -80,6 +90,19 @@ Nach der Installation läuft die Adapter-Instanz `vis-newborn.0` *nicht dauerhaf
 | `name` | Text | Anzeigename der Lampe. Default: `Licht`. |
 | `size` | small / medium / large | Skaliert die Kachel. Default: `medium`. |
 
+### Newborn Jalousie (Tile)
+
+| Feld | Typ | Wirkung |
+|------|-----|---------|
+| `oid_blinds_cmd` | Object-ID | **Jalousie Schalt-DP** (boolean). `true/1` = auf, `false/0` = ab. Wird beim Klick auf Jalousie ▲/▼ beschrieben. |
+| `oid_blinds_pos_cmd` | Object-ID | **Jalousie Position-Cmd** (0–100). Vom Slider beschrieben für absolute Positionierung. |
+| `oid_blinds_pos_state` | Object-ID | **Jalousie Position-Status** (0–100). Wird gelesen und live unten links auf der Kachel angezeigt. |
+| `oid_slats_cmd` | Object-ID | **Lamellen Schalt-DP** (boolean). `true/1` = auf + Jalousie stop, `false/0` = ab + Jalousie stop. Wird beim Klick auf Lamellen ▲/▼ und auf Stop ⏹ beschrieben. |
+| `oid_slats_pos_cmd` | Object-ID | **Lamellen Position-Cmd** (0–100). Vom Slider beschrieben. |
+| `oid_slats_pos_state` | Object-ID | **Lamellen Position-Status** (0–100). Wird live unten rechts auf der Kachel angezeigt. |
+| `name` | Text | Anzeigename, Default `Jalousie`. |
+| `size` | small / medium / large | Skaliert die Kachel. Default `medium`. |
+
 > **Hinweis zur fehlenden KNX-Checkbox:** vis 1.5.x unterstützt keine bedingte Sichtbarkeit von Editor-Feldern (`visEditInspect.js:1964`-Parser kennt keinen Conditional-Slot). Statt einer Checkbox + immer sichtbarem `oid_status`-Feld nutzt dieses Widget das natürlichere Auto-Detect-Pattern: setze `oid_status`, wenn du eine separate Statusrückmeldung hast — das ist alles.
 
 ## Beispiele
@@ -121,6 +144,19 @@ oid_status      = knx.0.0.licht_küche.status       (DPT 1.001 — Statusrückme
 invert_status   = ☐
 name            = Küche
 size            = medium
+```
+
+### Jalousie — KNX (6 DP)
+
+```
+oid_blinds_cmd       = knx.0.0.jalousie_wz.auf_ab          (DPT 1.008 — Auf/Ab)
+oid_blinds_pos_cmd   = knx.0.0.jalousie_wz.position_set    (DPT 5.001 — 0..100 schreiben)
+oid_blinds_pos_state = knx.0.0.jalousie_wz.position_status (DPT 5.001 — 0..100 lesen)
+oid_slats_cmd        = knx.0.0.jalousie_wz.lamelle         (DPT 1.007 — Step/Stop)
+oid_slats_pos_cmd    = knx.0.0.jalousie_wz.lamelle_set     (DPT 5.001 — 0..100 schreiben)
+oid_slats_pos_state  = knx.0.0.jalousie_wz.lamelle_status  (DPT 5.001 — 0..100 lesen)
+name                 = Wohnzimmer
+size                 = medium
 ```
 
 ## Architektur

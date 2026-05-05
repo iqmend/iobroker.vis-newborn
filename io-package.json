@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "news": {
+      "0.1.8": {
+        "en": "New widget: Newborn Jalousie (Tile) — portrait blind/shutter tile with two columns of up/down buttons (Jalousie + Lamellen), a centered Stop button, and a long-press popup with two vertical sliders for absolute % positioning. Six datapoints: blinds command (boolean up/down), blinds position cmd/state (0-100 %), slats command (boolean up/down/stop, used by the stop button), slats position cmd/state (0-100 %). Live percentages are shown at the bottom of the tile. Same proven jQuery click+touch+long-press pattern as the dimmer widget — works on PC and mobile.",
+        "de": "Neues Widget: Newborn Jalousie (Tile) — Hochformat-Kachel für Jalousien/Rolladen mit zwei Spalten Auf/Ab-Tasten (Jalousie + Lamellen), zentralem Stop-Button und Long-Press-Popup mit zwei vertikalen Slidern fuer absolute %-Position. Sechs Datenpunkte: Jalousie-Schalt (boolean auf/ab), Jalousie-Pos-Cmd/Status (0-100 %), Lamellen-Schalt (boolean auf/ab/stop, vom Stop-Button benutzt), Lamellen-Pos-Cmd/Status (0-100 %). Live-Prozente sind unten auf der Kachel sichtbar. Gleiches bewährtes jQuery-Click+Touch+Long-Press-Pattern wie das Dimmer-Widget — funktioniert auf PC und Mobile."
+      },
       "0.1.7": {
         "en": "New widget: Newborn Licht (Tile) — pure on/off light tile in HomeKit style. Click toggles. KNX mode is auto-detected by the presence of oid_status: if set, oid is the command DP and oid_status the status read DP; if empty, oid is bidirectional. invert_status mirrors both directions in 2-DP mode. No knx-checkbox needed (vis 1.5.x does not support conditional editor field visibility, so the cleanest UX is auto-detection). Same proven jQuery click+touch+detectBounce handler pattern as the toggle widget — works on PC and mobile.",
         "de": "Neues Widget: Newborn Licht (Tile) — reine An/Aus-Lichtkachel im HomeKit-Stil. Klick toggelt. KNX-Modus wird automatisch erkannt: ist oid_status gesetzt, ist oid der Schalt-DP und oid_status der Status-DP; ist oid_status leer, ist oid bidirektional. invert_status spiegelt im 2-DP-Modus beide Richtungen. Keine KNX-Checkbox nötig (vis 1.5.x unterstützt keine bedingte Editor-Sichtbarkeit, daher ist Auto-Erkennung die saubere UX). Gleiches bewährtes jQuery click+touch+detectBounce-Pattern wie beim Toggle-Widget — funktioniert auf PC und Mobile."
