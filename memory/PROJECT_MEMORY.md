@@ -10,10 +10,13 @@ Adapter `iobroker.vis-newborn` für ioBroker VIS / VIS-2: eine wachsende Sammlun
 
 ## Enthaltene Widgets
 
-| Widget | Datei | Beschreibung |
-|--------|-------|--------------|
-| Newborn Toggle (Slide) | `widgets/newborn-toggle.html` | Slide-Toggle, 1- oder 2-DP-KNX-Modus, optionaler Status-Invert, 3 Größen |
-| Newborn Dimmer (Tile) | `widgets/newborn-dimmer.html` | HomeKit-Style Kachel, kurzer Tap = Toggle, Long-Press öffnet Vertikal-Slider-Overlay (4 DPs: switch_cmd/state, dim_cmd/state), 3 Größen |
+Alle Widgets liegen in **einer** Datei `widgets/newborn.html` (kanonisches VIS-Pattern, Filename-Stem matcht Adapter-Suffix).
+
+| Widget | Template-ID | Beschreibung |
+|--------|-------------|--------------|
+| Newborn Toggle (Slide) | `tplNewbornToggle` | Slide-Toggle, 1- oder 2-DP-KNX-Modus, optionaler Status-Invert, 3 Größen |
+| Newborn Dimmer (Tile) | `tplNewbornDimmer` | HomeKit-Style Kachel, kurzer Tap = Toggle, Long-Press öffnet Vertikal-Slider-Overlay (4 DPs), 3 Größen |
+| Newborn Licht (Tile) | `tplNewbornLight` | HomeKit-Style Kachel, Klick = An/Aus, KNX-Modus per Auto-Detect (oid_status gesetzt = 2-DP), 3 Größen |
 
 ## Architektur (Quintessenz)
 
@@ -40,7 +43,8 @@ Detail siehe [vis-widget-development.md](vis-widget-development.md) und [../docs
 | 2026-05-05 | v0.1.3: spekulativer Synth-Mouse-Guard + doppelte CSS — zerschossen Klick auf PC und Mobile | abgelöst |
 | 2026-05-05 | v0.1.4: Revert auf v0.1.2 funktional | erledigt |
 | 2026-05-05 | v0.1.5: Pointer-Events-Migration — Widget rendert nicht mehr in Live-View, SyntaxError im VM-Eval-Kontext (Ursache nicht identifiziert) | abgelöst |
-| 2026-05-05 | v0.1.6: Revert auf v0.1.4 funktional → bestätigt funktionierend | **aktiv** |
+| 2026-05-05 | v0.1.6: Revert auf v0.1.4 funktional → bestätigt funktionierend | erledigt |
+| 2026-05-05 | v0.1.7: Neues Widget `Newborn Licht (Tile)` ergänzt — reine An/Aus-Kachel, KNX-Modus per Auto-Detect (oid_status gesetzt = 2-DP). Bedingte Editor-Sichtbarkeit ist in vis 1.5.x nicht unterstützt (Quelle: `visEditInspect.js:1964`-Parser ohne Conditional-Slot), daher KNX-Checkbox weggelassen | **aktiv** |
 
 ## Bekannte offene Issues (v0.1.6)
 

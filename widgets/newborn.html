@@ -517,6 +517,158 @@
     transition: bottom 0.06s linear, opacity 0.18s ease;
     opacity: 0;
   }
+
+  /* ============================================================== */
+  /*  Light widget (vis-newborn-light-*)                            */
+  /*  Square HomeKit-style tile, click toggles. Visual is the       */
+  /*  dimmer tile minus the percentage row. KNX-mode auto-detect    */
+  /*  via presence of oid_status (no extra checkbox needed).        */
+  /* ============================================================== */
+  .vis-newborn-light-tile,
+  .vis-newborn-light-tile *,
+  .vis-newborn-light-tile *::before,
+  .vis-newborn-light-tile *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-light-tile {
+    --nl-radius: 22px;
+    --nl-tile-bg-off-1: #2a2a2e;
+    --nl-tile-bg-off-2: #1d1d20;
+    --nl-tile-bg-on-1: #ffd66b;
+    --nl-tile-bg-on-2: #f5b042;
+    --nl-text-off: #d0d0d4;
+    --nl-text-on: #2a1a06;
+    --nl-icon-bg-off: rgba(255,255,255,0.06);
+    --nl-icon-bg-on: rgba(255,255,255,0.55);
+    --nl-icon-off: #6e6e74;
+    --nl-icon-on: #b85c00;
+    --nl-glow-on: rgba(255,198,80,0.55);
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--nl-radius);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(160deg, var(--nl-tile-bg-off-1) 0%, var(--nl-tile-bg-off-2) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.06) inset,
+      0 0 0 1px rgba(255,255,255,0.04) inset,
+      0 6px 18px -6px rgba(0,0,0,0.45);
+    transition:
+      background 360ms cubic-bezier(.65,.05,.36,1),
+      box-shadow 360ms cubic-bezier(.65,.05,.36,1),
+      transform 220ms cubic-bezier(.65,.05,.36,1),
+      color 360ms cubic-bezier(.65,.05,.36,1);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--nl-text-off);
+  }
+
+  .vis-newborn-light-tile:active {
+    transform: scale(0.97);
+  }
+
+  .vis-newborn-light-tile.is-on {
+    background: linear-gradient(160deg, var(--nl-tile-bg-on-1) 0%, var(--nl-tile-bg-on-2) 100%);
+    color: var(--nl-text-on);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.35) inset,
+      0 0 0 1px rgba(255,255,255,0.18) inset,
+      0 8px 26px -8px var(--nl-glow-on);
+  }
+
+  .vis-newborn-light-tile .nl-icon {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--nl-icon-bg-off);
+    color: var(--nl-icon-off);
+    transition:
+      background 360ms cubic-bezier(.65,.05,.36,1),
+      color 360ms cubic-bezier(.65,.05,.36,1);
+  }
+
+  .vis-newborn-light-tile.is-on .nl-icon {
+    background: var(--nl-icon-bg-on);
+    color: var(--nl-icon-on);
+  }
+
+  .vis-newborn-light-tile .nl-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .vis-newborn-light-tile .nl-name {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  .vis-widget.vis-newborn-light-size-small  { width: 100px !important; height: 100px !important; }
+  .vis-widget.vis-newborn-light-size-medium { width: 130px !important; height: 130px !important; }
+  .vis-widget.vis-newborn-light-size-large  { width: 160px !important; height: 160px !important; }
+
+  .vis-newborn-light-tile.size-small .nl-icon {
+    width: 26px;
+    height: 26px;
+    top: 10px;
+    left: 10px;
+  }
+  .vis-newborn-light-tile.size-small .nl-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .vis-newborn-light-tile.size-small .nl-name {
+    font-size: 12px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .vis-newborn-light-tile.size-large .nl-icon {
+    width: 36px;
+    height: 36px;
+    top: 18px;
+    left: 18px;
+  }
+  .vis-newborn-light-tile.size-large .nl-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .vis-newborn-light-tile.size-large .nl-name {
+    font-size: 15px;
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+  }
+
+  body.vis-edit-active .vis-widget.vis-newborn-light-wrap .vis-newborn-light-tile,
+  body.vis-edit-active .vis-widget.vis-newborn-light-wrap .vis-newborn-light-tile * {
+    pointer-events: none !important;
+  }
 </style>
 
 <!-- ====================================================================
@@ -581,6 +733,43 @@
     </div>
     <div class="nd-name"><%= this.data.attr('name') || 'Lampe' %></div>
     <div class="nd-percent"><span class="nd-pct">0</span>%</div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Light template
+     KNX-mode is auto-detected: if oid_status is set, it is read from;
+     otherwise oid is bidirectional. invert_status only takes effect
+     when oid_status is set. No knx-checkbox needed.
+     ==================================================================== -->
+<script id="tplNewbornLight"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:90px;"><div class="vis-newborn-light-tile size-small is-on" style="width:80px;height:80px;position:relative;border-radius:18px;background:linear-gradient(160deg,#ffd66b 0%, #f5b042 100%);box-shadow:0 1px 0 rgba(255,255,255,0.35) inset, 0 8px 22px -8px rgba(255,198,80,0.55);color:#2a1a06;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:999px;background:rgba(255,255,255,0.55);color:#b85c00;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div style="position:absolute;left:8px;right:8px;bottom:8px;font-size:11px;font-weight:600;">Licht</div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Licht (Tile)"
+        data-vis-attrs="oid/id;oid_status/id;invert_status/checkbox;name/text;size/select,small,medium,large">
+<div class="vis-widget vis-newborn-light-wrap vis-newborn-light-size-<%= (this.data.attr('size') || 'medium') %> <%== this.data.attr('class') %>"
+     style="width: 130px; height: 130px; padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid="<%= this.data.attr('oid') %>"
+     data-oid-status="<%= this.data.attr('oid_status') %>"
+     data-invert="<%= this.data.attr('invert_status') %>"
+     data-nl-name="<%= this.data.attr('name') %>"
+     <%= (el) -> vis.binds['newborn'].light(el) %>>
+  <div class="vis-newborn-light-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="switch"
+       aria-checked="false"
+       aria-label="Licht">
+    <div class="nl-icon">
+      <svg viewBox="0 0 24 24">
+        <path d="M9 18h6"/>
+        <path d="M10 21h4"/>
+        <path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/>
+      </svg>
+    </div>
+    <div class="nl-name"><%= this.data.attr('name') || 'Licht' %></div>
   </div>
 </div>
 </script>
@@ -1044,8 +1233,81 @@
       });
     };
 
+    // ===== Light handler =====
+    /**
+     * Pure on/off light. Click toggles state. KNX-mode is auto-detected
+     * from the data attributes:
+     *   - oid_status set   → 2-DP mode (write to oid, read from oid_status)
+     *   - oid_status empty → 1-DP mode (oid bidirectional)
+     * invert_status only takes effect in 2-DP mode (mirrors both directions).
+     *
+     * Same touch+click pattern as the toggle widget — proven on PC and mobile.
+     */
+    ns.light = function (el) {
+      var $this = $(el);
+      var oid       = $this.data("oid");
+      var oidStatus = $this.data("oid-status");
+      var invert    = ($this.data("invert") === true || $this.data("invert") === "true");
+
+      if (!oid || vis.editMode) {
+        return;
+      }
+
+      var oidRead = oidStatus || oid;
+      var $tile = $this.find(".vis-newborn-light-tile");
+      var moved = false;
+
+      function applyState(rawVal) {
+        var on = isOn(rawVal);
+        if (oidStatus && invert) {
+          on = !on;
+        }
+        $tile.toggleClass("is-on", on);
+        $tile.attr("aria-checked", on ? "true" : "false");
+      }
+
+      function onStateChange(e, newVal) {
+        applyState(newVal);
+      }
+
+      applyState(vis.states[oidRead + ".val"]);
+      vis.states.bind(oidRead + ".val", onStateChange);
+
+      $this.on("click.newbornLight touchend.newbornLight", function () {
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        if (moved) {
+          return;
+        }
+
+        var current = vis.states[oidRead + ".val"];
+        var on = isOn(current);
+        if (oidStatus && invert) {
+          on = !on;
+        }
+        var next = !on;
+        var writeValue = (oidStatus && invert) ? !next : next;
+
+        vis.setValue(oid, writeValue);
+      });
+      $this.on("touchmove.newbornLight", function () {
+        moved = true;
+      });
+      $this.on("touchstart.newbornLight", function () {
+        moved = false;
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornLight");
+        if (vis.states.unbind) {
+          vis.states.unbind(oidRead + ".val", onStateChange);
+        }
+      });
+    };
+
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.6 ready");
+      console.log("vis-newborn 0.1.7 ready");
       ns._versionLogged = true;
     }
   })();

@@ -20,6 +20,14 @@ Alle Widgets erscheinen im VIS-Editor unter einer gemeinsamen Palette-Sektion **
 - Slider-Drag mit ~100 ms Throttling, damit der KNX-Bus nicht überrannt wird
 - 3 Größen: small, medium, large
 
+### Newborn Licht (Tile)
+- HomeKit-Style quadratische Kachel — wie Dimmer-Kachel, nur ohne Helligkeit
+- Klick/Tap → An/Aus (Toggle)
+- 1 Datenpunkt (Standard): `oid` ist bidirektional (Schalten und Status)
+- 2 Datenpunkte (KNX): zusätzlich `oid_status` ausfüllen — wird automatisch als 2-DP-Modus erkannt
+- Optional `invert_status` (im 2-DP-Modus spiegelt es beide Richtungen)
+- 3 Größen: small, medium, large
+
 ## Installation
 
 ioBroker-Admin → **Adapter** → Stiftsymbol (oben rechts) → **Aus eigener URL installieren** → URL eingeben:
@@ -62,6 +70,18 @@ Nach der Installation läuft die Adapter-Instanz `vis-newborn.0` *nicht dauerhaf
 | `name` | Text | Anzeigename der Lampe. Default: `Lampe`. |
 | `size` | small / medium / large | Skaliert die Kachel. Default: `medium`. |
 
+### Newborn Licht (Tile)
+
+| Feld | Typ | Wirkung |
+|------|-----|---------|
+| `oid` | Object-ID | **Schalt-Datenpunkt.** Bei leerem `oid_status` zugleich der Status-Datenpunkt (1-DP-Modus). |
+| `oid_status` | Object-ID | **Optional.** Sobald gesetzt, schaltet das Widget in den **2-DP-/KNX-Modus** um: `oid` wird geschrieben, `oid_status` wird gelesen. Leer lassen für 1-DP-Modus. |
+| `invert_status` | Checkbox | **Nur im 2-DP-Modus aktiv.** Spiegelt sowohl Status-Lesen als auch Schalt-Schreiben. |
+| `name` | Text | Anzeigename der Lampe. Default: `Licht`. |
+| `size` | small / medium / large | Skaliert die Kachel. Default: `medium`. |
+
+> **Hinweis zur fehlenden KNX-Checkbox:** vis 1.5.x unterstützt keine bedingte Sichtbarkeit von Editor-Feldern (`visEditInspect.js:1964`-Parser kennt keinen Conditional-Slot). Statt einer Checkbox + immer sichtbarem `oid_status`-Feld nutzt dieses Widget das natürlichere Auto-Detect-Pattern: setze `oid_status`, wenn du eine separate Statusrückmeldung hast — das ist alles.
+
 ## Beispiele
 
 ### Toggle — Standard (1 DP)
@@ -87,6 +107,20 @@ oid_dim_cmd      = knx.0.0.licht_wz.dimm_absolut    (DPT 5.001 — 0..100 schrei
 oid_dim_state    = knx.0.0.licht_wz.dimm_status     (DPT 5.001 — 0..100 lesen)
 name             = Wohnzimmer
 size             = medium
+```
+
+### Licht — Standard (1 DP)
+
+`oid = 0_userdata.0.lampe`, `name = Wohnzimmer`, `size = medium`. `oid_status` und `invert_status` leer lassen.
+
+### Licht — KNX (2 DP)
+
+```
+oid             = knx.0.0.licht_küche.schalten     (DPT 1.001 — Schalten)
+oid_status      = knx.0.0.licht_küche.status       (DPT 1.001 — Statusrückmeldung)
+invert_status   = ☐
+name            = Küche
+size            = medium
 ```
 
 ## Architektur
