@@ -60,7 +60,12 @@
     'oid_rollo_zu':      { 'en': 'Blind Close',           'de': 'Rollo Zu' },
     'row2_label':        { 'en': 'Row 2 label',           'de': 'Zeile 2 Label' },
     'btn_open_label':    { 'en': 'Open button label',     'de': 'Auf-Button Text' },
-    'btn_close_label':   { 'en': 'Close button label',    'de': 'Zu-Button Text' }
+    'btn_close_label':   { 'en': 'Close button label',    'de': 'Zu-Button Text' },
+
+    // ---- Schalter ----
+    'room':              { 'en': 'Room (top right)',      'de': 'Raum (oben rechts)' },
+    'on_label':          { 'en': 'On label (default "an")', 'de': 'An-Label (Default "an")' },
+    'icon':              { 'en': 'Icon (square ~64x64 PNG/SVG)', 'de': 'Icon (quadratisch, ca. 64×64 PNG/SVG)' }
   });
 </script>
 
@@ -1763,6 +1768,220 @@
   body.vis-edit-active .vis-widget.vis-newborn-window-wrap .vis-newborn-window-tile * {
     pointer-events: none !important;
   }
+
+  /* ============================================================== */
+  /*  Schalter widget (vis-newborn-switch-*)                        */
+  /*  Generic on/off switch tile inspired by HomeKit. Tap toggles.  */
+  /*  Top: editable icon (image picker, default power SVG) + room   */
+  /*  text (right, only shown if filled). Bottom: title + iOS-style */
+  /*  pill — blue with editable "an" label when ON, grey when OFF.  */
+  /*  Same KNX auto-detect (oid_status) as Light/Toggle.            */
+  /* ============================================================== */
+  .vis-newborn-switch-tile,
+  .vis-newborn-switch-tile *,
+  .vis-newborn-switch-tile *::before,
+  .vis-newborn-switch-tile *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-switch-tile {
+    --sw-radius: 22px;
+    --sw-bg-1: #ffffff;
+    --sw-bg-2: #f5f5f8;
+    --sw-text: #1c1c1e;
+    --sw-text-muted: #8e8e93;
+    --sw-icon-bg: rgba(0,0,0,0.05);
+    --sw-icon-color: #6e6e74;
+    --sw-pill-off: #d8d8dc;
+    --sw-pill-on: #0a84ff;
+    --sw-pill-label: #ffffff;
+    --sw-pill-handle: #ffffff;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--sw-radius);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(160deg, var(--sw-bg-1) 0%, var(--sw-bg-2) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 0 0 1px rgba(0,0,0,0.04) inset,
+      0 4px 14px -4px rgba(0,0,0,0.10);
+    color: var(--sw-text);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .vis-newborn-switch-tile .sw-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .vis-newborn-switch-tile .sw-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--sw-icon-bg);
+    color: var(--sw-icon-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .vis-newborn-switch-tile .sw-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vis-newborn-switch-tile .sw-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .vis-newborn-switch-tile .sw-room {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sw-text-muted);
+    letter-spacing: -0.1px;
+    text-align: right;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+    display: none;
+    margin-top: 4px;
+  }
+  .vis-newborn-switch-tile .sw-room.is-shown {
+    display: block;
+  }
+
+  .vis-newborn-switch-tile .sw-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .vis-newborn-switch-tile .sw-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    color: var(--sw-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .vis-newborn-switch-tile .sw-pill {
+    position: relative;
+    width: 56px;
+    height: 30px;
+    border-radius: 999px;
+    background: var(--sw-pill-off);
+    flex-shrink: 0;
+    transition: background 240ms cubic-bezier(.65,.05,.36,1);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .vis-newborn-switch-tile .sw-pill.is-on {
+    background: var(--sw-pill-on);
+    box-shadow:
+      inset 0 1px 2px rgba(0,0,0,0.10),
+      0 4px 10px -4px rgba(10,132,255,0.55);
+  }
+
+  .vis-newborn-switch-tile .sw-pill .sw-pill-handle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--sw-pill-handle);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.20);
+    transition: transform 240ms cubic-bezier(.65,.05,.36,1);
+  }
+  .vis-newborn-switch-tile .sw-pill.is-on .sw-pill-handle {
+    transform: translateX(26px);
+  }
+
+  .vis-newborn-switch-tile .sw-pill .sw-pill-label {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sw-pill-label);
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 240ms cubic-bezier(.65,.05,.36,1);
+    pointer-events: none;
+  }
+  .vis-newborn-switch-tile .sw-pill.is-on .sw-pill-label {
+    opacity: 1;
+  }
+
+  /* sizes */
+  .vis-widget.vis-newborn-switch-size-small  { width: 130px !important; height: 130px !important; }
+  .vis-widget.vis-newborn-switch-size-medium { width: 160px !important; height: 160px !important; }
+  .vis-widget.vis-newborn-switch-size-large  { width: 200px !important; height: 200px !important; }
+
+  .vis-newborn-switch-tile.size-small {
+    padding: 12px;
+    gap: 4px;
+  }
+  .vis-newborn-switch-tile.size-small .sw-icon { width: 26px; height: 26px; border-radius: 7px; }
+  .vis-newborn-switch-tile.size-small .sw-icon svg { width: 16px; height: 16px; }
+  .vis-newborn-switch-tile.size-small .sw-room { font-size: 11px; }
+  .vis-newborn-switch-tile.size-small .sw-name { font-size: 13px; }
+  .vis-newborn-switch-tile.size-small .sw-pill { width: 50px; height: 28px; }
+  .vis-newborn-switch-tile.size-small .sw-pill .sw-pill-handle { width: 22px; height: 22px; }
+  .vis-newborn-switch-tile.size-small .sw-pill.is-on .sw-pill-handle { transform: translateX(22px); }
+
+  .vis-newborn-switch-tile.size-large {
+    padding: 18px;
+    gap: 8px;
+  }
+  .vis-newborn-switch-tile.size-large .sw-icon { width: 36px; height: 36px; border-radius: 10px; }
+  .vis-newborn-switch-tile.size-large .sw-icon svg { width: 20px; height: 20px; }
+  .vis-newborn-switch-tile.size-large .sw-room { font-size: 13px; }
+  .vis-newborn-switch-tile.size-large .sw-name { font-size: 17px; }
+  .vis-newborn-switch-tile.size-large .sw-pill { width: 64px; height: 34px; }
+  .vis-newborn-switch-tile.size-large .sw-pill .sw-pill-handle { width: 28px; height: 28px; }
+  .vis-newborn-switch-tile.size-large .sw-pill.is-on .sw-pill-handle { transform: translateX(30px); }
+
+  body.vis-edit-active .vis-widget.vis-newborn-switch-wrap .vis-newborn-switch-tile,
+  body.vis-edit-active .vis-widget.vis-newborn-switch-wrap .vis-newborn-switch-tile * {
+    pointer-events: none !important;
+  }
 </style>
 
 <!-- ====================================================================
@@ -2199,6 +2418,69 @@ var frRow2     = this.data.attr('row2_label')      || 'Rollo';
       <span class="fn-row-label"><%= frRow2 %></span>
       <button type="button" class="fn-btn" data-fn-oid="oid-rollo-auf"><%= frBtnOpen %></button>
       <button type="button" class="fn-btn" data-fn-oid="oid-rollo-zu"><%= frBtnClose %></button>
+    </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Schalter template — generic on/off tile.
+     1 OID (oid). Optional oid_status for KNX 2-DP mode (auto-detected,
+     same convention as Light/Toggle). Icon is an editable image picker;
+     if empty, falls back to the default power-icon SVG. Recommended
+     icon size: square ~64×64 PNG/SVG (CSS object-fits to the slot).
+     ==================================================================== -->
+<script id="tplNewbornSchalter"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:130px;"><div style="width:120px;height:120px;border-radius:18px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:10px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;"><div style="width:24px;height:24px;border-radius:6px;background:rgba(0,0,0,0.05);color:#6e6e74;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M5.6 5.6a9 9 0 1 0 12.8 0"/></svg></div><div style="font-size:9px;font-weight:600;color:#8e8e93;">Wohnzimmer</div></div><div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;gap:6px;"><div style="font-weight:700;font-size:11px;line-height:1.2;flex:1;">Schalter</div><div style="position:relative;width:42px;height:24px;border-radius:999px;background:#0a84ff;flex-shrink:0;"><span style="position:absolute;left:8px;top:0;bottom:0;display:flex;align-items:center;font-size:8px;font-weight:700;color:#fff;letter-spacing:0.05em;">an</span><span style="position:absolute;top:2px;left:20px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span></div></div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Schalter (Tile)"
+        data-vis-attrs="oid/id;oid_status/id;invert_status/checkbox;name/text;room/text;on_label/text;icon/image;size/select,small,medium,large;width/number;height/number">
+<%
+var swSize = this.data.attr('size') || 'medium';
+var swDefW = swSize === 'small' ? 130 : swSize === 'large' ? 200 : 160;
+var swDefH = swSize === 'small' ? 130 : swSize === 'large' ? 200 : 160;
+var swW = parseInt(this.data.attr('width'), 10);
+var swH = parseInt(this.data.attr('height'), 10);
+var swCustomW = isFinite(swW) && swW > 0;
+var swCustomH = isFinite(swH) && swH > 0;
+var swCustom = swCustomW || swCustomH;
+if (swCustom && !swCustomW) swW = swDefW;
+if (swCustom && !swCustomH) swH = swDefH;
+if (swCustom && swW < 110) swW = 110;
+if (swCustom && swH < 110) swH = 110;
+var swSizeClass = swCustom ? '' : ('vis-newborn-switch-size-' + swSize);
+var swStyle = swCustom ? ('width:' + swW + 'px !important;height:' + swH + 'px !important;') : 'width:160px;height:160px;';
+var swRoom = this.data.attr('room');
+var swOnLabel = this.data.attr('on_label') || 'an';
+var swIcon = this.data.attr('icon');
+var swIconHTML = swIcon
+  ? '<img src="' + swIcon + '" alt="">'
+  : '<svg viewBox="0 0 24 24"><path d="M12 2v10"/><path d="M5.6 5.6a9 9 0 1 0 12.8 0"/></svg>';
+%>
+<div class="vis-widget vis-newborn-switch-wrap <%= swSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= swStyle %> padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid="<%= this.data.attr('oid') %>"
+     data-oid-status="<%= this.data.attr('oid_status') %>"
+     data-invert="<%= this.data.attr('invert_status') %>"
+     <%= (el) -> vis.binds['newborn'].schalter(el) %>>
+  <div class="vis-newborn-switch-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="switch"
+       aria-checked="false"
+       aria-label="Schalter">
+    <div class="sw-top">
+      <div class="sw-icon"><%== swIconHTML %></div>
+      <div class="sw-room<%= swRoom ? ' is-shown' : '' %>"><%= swRoom %></div>
+    </div>
+
+    <div class="sw-bottom">
+      <div class="sw-name"><%= this.data.attr('name') || 'Schalter' %></div>
+      <div class="sw-pill">
+        <span class="sw-pill-label"><%= swOnLabel %></span>
+        <span class="sw-pill-handle"></span>
+      </div>
     </div>
   </div>
 </div>
@@ -3609,8 +3891,80 @@ var frRow2     = this.data.attr('row2_label')      || 'Rollo';
       });
     };
 
+    // ===== Schalter (generic on/off tile) =====
+    /**
+     * Same KNX auto-detect as the Light/Toggle widgets:
+     *   - oid_status set   → 2-DP (write to oid, read from oid_status)
+     *   - oid_status empty → 1-DP (oid bidirectional)
+     * invert_status only takes effect in 2-DP mode.
+     * Tap toggles. The pill mirrors the resulting state — blue with
+     * the editable on-label when ON, grey (no text) when OFF.
+     */
+    ns.schalter = function (el) {
+      var $this = $(el);
+      var oid       = $this.data("oid");
+      var oidStatus = $this.data("oid-status");
+      var invert    = ($this.data("invert") === true || $this.data("invert") === "true");
+
+      if (!oid || vis.editMode) {
+        return;
+      }
+
+      var oidRead = oidStatus || oid;
+      var $tile = $this.find(".vis-newborn-switch-tile");
+      var $pill = $this.find(".sw-pill");
+      var moved = false;
+
+      function applyState(rawVal) {
+        var on = isOn(rawVal);
+        if (oidStatus && invert) {
+          on = !on;
+        }
+        $tile.toggleClass("is-on", on);
+        $pill.toggleClass("is-on", on);
+        $tile.attr("aria-checked", on ? "true" : "false");
+      }
+
+      function onStateChange(e, newVal) {
+        applyState(newVal);
+      }
+
+      applyState(vis.states[oidRead + ".val"]);
+      vis.states.bind(oidRead + ".val", onStateChange);
+
+      $this.on("click.newbornSwitch touchend.newbornSwitch", function () {
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        if (moved) {
+          return;
+        }
+        var current = vis.states[oidRead + ".val"];
+        var on = isOn(current);
+        if (oidStatus && invert) {
+          on = !on;
+        }
+        var next = !on;
+        var writeValue = (oidStatus && invert) ? !next : next;
+        vis.setValue(oid, writeValue);
+      });
+      $this.on("touchmove.newbornSwitch", function () {
+        moved = true;
+      });
+      $this.on("touchstart.newbornSwitch", function () {
+        moved = false;
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornSwitch");
+        if (vis.states.unbind) {
+          vis.states.unbind(oidRead + ".val", onStateChange);
+        }
+      });
+    };
+
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.17 ready");
+      console.log("vis-newborn 0.1.18 ready");
       ns._versionLogged = true;
     }
   })();

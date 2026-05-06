@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.17",
+    "version": "0.1.18",
     "news": {
+      "0.1.18": {
+        "en": "New widget: Newborn Schalter (Tile) — generic on/off switch tile inspired by HomeKit, usable for any device that can be switched on/off (Klimaanlage, Wallbox, Pumpe, …). Icon top-left (editable image picker, default power-icon SVG; recommended ~64×64 PNG/SVG, scaled via object-fit so any size works). Optional room text top-right (only shown when filled). Title bottom-left (default 'Schalter'). iOS-style pill bottom-right — blue background with editable on-label (default 'an') when ON, neutral grey (no text) when OFF. Same KNX auto-detect convention as Light/Toggle: oid_status set => 2-DP mode, empty => 1-DP bidirectional. invert_status only applies in 2-DP mode.",
+        "de": "Neues Widget: Newborn Schalter (Tile) — generische An/Aus-Kachel im HomeKit-Stil, verwendbar fuer alle Geraete die ein/aus geschaltet werden koennen (Klimaanlage, Wallbox, Pumpe, …). Icon oben links (editierbarer Image-Picker, Default Power-Icon-SVG; empfohlen ca. 64×64 PNG/SVG, wird via object-fit skaliert sodass jede Groesse passt). Optionaler Raum-Text oben rechts (nur sichtbar wenn ausgefuellt). Titel unten links (Default 'Schalter'). iOS-Style-Pille unten rechts — blau hinterlegt mit editierbarem An-Label (Default 'an') wenn ON, neutral grau (ohne Text) wenn OFF. Gleiche KNX-Auto-Erkennung wie Licht/Toggle: oid_status gesetzt => 2-DP-Modus, leer => 1-DP bidirektional. invert_status greift nur im 2-DP-Modus."
+      },
       "0.1.17": {
         "en": "Fenster widgets — Auf/Zu buttons enlarged to match the Jalousie arrow buttons. Heights now small/medium/large = 32/38/50 px (was 28/32/38), border-radius and font-size bumped accordingly. Tile default heights raised so the larger buttons fit comfortably (Newborn Fenster: 165/185/220 px, Newborn Fenster + Rollo: 210/235/280 px).",
         "de": "Fenster-Widgets — Auf/Zu-Buttons vergrößert, jetzt so hoch wie die Pfeil-Buttons im Jalousie-Widget. Höhen small/medium/large = 32/38/50 px (vorher 28/32/38), Border-Radius und Schriftgröße entsprechend mitgewachsen. Kachel-Default-Höhen leicht erhöht damit die größeren Buttons sauber reinpassen (Newborn Fenster: 165/185/220 px, Newborn Fenster + Rollo: 210/235/280 px)."
