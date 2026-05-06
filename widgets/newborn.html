@@ -325,6 +325,56 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .vis-newborn-dimmer-tile .nd-controls {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .vis-newborn-dimmer-tile .nd-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.18);
+    color: inherit;
+    border: 1px solid rgba(255,255,255,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 160ms ease, transform 100ms ease;
+    font-family: inherit;
+  }
+
+  .vis-newborn-dimmer-tile.is-on .nd-btn {
+    background: rgba(255,255,255,0.45);
+    border-color: rgba(255,255,255,0.35);
+  }
+
+  .vis-newborn-dimmer-tile .nd-btn:hover {
+    background: rgba(255,255,255,0.32);
+  }
+  .vis-newborn-dimmer-tile.is-on .nd-btn:hover {
+    background: rgba(255,255,255,0.65);
+  }
+  .vis-newborn-dimmer-tile .nd-btn:active {
+    transform: scale(0.92);
+  }
+
+  .vis-newborn-dimmer-tile .nd-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
   .vis-widget.vis-newborn-dimmer-size-small  { width: 100px !important; height: 100px !important; }
   .vis-widget.vis-newborn-dimmer-size-medium { width: 130px !important; height: 130px !important; }
   .vis-widget.vis-newborn-dimmer-size-large  { width: 160px !important; height: 160px !important; }
@@ -677,6 +727,362 @@
   }
 
   /* ============================================================== */
+  /*  Heizung widget (vis-newborn-heat-*)                           */
+  /*  Vorschau: Soll groß, Ist klein, ± Buttons (rel_cmd true/false)*/
+  /*  Long-press → Popup mit vertikalem Slider für abs Sollwert.    */
+  /*  4 OIDs: oid_set_abs_cmd / oid_set_abs_state /                 */
+  /*          oid_set_rel_cmd / oid_actual_state                    */
+  /* ============================================================== */
+  .vis-newborn-heat-tile,
+  .vis-newborn-heat-tile *,
+  .vis-newborn-heat-tile *::before,
+  .vis-newborn-heat-tile *::after,
+  .vis-newborn-heat-popup,
+  .vis-newborn-heat-popup *,
+  .vis-newborn-heat-popup *::before,
+  .vis-newborn-heat-popup *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-heat-tile {
+    --hp-radius: 22px;
+    --hp-bg-1: #ffffff;
+    --hp-bg-2: #f5f5f8;
+    --hp-text: #1c1c1e;
+    --hp-text-muted: #8e8e93;
+    --hp-accent: #e85a3a;
+    --hp-btn-bg: #ffffff;
+    --hp-btn-border: rgba(0,0,0,0.08);
+    --hp-btn-bg-hover: #f2f2f7;
+    --hp-btn-bg-active: #e5e5ea;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--hp-radius);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(160deg, var(--hp-bg-1) 0%, var(--hp-bg-2) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 0 0 1px rgba(0,0,0,0.04) inset,
+      0 4px 14px -4px rgba(0,0,0,0.10);
+    color: var(--hp-text);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .vis-newborn-heat-tile .hp-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .vis-newborn-heat-tile .hp-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(232,90,58,0.10);
+    color: var(--hp-accent);
+    flex-shrink: 0;
+  }
+
+  .vis-newborn-heat-tile .hp-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .vis-newborn-heat-tile .hp-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: 1.2;
+    color: var(--hp-text);
+    flex: 1;
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  .vis-newborn-heat-tile .hp-soll {
+    font-size: 30px;
+    font-weight: 300;
+    letter-spacing: -1.2px;
+    color: var(--hp-text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+    margin-top: 4px;
+  }
+
+  .vis-newborn-heat-tile .hp-soll-unit {
+    font-size: 16px;
+    color: var(--hp-text-muted);
+    margin-left: 2px;
+    font-weight: 400;
+  }
+
+  .vis-newborn-heat-tile .hp-ist {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--hp-text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .vis-newborn-heat-tile .hp-ist .hp-ist-val {
+    color: var(--hp-text);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 4px;
+  }
+
+  .vis-newborn-heat-tile .hp-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+
+  .vis-newborn-heat-tile .hp-btn {
+    flex: 1;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--hp-btn-bg);
+    border: 1px solid var(--hp-btn-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 160ms ease, transform 100ms ease;
+    color: var(--hp-text);
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .vis-newborn-heat-tile .hp-btn:hover {
+    background: var(--hp-btn-bg-hover);
+  }
+  .vis-newborn-heat-tile .hp-btn:active {
+    background: var(--hp-btn-bg-active);
+    transform: scale(0.96);
+  }
+  .vis-newborn-heat-tile .hp-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* Sizes */
+  .vis-widget.vis-newborn-heat-size-small  { width: 140px !important; height: 160px !important; }
+  .vis-widget.vis-newborn-heat-size-medium { width: 170px !important; height: 190px !important; }
+  .vis-widget.vis-newborn-heat-size-large  { width: 210px !important; height: 230px !important; }
+
+  .vis-newborn-heat-tile.size-small {
+    padding: 12px;
+  }
+  .vis-newborn-heat-tile.size-small .hp-icon { width: 24px; height: 24px; }
+  .vis-newborn-heat-tile.size-small .hp-icon svg { width: 14px; height: 14px; }
+  .vis-newborn-heat-tile.size-small .hp-name { font-size: 12px; }
+  .vis-newborn-heat-tile.size-small .hp-soll { font-size: 26px; }
+  .vis-newborn-heat-tile.size-small .hp-soll-unit { font-size: 14px; }
+  .vis-newborn-heat-tile.size-small .hp-ist { font-size: 10px; }
+  .vis-newborn-heat-tile.size-small .hp-btn { height: 32px; }
+  .vis-newborn-heat-tile.size-small .hp-btn svg { width: 14px; height: 14px; }
+
+  .vis-newborn-heat-tile.size-large {
+    padding: 18px;
+    gap: 6px;
+  }
+  .vis-newborn-heat-tile.size-large .hp-icon { width: 32px; height: 32px; }
+  .vis-newborn-heat-tile.size-large .hp-icon svg { width: 18px; height: 18px; }
+  .vis-newborn-heat-tile.size-large .hp-name { font-size: 16px; }
+  .vis-newborn-heat-tile.size-large .hp-soll { font-size: 36px; }
+  .vis-newborn-heat-tile.size-large .hp-soll-unit { font-size: 18px; }
+  .vis-newborn-heat-tile.size-large .hp-ist { font-size: 12px; }
+  .vis-newborn-heat-tile.size-large .hp-btn { height: 46px; border-radius: 12px; }
+  .vis-newborn-heat-tile.size-large .hp-btn svg { width: 18px; height: 18px; }
+
+  body.vis-edit-active .vis-widget.vis-newborn-heat-wrap .vis-newborn-heat-tile,
+  body.vis-edit-active .vis-widget.vis-newborn-heat-wrap .vis-newborn-heat-tile * {
+    pointer-events: none !important;
+  }
+
+  /* ===== Heizung popup (vertikaler Slider für abs Sollwert) ===== */
+  .vis-newborn-heat-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0);
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    transition:
+      background 220ms cubic-bezier(.65,.05,.36,1),
+      backdrop-filter 220ms cubic-bezier(.65,.05,.36,1),
+      -webkit-backdrop-filter 220ms cubic-bezier(.65,.05,.36,1);
+    pointer-events: none;
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .vis-newborn-heat-popup.is-open {
+    background: rgba(0,0,0,0.55);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+  }
+
+  .vis-newborn-heat-popup .hp-popup-card {
+    position: relative;
+    width: 240px;
+    background: #ffffff;
+    color: #1c1c1e;
+    border-radius: 28px;
+    padding: 22px 22px 26px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    transition:
+      transform 280ms cubic-bezier(.2,.9,.3,1.2),
+      opacity 220ms cubic-bezier(.65,.05,.36,1);
+  }
+
+  .vis-newborn-heat-popup.is-open .hp-popup-card {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .vis-newborn-heat-popup .hp-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f2f2f7;
+    color: #6e6e74;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.18s ease, color 0.18s ease;
+    font-family: inherit;
+  }
+  .vis-newborn-heat-popup .hp-popup-close:hover {
+    background: #e5e5ea;
+    color: #1c1c1e;
+  }
+
+  .vis-newborn-heat-popup .hp-popup-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 30px 8px 0;
+    letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .vis-newborn-heat-popup .hp-popup-ist {
+    font-size: 12px;
+    color: #8e8e93;
+    margin-bottom: 12px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  .vis-newborn-heat-popup .hp-popup-ist .hp-popup-ist-val {
+    color: #1c1c1e;
+    font-weight: 700;
+    margin-left: 4px;
+  }
+
+  .vis-newborn-heat-popup .hp-popup-temp {
+    font-size: 38px;
+    font-weight: 200;
+    text-align: center;
+    color: #1c1c1e;
+    letter-spacing: -2px;
+    margin: 0 0 18px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .vis-newborn-heat-popup .hp-popup-temp .hp-popup-unit {
+    font-size: 22px;
+    margin-left: 2px;
+    color: #8e8e93;
+  }
+
+  .vis-newborn-heat-popup .hp-slider {
+    position: relative;
+    width: 110px;
+    height: 280px;
+    margin: 0 auto;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #f2f2f7 0%, #e5e5ea 100%);
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+    touch-action: none;
+  }
+
+  .vis-newborn-heat-popup .hp-slider-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0%;
+    background: linear-gradient(180deg, #ff8a5b 0%, #e85a3a 100%);
+    transition: height 0.06s linear;
+    pointer-events: none;
+  }
+
+  .vis-newborn-heat-popup .hp-slider-handle {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 0%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    pointer-events: none;
+    transform: translateY(50%);
+    transition: bottom 0.06s linear, opacity 0.18s ease;
+    opacity: 0;
+  }
+
+  /* ============================================================== */
   /*  Blinds widget (vis-newborn-blinds-*)                          */
   /*  Portrait tile with Jalousie up/down + Lamellen up/down +      */
   /*  central Stop button. Long-press opens a popup with two        */
@@ -805,18 +1211,12 @@
 
   .vis-newborn-blinds-tile .bl-row {
     display: grid;
-    grid-template-columns: 30px 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 6px;
     align-items: center;
   }
-
-  .vis-newborn-blinds-tile .bl-row-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--bl-text-muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding-right: 2px;
+  .vis-newborn-blinds-tile .bl-row-stop {
+    display: block;
   }
 
   .vis-newborn-blinds-tile .bl-btn {
@@ -850,10 +1250,8 @@
     stroke-linejoin: round;
   }
 
-  /* Stop sits in its own bl-row, but spans cols 2+3 only — same width
-     as the up+down buttons above, NOT full-width. */
+  /* Stop spans full tile width below the Jal up/down row. */
   .vis-newborn-blinds-tile .bl-row-stop .bl-btn-stop {
-    grid-column: 2 / span 2;
     width: 100%;
     height: 34px;
     background: var(--bl-stop-bg);
@@ -873,7 +1271,7 @@
 
   .vis-newborn-blinds-tile .bl-pct-row {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     margin-top: auto;
     padding-top: 6px;
     font-size: 13px;
@@ -881,11 +1279,6 @@
     color: var(--bl-text);
     font-variant-numeric: tabular-nums;
     line-height: 1;
-  }
-  .vis-newborn-blinds-tile .bl-pct-row .bl-pct-key {
-    color: var(--bl-text-muted);
-    font-weight: 500;
-    margin-right: 4px;
   }
 
   /* Sizes — bumped to fit the title row and bigger buttons */
@@ -1083,6 +1476,39 @@
     transition: bottom 0.06s linear, opacity 0.18s ease;
     opacity: 0;
   }
+
+  .vis-newborn-blinds-popup .bl-popup-stop {
+    margin-top: 18px;
+    width: 100%;
+    height: 38px;
+    border-radius: 12px;
+    background: rgba(232,83,74,0.10);
+    border: 1px solid rgba(232,83,74,0.22);
+    color: #d12824;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0;
+    font-family: inherit;
+    transition: background 160ms ease, transform 100ms ease;
+  }
+  .vis-newborn-blinds-popup .bl-popup-stop:hover {
+    background: rgba(232,83,74,0.18);
+  }
+  .vis-newborn-blinds-popup .bl-popup-stop:active {
+    transform: scale(0.98);
+  }
+  .vis-newborn-blinds-popup .bl-popup-stop svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+  }
 </style>
 
 <!-- ====================================================================
@@ -1138,10 +1564,10 @@ var tcStyle = tcCustom ? ('width:' + tcW + 'px !important;height:' + tcH + 'px !
 <script id="tplNewbornDimmer"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:90px;"><div class="vis-newborn-dimmer-tile size-small is-on" style="width:80px;height:80px;position:relative;border-radius:18px;background:linear-gradient(160deg,#ffd66b 0%, #f5b042 100%);box-shadow:0 1px 0 rgba(255,255,255,0.35) inset, 0 8px 22px -8px rgba(255,198,80,0.55);color:#2a1a06;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:999px;background:rgba(255,255,255,0.55);color:#b85c00;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div style="position:absolute;left:8px;right:8px;bottom:22px;font-size:11px;font-weight:600;">Lampe</div><div style="position:absolute;left:8px;bottom:8px;font-size:10px;font-weight:500;opacity:0.85;">75%</div></div></div>'
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:100px;height:90px;"><div class="vis-newborn-dimmer-tile size-small is-on" style="width:90px;height:80px;position:relative;border-radius:18px;background:linear-gradient(160deg,#ffd66b 0%, #f5b042 100%);box-shadow:0 1px 0 rgba(255,255,255,0.35) inset, 0 8px 22px -8px rgba(255,198,80,0.55);color:#2a1a06;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:6px;left:6px;width:22px;height:22px;border-radius:999px;background:rgba(255,255,255,0.55);color:#b85c00;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.6 1 2.5h6c0-.9.3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div><div style="position:absolute;left:6px;right:6px;top:30px;font-size:10px;font-weight:600;">Lampe</div><div style="position:absolute;left:6px;bottom:8px;font-size:10px;font-weight:500;opacity:0.85;">75%</div><div style="position:absolute;right:5px;bottom:5px;display:flex;gap:3px;"><div style="width:20px;height:20px;border-radius:999px;background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="6" y1="12" x2="18" y2="12"/></svg></div><div style="width:20px;height:20px;border-radius:999px;background:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg></div></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Dimmer (Tile)"
-        data-vis-attrs="oid_switch_cmd/id;oid_switch_state/id;oid_dim_cmd/id;oid_dim_state/id;name/text;size/select,small,medium,large;width/number;height/number">
+        data-vis-attrs="oid_switch_cmd/id;oid_switch_state/id;oid_dim_cmd/id;oid_dim_state/id;oid_rel_dim_cmd/id;oid_rel_dim_state/id;name/text;size/select,small,medium,large;width/number;height/number">
 <%
 var dcSize = this.data.attr('size') || 'medium';
 var dcDef = dcSize === 'small' ? 100 : dcSize === 'large' ? 160 : 130;
@@ -1164,6 +1590,8 @@ var dcStyle = dcCustom ? ('width:' + dcW + 'px !important;height:' + dcH + 'px !
      data-oid-switch-state="<%= this.data.attr('oid_switch_state') %>"
      data-oid-dim-cmd="<%= this.data.attr('oid_dim_cmd') %>"
      data-oid-dim-state="<%= this.data.attr('oid_dim_state') %>"
+     data-oid-rel-dim-cmd="<%= this.data.attr('oid_rel_dim_cmd') %>"
+     data-oid-rel-dim-state="<%= this.data.attr('oid_rel_dim_state') %>"
      data-nd-name="<%= this.data.attr('name') %>"
      <%= (el) -> vis.binds['newborn'].dimmer(el) %>>
   <div class="vis-newborn-dimmer-tile size-<%= (this.data.attr('size') || 'medium') %>"
@@ -1178,6 +1606,14 @@ var dcStyle = dcCustom ? ('width:' + dcW + 'px !important;height:' + dcH + 'px !
     </div>
     <div class="nd-name"><%= this.data.attr('name') || 'Lampe' %></div>
     <div class="nd-percent"><span class="nd-pct">0</span>%</div>
+    <div class="nd-controls">
+      <button type="button" class="nd-btn" data-nd-action="dim-down" aria-label="dunkler">
+        <svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="18" y2="12"/></svg>
+      </button>
+      <button type="button" class="nd-btn" data-nd-action="dim-up" aria-label="heller">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 </script>
@@ -1235,14 +1671,83 @@ var lcStyle = lcCustom ? ('width:' + lcW + 'px !important;height:' + lcH + 'px !
 </script>
 
 <!-- ====================================================================
-     Blinds template — Jalousie + Lamellen + Stop, with long-press popup.
-     6 OIDs: blinds_cmd (boolean up/down), blinds_pos_cmd / state (0-100),
-             slats_cmd  (boolean up/down/stop), slats_pos_cmd / state (0-100).
+     Heizung template — Soll/Ist + relative ± buttons; long-press → popup
+     mit vertikalem Slider für absoluten Sollwert.
+     4 OIDs: oid_set_abs_cmd      (write soll absolute, Zahl)
+             oid_set_abs_state    (read soll, Zahl)
+             oid_set_rel_cmd      (boolean — true = wärmer, false = kälter)
+             oid_actual_state     (read ist-Temperatur, Zahl)
+     ==================================================================== -->
+<script id="tplNewbornHeat"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:130px;"><div style="width:100px;height:120px;border-radius:14px;background:linear-gradient(160deg,#ffffff 0%, #f5f5f8 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;display:flex;flex-direction:column;gap:3px;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><div style="display:flex;align-items:center;gap:5px;"><div style="width:16px;height:16px;border-radius:999px;background:rgba(232,90,58,0.10);color:#e85a3a;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14V5a2 2 0 0 0-4 0v9a4 4 0 1 0 4 0z"/></svg></div><div style="font-size:9px;font-weight:700;line-height:1.2;">Heizung</div></div><div style="font-size:18px;font-weight:300;letter-spacing:-0.5px;margin-top:2px;line-height:1;">22.0<span style="font-size:10px;color:#8e8e93;">°C</span></div><div style="font-size:8px;color:#8e8e93;text-transform:uppercase;font-weight:600;">Ist <span style="color:#1c1c1e;font-weight:700;text-transform:none;">20.5°C</span></div><div style="display:flex;gap:4px;margin-top:auto;"><div style="flex:1;height:18px;border-radius:5px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;font-weight:700;font-size:11px;">−</div><div style="flex:1;height:18px;border-radius:5px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;font-weight:700;font-size:11px;">+</div></div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Heizung (Tile)"
+        data-vis-attrs="oid_set_abs_cmd/id;oid_set_abs_state/id;oid_set_rel_cmd/id;oid_actual_state/id;name/text;size/select,small,medium,large;width/number;height/number">
+<%
+var hcSize = this.data.attr('size') || 'medium';
+var hcDefW = hcSize === 'small' ? 140 : hcSize === 'large' ? 210 : 170;
+var hcDefH = hcSize === 'small' ? 160 : hcSize === 'large' ? 230 : 190;
+var hcW = parseInt(this.data.attr('width'), 10);
+var hcH = parseInt(this.data.attr('height'), 10);
+var hcCustomW = isFinite(hcW) && hcW > 0;
+var hcCustomH = isFinite(hcH) && hcH > 0;
+var hcCustom = hcCustomW || hcCustomH;
+if (hcCustom && !hcCustomW) hcW = hcDefW;
+if (hcCustom && !hcCustomH) hcH = hcDefH;
+if (hcCustom && hcW < 140) hcW = 140;
+if (hcCustom && hcH < 160) hcH = 160;
+var hcSizeClass = hcCustom ? '' : ('vis-newborn-heat-size-' + hcSize);
+var hcStyle = hcCustom ? ('width:' + hcW + 'px !important;height:' + hcH + 'px !important;') : 'width:170px;height:190px;';
+%>
+<div class="vis-widget vis-newborn-heat-wrap <%= hcSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= hcStyle %> padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid-set-abs-cmd="<%= this.data.attr('oid_set_abs_cmd') %>"
+     data-oid-set-abs-state="<%= this.data.attr('oid_set_abs_state') %>"
+     data-oid-set-rel-cmd="<%= this.data.attr('oid_set_rel_cmd') %>"
+     data-oid-actual-state="<%= this.data.attr('oid_actual_state') %>"
+     data-hp-name="<%= this.data.attr('name') %>"
+     <%= (el) -> vis.binds['newborn'].heat(el) %>>
+  <div class="vis-newborn-heat-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="group"
+       aria-label="Heizung">
+    <div class="hp-top">
+      <div class="hp-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M14 14V5a2 2 0 0 0-4 0v9a4 4 0 1 0 4 0z"/>
+        </svg>
+      </div>
+      <div class="hp-name"><%= this.data.attr('name') || 'Heizung' %></div>
+    </div>
+
+    <div class="hp-soll"><span class="hp-soll-val">--</span><span class="hp-soll-unit">°C</span></div>
+    <div class="hp-ist">Ist<span class="hp-ist-val">--</span></div>
+
+    <div class="hp-controls">
+      <button type="button" class="hp-btn" data-hp-action="rel-down" aria-label="kälter">
+        <svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="18" y2="12"/></svg>
+      </button>
+      <button type="button" class="hp-btn" data-hp-action="rel-up" aria-label="wärmer">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Blinds template — Jalousie up/down + Stop, mit Long-Press-Popup für
+     abs Werte (Jalousie + Lamellen). Stop-Button auch im Popup.
+     7 OIDs: blinds_cmd (boolean up/down), blinds_pos_cmd / state (0-100),
+             slats_cmd  (boolean up/down/stop, vom Stop benutzt),
+             slats_pos_cmd / state (0-100), window_state (optional).
      ==================================================================== -->
 <script id="tplNewbornBlinds"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:150px;"><div style="width:100px;height:140px;border-radius:14px;background:linear-gradient(160deg,#ffffff 0%, #f5f5f8 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;gap:5px;"><div style="width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#8e8e93;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-size:7px;font-weight:700;padding:2px 6px;border-radius:999px;background:#3ec168;color:#fff;text-transform:uppercase;">zu</div></div><div style="font-weight:700;font-size:9px;line-height:1.2;">Jalousie</div><div style="display:grid;grid-template-columns:18px 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#8e8e93;text-transform:uppercase;font-weight:700;">Jal</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:18px 1fr 1fr;gap:3px;align-items:center;"><div style="font-size:6px;color:#8e8e93;text-transform:uppercase;font-weight:700;">Lam</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▲</div><div style="height:16px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;">▼</div></div><div style="display:grid;grid-template-columns:18px 1fr 1fr;gap:3px;align-items:center;"><span></span><div style="grid-column:2 / span 2;height:14px;border-radius:4px;background:rgba(232,83,74,0.10);border:1px solid rgba(232,83,74,0.22);color:#d12824;display:flex;align-items:center;justify-content:center;font-weight:700;">⏹</div></div><div style="display:flex;justify-content:space-around;font-size:7px;color:#1c1c1e;font-weight:700;margin-top:auto;">75 %<span>50 %</span></div></div></div>'
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:110px;height:140px;"><div style="width:100px;height:130px;border-radius:14px;background:linear-gradient(160deg,#ffffff 0%, #f5f5f8 100%);color:#1c1c1e;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;padding:8px;box-sizing:border-box;font-size:8px;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,0.08);"><div style="display:flex;align-items:center;justify-content:space-between;gap:5px;"><div style="width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,0.05);display:flex;align-items:center;justify-content:center;color:#8e8e93;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/></svg></div><div style="font-size:7px;font-weight:700;padding:2px 6px;border-radius:999px;background:#3ec168;color:#fff;text-transform:uppercase;">zu</div></div><div style="font-weight:700;font-size:9px;line-height:1.2;">Jalousie</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;align-items:center;"><div style="height:18px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;font-weight:700;">▲</div><div style="height:18px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;color:#1c1c1e;font-weight:700;">▼</div></div><div style="height:14px;border-radius:4px;background:rgba(232,83,74,0.10);border:1px solid rgba(232,83,74,0.22);color:#d12824;display:flex;align-items:center;justify-content:center;font-weight:700;">⏹</div><div style="font-size:9px;color:#1c1c1e;font-weight:700;margin-top:auto;text-align:center;">50 %</div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Jalousie (Tile)"
         data-vis-attrs="oid_blinds_cmd/id;oid_blinds_pos_cmd/id;oid_blinds_pos_state/id;oid_slats_cmd/id;oid_slats_pos_cmd/id;oid_slats_pos_state/id;oid_window_state/id;name/text;size/select,small,medium,large;width/number;height/number">
@@ -1291,8 +1796,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
 
     <div class="bl-name"><%= this.data.attr('name') || 'Jalousie' %></div>
 
-    <div class="bl-row">
-      <span class="bl-row-label">Jal</span>
+    <div class="bl-row bl-row-jal">
       <div class="bl-btn" data-bl-action="jal-up" role="button" aria-label="Jalousie auf">
         <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
       </div>
@@ -1301,26 +1805,14 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       </div>
     </div>
 
-    <div class="bl-row">
-      <span class="bl-row-label">Lam</span>
-      <div class="bl-btn" data-bl-action="lam-up" role="button" aria-label="Lamellen auf">
-        <svg viewBox="0 0 24 24"><polyline points="6 14 12 8 18 14"/></svg>
-      </div>
-      <div class="bl-btn" data-bl-action="lam-down" role="button" aria-label="Lamellen ab">
-        <svg viewBox="0 0 24 24"><polyline points="6 10 12 16 18 10"/></svg>
-      </div>
-    </div>
-
     <div class="bl-row bl-row-stop">
-      <span class="bl-row-label"></span>
       <div class="bl-btn bl-btn-stop" data-bl-action="stop" role="button" aria-label="Stop">
         <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
       </div>
     </div>
 
     <div class="bl-pct-row">
-      <span><span class="bl-pct-key">Jal</span><span class="bl-pct-jal">0</span> %</span>
-      <span><span class="bl-pct-key">Lam</span><span class="bl-pct-lam">0</span> %</span>
+      <span><span class="bl-pct-jal">0</span> %</span>
     </div>
   </div>
 </div>
@@ -1598,12 +2090,13 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       var oidSwitchState = $this.data("oid-switch-state");
       var oidDimCmd      = $this.data("oid-dim-cmd");
       var oidDimState    = $this.data("oid-dim-state");
+      var oidRelDimCmd   = $this.data("oid-rel-dim-cmd");
       var name           = $this.data("nd-name") || "Lampe";
 
       if (vis.editMode) {
         return;
       }
-      if (!oidSwitchCmd && !oidDimCmd) {
+      if (!oidSwitchCmd && !oidDimCmd && !oidRelDimCmd) {
         return;
       }
 
@@ -1654,6 +2147,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       var moved = false;
       var startX = 0;
       var startY = 0;
+      var pressedAction = null;
       var LONG_PRESS_MS = 500;
       var MOVE_TOL = 12;
 
@@ -1678,6 +2172,12 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         moved = false;
         startX = p[0];
         startY = p[1];
+        var btn = $(e.target).closest("[data-nd-action]")[0];
+        pressedAction = btn ? btn.getAttribute("data-nd-action") : null;
+        // Press on a +/- button: no long-press timer, no toggle.
+        if (pressedAction) {
+          return;
+        }
         pressTimer = setTimeout(function () {
           longPressed = true;
           pressTimer = null;
@@ -1710,6 +2210,17 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         }
       }
 
+      function performRelDim(action) {
+        if (!oidRelDimCmd) {
+          return;
+        }
+        if (action === "dim-up") {
+          vis.setValue(oidRelDimCmd, true);
+        } else if (action === "dim-down") {
+          vis.setValue(oidRelDimCmd, false);
+        }
+      }
+
       function onRelease(e) {
         if (pressTimer) {
           clearTimeout(pressTimer);
@@ -1718,9 +2229,16 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         if (longPressed || moved) {
           longPressed = false;
           moved = false;
+          pressedAction = null;
           return;
         }
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          pressedAction = null;
+          return;
+        }
+        if (pressedAction) {
+          performRelDim(pressedAction);
+          pressedAction = null;
           return;
         }
         var current = isOn(vis.states[readOn + ".val"]);
@@ -1851,6 +2369,10 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         '      </div>',
         '    </div>',
         '  </div>',
+        '  <button type="button" class="bl-popup-stop" aria-label="Stop">',
+        '    <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>',
+        '    Stop',
+        '  </button>',
         '</div>'
       ].join("");
       document.body.appendChild(popup);
@@ -1892,6 +2414,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       var titleEl = popup.querySelector(".bl-popup-title");
       var blindsSlider = popup.querySelector('[data-bl-slider="blinds"]');
       var slatsSlider = popup.querySelector('[data-bl-slider="slats"]');
+      var stopBtn = popup.querySelector(".bl-popup-stop");
 
       titleEl.textContent = ctx.name || "Jalousie";
 
@@ -2003,6 +2526,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         document.removeEventListener("touchcancel", onPointerUp);
         popup.removeEventListener("click", onBackdropClick);
         closeBtn.removeEventListener("click", onCloseClick);
+        stopBtn.removeEventListener("click", onStopClick);
         ctx.popupOnExternalUpdate = null;
       }
 
@@ -2017,8 +2541,16 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         close();
       }
 
+      function onStopClick(e) {
+        e.stopPropagation();
+        if (ctx.oidSlatsCmd) {
+          vis.setValue(ctx.oidSlatsCmd, true);
+        }
+      }
+
       popup.addEventListener("click", onBackdropClick);
       closeBtn.addEventListener("click", onCloseClick);
+      stopBtn.addEventListener("click", onStopClick);
 
       ctx.popupOnExternalUpdate = function (newBlindsPct, newSlatsPct) {
         if (dragging) {
@@ -2066,6 +2598,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       var ctx = {
         oidBlindsPosCmd: oidBlindsPosCmd,
         oidSlatsPosCmd: oidSlatsPosCmd,
+        oidSlatsCmd: oidSlatsCmd,
         readBlinds: readBlinds,
         readSlats: readSlats,
         name: name,
@@ -2075,7 +2608,6 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       };
 
       var $pctJal = $this.find(".bl-pct-jal");
-      var $pctLam = $this.find(".bl-pct-lam");
       var $badge  = $this.find(".bl-badge");
 
       function applyState() {
@@ -2087,7 +2619,6 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
         }
         if (readSlats) {
           sp = toPct(vis.states[readSlats + ".val"]);
-          $pctLam.text(sp);
         }
         if (oidWindowState) {
           var open = isOn(vis.states[oidWindowState + ".val"]);
@@ -2258,8 +2789,369 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       });
     };
 
+    // ===== Heizung handler (Soll/Ist + ± buttons + long-press abs popup) =====
+    var sharedHeatPopup = null;
+
+    function ensureHeatPopup() {
+      if (sharedHeatPopup) {
+        return sharedHeatPopup;
+      }
+      var popup = document.createElement("div");
+      popup.className = "vis-newborn-heat-popup";
+      popup.innerHTML = [
+        '<div class="hp-popup-card">',
+        '  <button type="button" class="hp-popup-close" aria-label="Schliessen">&times;</button>',
+        '  <div class="hp-popup-title">Heizung</div>',
+        '  <div class="hp-popup-ist">Ist<span class="hp-popup-ist-val">--</span></div>',
+        '  <div class="hp-popup-temp"><span class="hp-popup-soll">--</span><span class="hp-popup-unit">°C</span></div>',
+        '  <div class="hp-slider">',
+        '    <div class="hp-slider-fill"></div>',
+        '    <div class="hp-slider-handle"></div>',
+        '  </div>',
+        '</div>'
+      ].join("");
+      document.body.appendChild(popup);
+      sharedHeatPopup = popup;
+      return popup;
+    }
+
+    // Sliderbereich der Heizungs-UI: 5–30 °C in 0.5er Schritten.
+    // Schreibt aufs cmd nur Float-Werte; ob KNX dem folgt oder selbst clampt,
+    // ist Sache des KNX-Geräts (User-Vorgabe: "min max wird in knx festgelegt").
+    var HEAT_MIN = 5;
+    var HEAT_MAX = 30;
+    var HEAT_STEP = 0.5;
+
+    function clampHeat(v) {
+      if (v < HEAT_MIN) {
+        return HEAT_MIN;
+      }
+      if (v > HEAT_MAX) {
+        return HEAT_MAX;
+      }
+      return v;
+    }
+
+    function snapHeat(v) {
+      return Math.round(v / HEAT_STEP) * HEAT_STEP;
+    }
+
+    function fmtTemp(v) {
+      if (v === null || v === undefined || isNaN(v)) {
+        return "--";
+      }
+      var n = Math.round(v * 10) / 10;
+      var s = n.toFixed(1);
+      return s.replace(/\.0$/, ".0");
+    }
+
+    function renderHeatPopup(popup, sollVal, istVal) {
+      var clamped = clampHeat(sollVal);
+      var pct = (clamped - HEAT_MIN) / (HEAT_MAX - HEAT_MIN) * 100;
+      var fill = popup.querySelector(".hp-slider-fill");
+      var handle = popup.querySelector(".hp-slider-handle");
+      var sollEl = popup.querySelector(".hp-popup-soll");
+      var istEl = popup.querySelector(".hp-popup-ist-val");
+      fill.style.height = pct + "%";
+      handle.style.bottom = pct + "%";
+      handle.style.opacity = pct > 0 ? "1" : "0";
+      sollEl.textContent = fmtTemp(sollVal);
+      istEl.textContent = " " + fmtTemp(istVal) + " °C";
+    }
+
+    function openHeatPopup(ctx) {
+      var popup = ensureHeatPopup();
+      var slider = popup.querySelector(".hp-slider");
+      var closeBtn = popup.querySelector(".hp-popup-close");
+      var titleEl = popup.querySelector(".hp-popup-title");
+
+      titleEl.textContent = ctx.name || "Heizung";
+
+      var sollRaw = parseFloat(vis.states[ctx.readSoll + ".val"]);
+      var istRaw  = parseFloat(vis.states[ctx.readIst  + ".val"]);
+      if (!isFinite(sollRaw)) {
+        sollRaw = HEAT_MIN;
+      }
+      renderHeatPopup(popup, sollRaw, istRaw);
+
+      var dragging = false;
+      var lastWritten = -999;
+
+      function tempFromEvent(e) {
+        var rect = slider.getBoundingClientRect();
+        var clientY;
+        if (e.touches && e.touches.length) {
+          clientY = e.touches[0].clientY;
+        } else if (e.changedTouches && e.changedTouches.length) {
+          clientY = e.changedTouches[0].clientY;
+        } else {
+          clientY = e.clientY;
+        }
+        var rel = (rect.bottom - clientY) / rect.height;
+        if (rel < 0) {
+          rel = 0;
+        }
+        if (rel > 1) {
+          rel = 1;
+        }
+        var raw = HEAT_MIN + rel * (HEAT_MAX - HEAT_MIN);
+        return clampHeat(snapHeat(raw));
+      }
+
+      function onPointerDown(e) {
+        dragging = true;
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        var t = tempFromEvent(e);
+        var ist = parseFloat(vis.states[ctx.readIst + ".val"]);
+        renderHeatPopup(popup, t, ist);
+      }
+
+      function onPointerMove(e) {
+        if (!dragging) {
+          return;
+        }
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        var t = tempFromEvent(e);
+        var ist = parseFloat(vis.states[ctx.readIst + ".val"]);
+        renderHeatPopup(popup, t, ist);
+      }
+
+      function onPointerUp(e) {
+        if (!dragging) {
+          return;
+        }
+        dragging = false;
+        var t = tempFromEvent(e);
+        var ist = parseFloat(vis.states[ctx.readIst + ".val"]);
+        renderHeatPopup(popup, t, ist);
+        if (t !== lastWritten && ctx.oidSetAbsCmd) {
+          vis.setValue(ctx.oidSetAbsCmd, t);
+          lastWritten = t;
+        }
+      }
+
+      var passiveFalse = {
+        passive: false
+      };
+
+      slider.addEventListener("mousedown", onPointerDown);
+      slider.addEventListener("touchstart", onPointerDown, passiveFalse);
+      document.addEventListener("mousemove", onPointerMove);
+      document.addEventListener("touchmove", onPointerMove, passiveFalse);
+      document.addEventListener("mouseup", onPointerUp);
+      document.addEventListener("touchend", onPointerUp);
+      document.addEventListener("touchcancel", onPointerUp);
+
+      function close() {
+        popup.classList.remove("is-open");
+        slider.removeEventListener("mousedown", onPointerDown);
+        slider.removeEventListener("touchstart", onPointerDown, passiveFalse);
+        document.removeEventListener("mousemove", onPointerMove);
+        document.removeEventListener("touchmove", onPointerMove, passiveFalse);
+        document.removeEventListener("mouseup", onPointerUp);
+        document.removeEventListener("touchend", onPointerUp);
+        document.removeEventListener("touchcancel", onPointerUp);
+        popup.removeEventListener("click", onBackdropClick);
+        closeBtn.removeEventListener("click", onCloseClick);
+        ctx.popupOnExternalUpdate = null;
+      }
+
+      function onBackdropClick(e) {
+        if (e.target === popup) {
+          close();
+        }
+      }
+
+      function onCloseClick(e) {
+        e.stopPropagation();
+        close();
+      }
+
+      popup.addEventListener("click", onBackdropClick);
+      closeBtn.addEventListener("click", onCloseClick);
+
+      ctx.popupOnExternalUpdate = function (newSoll, newIst) {
+        if (dragging) {
+          return;
+        }
+        renderHeatPopup(popup, newSoll, newIst);
+      };
+
+      requestAnimationFrame(function () {
+        popup.classList.add("is-open");
+      });
+    }
+
+    ns.heat = function (el) {
+      var $this = $(el);
+      var oidSetAbsCmd   = $this.data("oid-set-abs-cmd");
+      var oidSetAbsState = $this.data("oid-set-abs-state");
+      var oidSetRelCmd   = $this.data("oid-set-rel-cmd");
+      var oidActualState = $this.data("oid-actual-state");
+      var name           = $this.data("hp-name") || "Heizung";
+
+      if (vis.editMode) {
+        return;
+      }
+      if (!oidSetAbsCmd && !oidSetRelCmd && !oidSetAbsState && !oidActualState) {
+        return;
+      }
+
+      var readSoll = oidSetAbsState || oidSetAbsCmd;
+      var readIst  = oidActualState;
+
+      var ctx = {
+        oidSetAbsCmd: oidSetAbsCmd,
+        oidSetRelCmd: oidSetRelCmd,
+        readSoll: readSoll,
+        readIst: readIst,
+        name: name,
+        popupOnExternalUpdate: null
+      };
+
+      var $sollVal = $this.find(".hp-soll-val");
+      var $istVal  = $this.find(".hp-ist-val");
+
+      function applyState() {
+        var soll = parseFloat(vis.states[readSoll + ".val"]);
+        var ist  = parseFloat(vis.states[readIst  + ".val"]);
+        $sollVal.text(fmtTemp(soll));
+        $istVal.text(" " + fmtTemp(ist) + "°C");
+        if (ctx.popupOnExternalUpdate) {
+          ctx.popupOnExternalUpdate(soll, ist);
+        }
+      }
+
+      function onStateChange(e, val) {
+        applyState();
+      }
+
+      applyState();
+
+      if (readSoll) {
+        vis.states.bind(readSoll + ".val", onStateChange);
+      }
+      if (readIst && readIst !== readSoll) {
+        vis.states.bind(readIst + ".val", onStateChange);
+      }
+
+      // ===== Press detection (button click vs. long-press popup) =====
+      var pressTimer = null;
+      var longPressed = false;
+      var moved = false;
+      var startX = 0;
+      var startY = 0;
+      var pressedAction = null;
+      var LONG_PRESS_MS = 500;
+      var MOVE_TOL = 12;
+
+      function getXY(e) {
+        var oe = e.originalEvent || e;
+        if (oe.touches && oe.touches.length) {
+          return [oe.touches[0].clientX, oe.touches[0].clientY];
+        }
+        if (oe.changedTouches && oe.changedTouches.length) {
+          return [oe.changedTouches[0].clientX, oe.changedTouches[0].clientY];
+        }
+        return [e.clientX || 0, e.clientY || 0];
+      }
+
+      function startPress(e) {
+        var p = getXY(e);
+        longPressed = false;
+        moved = false;
+        startX = p[0];
+        startY = p[1];
+        var btn = $(e.target).closest("[data-hp-action]")[0];
+        pressedAction = btn ? btn.getAttribute("data-hp-action") : null;
+        pressTimer = setTimeout(function () {
+          longPressed = true;
+          pressTimer = null;
+          openHeatPopup(ctx);
+        }, LONG_PRESS_MS);
+      }
+
+      function cancelPress() {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      }
+
+      function onPressStart(e) {
+        if (e.type === "mousedown" && e.button !== undefined && e.button !== 0) {
+          return;
+        }
+        startPress(e);
+      }
+
+      function onPressMove(e) {
+        if (pressTimer === null && !longPressed) {
+          return;
+        }
+        var p = getXY(e);
+        if (Math.abs(p[0] - startX) > MOVE_TOL || Math.abs(p[1] - startY) > MOVE_TOL) {
+          moved = true;
+          cancelPress();
+        }
+      }
+
+      function performRel(action) {
+        if (!oidSetRelCmd) {
+          return;
+        }
+        if (action === "rel-up") {
+          vis.setValue(oidSetRelCmd, true);
+        } else if (action === "rel-down") {
+          vis.setValue(oidSetRelCmd, false);
+        }
+      }
+
+      function onRelease(e) {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+        if (longPressed || moved) {
+          longPressed = false;
+          moved = false;
+          pressedAction = null;
+          return;
+        }
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          pressedAction = null;
+          return;
+        }
+        if (pressedAction) {
+          performRel(pressedAction);
+          pressedAction = null;
+        }
+      }
+
+      $this.on("mousedown.newbornHeat touchstart.newbornHeat", onPressStart);
+      $this.on("mousemove.newbornHeat touchmove.newbornHeat", onPressMove);
+      $this.on("mouseup.newbornHeat mouseleave.newbornHeat touchend.newbornHeat touchcancel.newbornHeat", onRelease);
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornHeat");
+        cancelPress();
+        if (vis.states.unbind) {
+          if (readSoll) {
+            vis.states.unbind(readSoll + ".val", onStateChange);
+          }
+          if (readIst && readIst !== readSoll) {
+            vis.states.unbind(readIst + ".val", onStateChange);
+          }
+        }
+      });
+    };
+
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.11 ready");
+      console.log("vis-newborn 0.1.12 ready");
       ns._versionLogged = true;
     }
   })();
