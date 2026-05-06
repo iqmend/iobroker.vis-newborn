@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.16",
+    "version": "0.1.17",
     "news": {
+      "0.1.17": {
+        "en": "Fenster widgets — Auf/Zu buttons enlarged to match the Jalousie arrow buttons. Heights now small/medium/large = 32/38/50 px (was 28/32/38), border-radius and font-size bumped accordingly. Tile default heights raised so the larger buttons fit comfortably (Newborn Fenster: 165/185/220 px, Newborn Fenster + Rollo: 210/235/280 px).",
+        "de": "Fenster-Widgets — Auf/Zu-Buttons vergrößert, jetzt so hoch wie die Pfeil-Buttons im Jalousie-Widget. Höhen small/medium/large = 32/38/50 px (vorher 28/32/38), Border-Radius und Schriftgröße entsprechend mitgewachsen. Kachel-Default-Höhen leicht erhöht damit die größeren Buttons sauber reinpassen (Newborn Fenster: 165/185/220 px, Newborn Fenster + Rollo: 210/235/280 px)."
+      },
       "0.1.16": {
         "en": "Fenster widgets — badge fix. The top-right badge is now a status badge driven by oid_window_state (same convention as the Jalousie widget), not free-form text. State true → red 'offen'; state false → green 'zu'; state unset → no badge. Removed the editable 'badge' attribute that was incorrectly added in v0.1.15.",
         "de": "Fenster-Widgets — Badge-Fix. Der Badge oben rechts ist jetzt ein Status-Badge, gespeist von oid_window_state (gleiche Konvention wie das Jalousie-Widget), kein frei editierbarer Text. State true → rot 'offen'; State false → grün 'zu'; State leer → kein Badge. Das in v0.1.15 fälschlich eingebaute editierbare 'badge'-Attribut entfernt."

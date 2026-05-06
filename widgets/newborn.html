@@ -1702,14 +1702,14 @@
   }
 
   .vis-newborn-window-tile .fn-btn {
-    min-width: 50px;
-    height: 32px;
-    padding: 0 10px;
-    border-radius: 8px;
+    min-width: 60px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
     background: var(--fn-btn-bg);
     border: 1px solid var(--fn-btn-border);
     color: var(--fn-text);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
@@ -1728,14 +1728,14 @@
     cursor: not-allowed;
   }
 
-  /* sizes */
-  .vis-widget.vis-newborn-window-size-small  { width: 150px !important; height: 150px !important; }
-  .vis-widget.vis-newborn-window-size-medium { width: 180px !important; height: 170px !important; }
-  .vis-widget.vis-newborn-window-size-large  { width: 220px !important; height: 200px !important; }
+  /* sizes — heights bumped to fit the larger Jalousie-matched buttons */
+  .vis-widget.vis-newborn-window-size-small  { width: 150px !important; height: 165px !important; }
+  .vis-widget.vis-newborn-window-size-medium { width: 180px !important; height: 185px !important; }
+  .vis-widget.vis-newborn-window-size-large  { width: 220px !important; height: 220px !important; }
 
-  .vis-widget.vis-newborn-window-rollo-size-small  { width: 150px !important; height: 190px !important; }
-  .vis-widget.vis-newborn-window-rollo-size-medium { width: 180px !important; height: 215px !important; }
-  .vis-widget.vis-newborn-window-rollo-size-large  { width: 220px !important; height: 250px !important; }
+  .vis-widget.vis-newborn-window-rollo-size-small  { width: 150px !important; height: 210px !important; }
+  .vis-widget.vis-newborn-window-rollo-size-medium { width: 180px !important; height: 235px !important; }
+  .vis-widget.vis-newborn-window-rollo-size-large  { width: 220px !important; height: 280px !important; }
 
   .vis-newborn-window-tile.size-small {
     padding: 12px;
@@ -1746,7 +1746,7 @@
   .vis-newborn-window-tile.size-small .fn-badge { font-size: 10px; padding: 3px 9px; }
   .vis-newborn-window-tile.size-small .fn-name { font-size: 13px; }
   .vis-newborn-window-tile.size-small .fn-row-label { font-size: 10px; }
-  .vis-newborn-window-tile.size-small .fn-btn { height: 28px; min-width: 44px; padding: 0 8px; font-size: 11px; }
+  .vis-newborn-window-tile.size-small .fn-btn { height: 32px; min-width: 50px; padding: 0 10px; font-size: 12px; }
 
   .vis-newborn-window-tile.size-large {
     padding: 18px;
@@ -1757,7 +1757,7 @@
   .vis-newborn-window-tile.size-large .fn-badge { font-size: 12px; padding: 5px 12px; }
   .vis-newborn-window-tile.size-large .fn-name { font-size: 16px; }
   .vis-newborn-window-tile.size-large .fn-row-label { font-size: 13px; }
-  .vis-newborn-window-tile.size-large .fn-btn { height: 38px; min-width: 58px; padding: 0 12px; font-size: 13px; border-radius: 10px; }
+  .vis-newborn-window-tile.size-large .fn-btn { height: 50px; min-width: 70px; padding: 0 14px; font-size: 14px; border-radius: 12px; }
 
   body.vis-edit-active .vis-widget.vis-newborn-window-wrap .vis-newborn-window-tile,
   body.vis-edit-active .vis-widget.vis-newborn-window-wrap .vis-newborn-window-tile * {
@@ -2086,7 +2086,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
 <%
 var fnSize = this.data.attr('size') || 'medium';
 var fnDefW = fnSize === 'small' ? 150 : fnSize === 'large' ? 220 : 180;
-var fnDefH = fnSize === 'small' ? 150 : fnSize === 'large' ? 200 : 170;
+var fnDefH = fnSize === 'small' ? 165 : fnSize === 'large' ? 220 : 185;
 var fnW = parseInt(this.data.attr('width'), 10);
 var fnH = parseInt(this.data.attr('height'), 10);
 var fnCustomW = isFinite(fnW) && fnW > 0;
@@ -2095,9 +2095,9 @@ var fnCustom = fnCustomW || fnCustomH;
 if (fnCustom && !fnCustomW) fnW = fnDefW;
 if (fnCustom && !fnCustomH) fnH = fnDefH;
 if (fnCustom && fnW < 150) fnW = 150;
-if (fnCustom && fnH < 130) fnH = 130;
+if (fnCustom && fnH < 150) fnH = 150;
 var fnSizeClass = fnCustom ? '' : ('vis-newborn-window-size-' + fnSize);
-var fnStyle = fnCustom ? ('width:' + fnW + 'px !important;height:' + fnH + 'px !important;') : 'width:180px;height:170px;';
+var fnStyle = fnCustom ? ('width:' + fnW + 'px !important;height:' + fnH + 'px !important;') : 'width:180px;height:185px;';
 var fnBtnOpen  = this.data.attr('btn_open_label')  || 'Auf';
 var fnBtnClose = this.data.attr('btn_close_label') || 'Zu';
 %>
@@ -2149,7 +2149,7 @@ var fnBtnClose = this.data.attr('btn_close_label') || 'Zu';
 <%
 var frSize = this.data.attr('size') || 'medium';
 var frDefW = frSize === 'small' ? 150 : frSize === 'large' ? 220 : 180;
-var frDefH = frSize === 'small' ? 190 : frSize === 'large' ? 250 : 215;
+var frDefH = frSize === 'small' ? 210 : frSize === 'large' ? 280 : 235;
 var frW = parseInt(this.data.attr('width'), 10);
 var frH = parseInt(this.data.attr('height'), 10);
 var frCustomW = isFinite(frW) && frW > 0;
@@ -2158,9 +2158,9 @@ var frCustom = frCustomW || frCustomH;
 if (frCustom && !frCustomW) frW = frDefW;
 if (frCustom && !frCustomH) frH = frDefH;
 if (frCustom && frW < 150) frW = 150;
-if (frCustom && frH < 170) frH = 170;
+if (frCustom && frH < 195) frH = 195;
 var frSizeClass = frCustom ? '' : ('vis-newborn-window-rollo-size-' + frSize);
-var frStyle = frCustom ? ('width:' + frW + 'px !important;height:' + frH + 'px !important;') : 'width:180px;height:215px;';
+var frStyle = frCustom ? ('width:' + frW + 'px !important;height:' + frH + 'px !important;') : 'width:180px;height:235px;';
 var frBtnOpen  = this.data.attr('btn_open_label')  || 'Auf';
 var frBtnClose = this.data.attr('btn_close_label') || 'Zu';
 var frRow2     = this.data.attr('row2_label')      || 'Rollo';
@@ -3610,7 +3610,7 @@ var frRow2     = this.data.attr('row2_label')      || 'Rollo';
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.16 ready");
+      console.log("vis-newborn 0.1.17 ready");
       ns._versionLogged = true;
     }
   })();
