@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.15",
+    "version": "0.1.16",
     "news": {
+      "0.1.16": {
+        "en": "Fenster widgets — badge fix. The top-right badge is now a status badge driven by oid_window_state (same convention as the Jalousie widget), not free-form text. State true → red 'offen'; state false → green 'zu'; state unset → no badge. Removed the editable 'badge' attribute that was incorrectly added in v0.1.15.",
+        "de": "Fenster-Widgets — Badge-Fix. Der Badge oben rechts ist jetzt ein Status-Badge, gespeist von oid_window_state (gleiche Konvention wie das Jalousie-Widget), kein frei editierbarer Text. State true → rot 'offen'; State false → grün 'zu'; State leer → kein Badge. Das in v0.1.15 fälschlich eingebaute editierbare 'badge'-Attribut entfernt."
+      },
       "0.1.15": {
         "en": "Two new widgets — window opener tiles. (1) 'Newborn Fenster (Tile)': two buttons (default 'Auf' / 'Zu') with two datapoints (oid_fenster_auf / oid_fenster_zu). Each click writes boolean true to its DP — no status, no toggle, no read. (2) 'Newborn Fenster + Rollo (Tile)': same idea with an additional row for a Rollo/Jalousie (4 buttons / 4 DPs). All texts are editable: title (default 'Fenster'), top-right badge (default 'Zu'), button labels (default 'Auf' / 'Zu'), and the row-2 label of the rollo variant (default 'Rollo' — set it to 'Jalousie' or anything else). The first row label 'Fenster' is hardcoded. Same neutral light tile style as Jalousie/Heizung.",
         "de": "Zwei neue Widgets — Fenster-Öffner-Kacheln. (1) 'Newborn Fenster (Tile)': zwei Buttons (Default 'Auf' / 'Zu') mit zwei Datenpunkten (oid_fenster_auf / oid_fenster_zu). Jeder Klick schreibt Boolean true auf seinen DP — kein Status, kein Toggle, kein Lesen. (2) 'Newborn Fenster + Rollo (Tile)': gleiches Prinzip plus eine zusätzliche Zeile für Rollo/Jalousie (4 Buttons / 4 DPs). Alle Texte editierbar: Titel (Default 'Fenster'), Badge oben rechts (Default 'Zu'), Button-Beschriftungen (Default 'Auf' / 'Zu'), und das Zeile-2-Label der Rollo-Variante (Default 'Rollo' — auf 'Jalousie' oder beliebig anderes setzbar). Die 'Fenster'-Beschriftung der ersten Zeile ist hardcoded. Gleicher heller Neutral-Stil wie Jalousie/Heizung."
