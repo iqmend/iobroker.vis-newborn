@@ -1874,7 +1874,7 @@
   }
 
   .vis-newborn-switch-tile .sw-name-section {
-    margin: 12px -14px 0;
+    margin: auto -14px 0;
     padding: 10px 14px;
     border-top: 1px solid var(--sw-divider);
     border-bottom: 1px solid var(--sw-divider);
@@ -1914,7 +1914,6 @@
   }
 
   .vis-newborn-switch-tile .sw-bottom {
-    margin-top: auto;
     padding-top: 12px;
     display: flex;
     justify-content: flex-end;
@@ -1985,7 +1984,7 @@
   .vis-newborn-switch-tile.size-small .sw-icon { width: 26px; height: 26px; border-radius: 7px; }
   .vis-newborn-switch-tile.size-small .sw-icon svg { width: 16px; height: 16px; }
   .vis-newborn-switch-tile.size-small .sw-room { font-size: 11px; }
-  .vis-newborn-switch-tile.size-small .sw-name-section { margin: 10px -12px 0; padding: 8px 12px; }
+  .vis-newborn-switch-tile.size-small .sw-name-section { margin: auto -12px 0; padding: 8px 12px; }
   .vis-newborn-switch-tile.size-small .sw-name { font-size: 14px; }
   .vis-newborn-switch-tile.size-small .sw-bottom { padding-top: 10px; }
   .vis-newborn-switch-tile.size-small .sw-pill { width: 50px; height: 28px; }
@@ -1998,7 +1997,7 @@
   .vis-newborn-switch-tile.size-large .sw-icon { width: 36px; height: 36px; border-radius: 10px; }
   .vis-newborn-switch-tile.size-large .sw-icon svg { width: 20px; height: 20px; }
   .vis-newborn-switch-tile.size-large .sw-room { font-size: 13px; }
-  .vis-newborn-switch-tile.size-large .sw-name-section { margin: 14px -18px 0; padding: 12px 18px; }
+  .vis-newborn-switch-tile.size-large .sw-name-section { margin: auto -18px 0; padding: 12px 18px; }
   .vis-newborn-switch-tile.size-large .sw-name { font-size: 18px; }
   .vis-newborn-switch-tile.size-large .sw-bottom { padding-top: 14px; }
   .vis-newborn-switch-tile.size-large .sw-pill { width: 64px; height: 34px; }
@@ -2460,7 +2459,7 @@ var frRow2     = this.data.attr('row2_label')      || 'Rollo';
 <script id="tplNewbornSchalter"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:130px;"><div style="width:120px;height:120px;border-radius:18px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:10px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;"><div style="width:24px;height:24px;border-radius:6px;background:rgba(0,0,0,0.05);color:#6e6e74;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M5.6 5.6a9 9 0 1 0 12.8 0"/></svg></div><div style="font-size:9px;font-weight:600;color:#8e8e93;">Garten</div></div><div style="margin:8px -10px 0;padding:6px 10px;border-top:1px solid rgba(0,0,0,0.08);border-bottom:1px solid rgba(0,0,0,0.08);"><div style="font-weight:700;font-size:12px;line-height:1.2;">Schalter</div></div><div style="margin-top:auto;padding-top:8px;display:flex;justify-content:flex-end;"><div style="position:relative;width:42px;height:24px;border-radius:999px;background:#0a84ff;flex-shrink:0;"><span style="position:absolute;left:8px;top:0;bottom:0;display:flex;align-items:center;font-size:8px;font-weight:700;color:#fff;letter-spacing:0.05em;">an</span><span style="position:absolute;top:2px;left:20px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span></div></div></div></div>'
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:130px;"><div style="width:120px;height:120px;border-radius:18px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:10px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;"><div style="width:24px;height:24px;border-radius:6px;background:rgba(0,0,0,0.05);color:#6e6e74;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M5.6 5.6a9 9 0 1 0 12.8 0"/></svg></div><div style="font-size:9px;font-weight:600;color:#8e8e93;">Garten</div></div><div style="margin:auto -10px 0;padding:6px 10px;border-top:1px solid rgba(0,0,0,0.08);border-bottom:1px solid rgba(0,0,0,0.08);"><div style="font-weight:700;font-size:12px;line-height:1.2;">Schalter</div></div><div style="padding-top:8px;display:flex;justify-content:flex-end;"><div style="position:relative;width:42px;height:24px;border-radius:999px;background:#0a84ff;flex-shrink:0;"><span style="position:absolute;left:8px;top:0;bottom:0;display:flex;align-items:center;font-size:8px;font-weight:700;color:#fff;letter-spacing:0.05em;">an</span><span style="position:absolute;top:2px;left:20px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span></div></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Schalter (Tile)"
         data-vis-attrs="oid/id;oid_status/id;invert_status/checkbox;name/text;room/text;on_label/text;icon/image;size/select,small,medium,large;width/number;height/number">
@@ -4059,7 +4058,7 @@ var swIconHTML = swIcon
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.19 ready");
+      console.log("vis-newborn 0.1.20 ready");
       ns._versionLogged = true;
     }
   })();

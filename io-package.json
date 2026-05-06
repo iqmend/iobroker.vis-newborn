@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.19",
+    "version": "0.1.20",
     "news": {
+      "0.1.20": {
+        "en": "Newborn Schalter — title section moved back to the bottom (above the pill). v0.1.19 had pinned it directly under the icon row; the title-with-dividers block now sits at the bottom of the tile with the pill right below it, and the empty space is in the middle between the icon row and the title block.",
+        "de": "Newborn Schalter — Titel-Sektion wieder nach unten (ueber die Pille) verschoben. v0.1.19 hatte sie direkt unter die Icon-Zeile gepinnt; der Titel-mit-Trennlinien-Block sitzt jetzt unten in der Kachel mit der Pille direkt darunter, und der Leerraum liegt in der Mitte zwischen Icon-Zeile und Titel-Block."
+      },
       "0.1.19": {
         "en": "Newborn Schalter — title-wrap fix + visual divider. Title now sits in its own full-width section between the icon row and the pill, with a 1px horizontal divider above and below (edge-to-edge inside the tile). Pill moved into a dedicated bottom row, right-aligned. The title now has the full tile width to itself, so a name like 'Zisterne' no longer competes with the pill and gets ugly-broken into 'Ziste/rne'. Wrapping rules: multi-word titles wrap at word boundaries onto up to 2 lines (with hyphenation as a fallback); a single word that doesn't fit at the base font shrinks step-by-step down to ~60% of the base size; only if it still doesn't fit does it fall back to a hyphenated 2-line wrap.",
         "de": "Newborn Schalter — Titel-Umbruch-Fix + visueller Trenner. Titel sitzt jetzt in einer eigenen, volle Kachelbreite einnehmenden Sektion zwischen Icon-Zeile und Pille, mit je einem 1px-Trennstrich oben und unten (kantenbuendig innerhalb der Kachel). Pille in eine eigene Bottom-Zeile rechtsbuendig verschoben. Der Titel hat jetzt die volle Kachelbreite fuer sich, sodass ein Name wie 'Zisterne' nicht mehr mit der Pille um Platz konkurriert und haesslich in 'Ziste/rne' zerbrochen wird. Umbruch-Regeln: mehrwortige Titel umbrechen an Wortgrenzen auf bis zu 2 Zeilen (mit Silbentrennung als Fallback); ein Einzelwort, das in der Basisschrift nicht passt, schrumpft schrittweise bis auf ca. 60 % der Basisgroesse; erst wenn es dann immer noch nicht passt, kommt der Fallback auf hyphenierten 2-Zeilen-Wrap."
