@@ -51,7 +51,17 @@
     'oid_set_abs_cmd':   { 'en': 'Setpoint abs.',         'de': 'Soll abs. setzen' },
     'oid_set_abs_state': { 'en': 'Setpoint status',       'de': 'Soll Status' },
     'oid_set_rel_cmd':   { 'en': 'Setpoint rel. (+/-)',   'de': 'Soll rel. (+/-)' },
-    'oid_actual_state':  { 'en': 'Actual temperature',    'de': 'Ist Temperatur' }
+    'oid_actual_state':  { 'en': 'Actual temperature',    'de': 'Ist Temperatur' },
+
+    // ---- Fenster (window opener) ----
+    'oid_fenster_auf':   { 'en': 'Window Open',           'de': 'Fenster Auf' },
+    'oid_fenster_zu':    { 'en': 'Window Close',          'de': 'Fenster Zu' },
+    'oid_rollo_auf':     { 'en': 'Blind Open',            'de': 'Rollo Auf' },
+    'oid_rollo_zu':      { 'en': 'Blind Close',           'de': 'Rollo Zu' },
+    'badge':             { 'en': 'Badge text',            'de': 'Badge-Text' },
+    'row2_label':        { 'en': 'Row 2 label',           'de': 'Zeile 2 Label' },
+    'btn_open_label':    { 'en': 'Open button label',     'de': 'Auf-Button Text' },
+    'btn_close_label':   { 'en': 'Close button label',    'de': 'Zu-Button Text' }
   });
 </script>
 
@@ -1555,6 +1565,197 @@
     height: 14px;
     fill: currentColor;
   }
+
+  /* ============================================================== */
+  /*  Window opener widgets (vis-newborn-window-*)                  */
+  /*  Two variants: 2 buttons (window only), 4 buttons (window +    */
+  /*  Rollo/Jalousie). Each button just sends `true` to its OID —   */
+  /*  no state, no toggle, no read. Title/badge/row-label/button    */
+  /*  labels are all editable text fields.                          */
+  /* ============================================================== */
+  .vis-newborn-window-tile,
+  .vis-newborn-window-tile *,
+  .vis-newborn-window-tile *::before,
+  .vis-newborn-window-tile *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-window-tile {
+    --fn-radius: 22px;
+    --fn-bg-1: #ffffff;
+    --fn-bg-2: #f5f5f8;
+    --fn-text: #1c1c1e;
+    --fn-text-muted: #6e6e74;
+    --fn-icon-bg: rgba(0,0,0,0.05);
+    --fn-icon-color: #6e6e74;
+    --fn-btn-bg: #ffffff;
+    --fn-btn-border: rgba(0,0,0,0.08);
+    --fn-btn-bg-hover: #f2f2f7;
+    --fn-btn-bg-active: #e5e5ea;
+    --fn-badge-bg: #3ec168;
+    --fn-badge-color: #ffffff;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--fn-radius);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(160deg, var(--fn-bg-1) 0%, var(--fn-bg-2) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 0 0 1px rgba(0,0,0,0.04) inset,
+      0 4px 14px -4px rgba(0,0,0,0.10);
+    color: var(--fn-text);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .vis-newborn-window-tile .fn-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .vis-newborn-window-tile .fn-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fn-icon-bg);
+    color: var(--fn-icon-color);
+    flex-shrink: 0;
+  }
+  .vis-newborn-window-tile .fn-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .vis-newborn-window-tile .fn-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+    background: var(--fn-badge-bg);
+    color: var(--fn-badge-color);
+    flex-shrink: 0;
+    display: none;
+  }
+  .vis-newborn-window-tile .fn-badge.is-shown {
+    display: inline-flex;
+  }
+
+  .vis-newborn-window-tile .fn-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    line-height: 1.25;
+    color: var(--fn-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    flex-shrink: 0;
+  }
+
+  .vis-newborn-window-tile .fn-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .vis-newborn-window-tile .fn-row-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--fn-text-muted);
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .vis-newborn-window-tile .fn-btn {
+    min-width: 50px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: var(--fn-btn-bg);
+    border: 1px solid var(--fn-btn-border);
+    color: var(--fn-text);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 160ms ease, transform 100ms ease;
+    font-family: inherit;
+  }
+  .vis-newborn-window-tile .fn-btn:hover {
+    background: var(--fn-btn-bg-hover);
+  }
+  .vis-newborn-window-tile .fn-btn:active {
+    background: var(--fn-btn-bg-active);
+    transform: scale(0.96);
+  }
+  .vis-newborn-window-tile .fn-btn[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* sizes */
+  .vis-widget.vis-newborn-window-size-small  { width: 150px !important; height: 150px !important; }
+  .vis-widget.vis-newborn-window-size-medium { width: 180px !important; height: 170px !important; }
+  .vis-widget.vis-newborn-window-size-large  { width: 220px !important; height: 200px !important; }
+
+  .vis-widget.vis-newborn-window-rollo-size-small  { width: 150px !important; height: 190px !important; }
+  .vis-widget.vis-newborn-window-rollo-size-medium { width: 180px !important; height: 215px !important; }
+  .vis-widget.vis-newborn-window-rollo-size-large  { width: 220px !important; height: 250px !important; }
+
+  .vis-newborn-window-tile.size-small {
+    padding: 12px;
+    gap: 6px;
+  }
+  .vis-newborn-window-tile.size-small .fn-icon { width: 24px; height: 24px; }
+  .vis-newborn-window-tile.size-small .fn-icon svg { width: 14px; height: 14px; }
+  .vis-newborn-window-tile.size-small .fn-badge { font-size: 10px; padding: 3px 9px; }
+  .vis-newborn-window-tile.size-small .fn-name { font-size: 13px; }
+  .vis-newborn-window-tile.size-small .fn-row-label { font-size: 10px; }
+  .vis-newborn-window-tile.size-small .fn-btn { height: 28px; min-width: 44px; padding: 0 8px; font-size: 11px; }
+
+  .vis-newborn-window-tile.size-large {
+    padding: 18px;
+    gap: 10px;
+  }
+  .vis-newborn-window-tile.size-large .fn-icon { width: 32px; height: 32px; }
+  .vis-newborn-window-tile.size-large .fn-icon svg { width: 18px; height: 18px; }
+  .vis-newborn-window-tile.size-large .fn-badge { font-size: 12px; padding: 5px 12px; }
+  .vis-newborn-window-tile.size-large .fn-name { font-size: 16px; }
+  .vis-newborn-window-tile.size-large .fn-row-label { font-size: 13px; }
+  .vis-newborn-window-tile.size-large .fn-btn { height: 38px; min-width: 58px; padding: 0 12px; font-size: 13px; border-radius: 10px; }
+
+  body.vis-edit-active .vis-widget.vis-newborn-window-wrap .vis-newborn-window-tile,
+  body.vis-edit-active .vis-widget.vis-newborn-window-wrap .vis-newborn-window-tile * {
+    pointer-events: none !important;
+  }
 </style>
 
 <!-- ====================================================================
@@ -1858,6 +2059,141 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
 
     <div class="bl-pct-row">
       <span><span class="bl-pct-jal">0</span> %</span>
+    </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Fenster-Öffner template (2 buttons)
+     2 OIDs: oid_fenster_auf, oid_fenster_zu — each click sends `true`.
+     No status DP. All texts (name/badge/button labels) editable.
+     ==================================================================== -->
+<script id="tplNewbornFenster"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:120px;height:120px;"><div style="width:110px;height:110px;border-radius:14px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:8px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;justify-content:space-between;"><div style="width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,0.05);color:#6e6e74;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="1.5"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="4" x2="12" y2="20"/></svg></div><div style="font-size:7px;font-weight:700;padding:2px 6px;border-radius:999px;background:#3ec168;color:#fff;text-transform:uppercase;">Zu</div></div><div style="font-weight:700;font-size:9px;line-height:1.2;">Fenster</div><div style="display:grid;grid-template-columns:1fr auto auto;gap:3px;align-items:center;margin-top:auto;"><span style="font-size:7px;color:#6e6e74;font-weight:700;">Fenster</span><div style="height:14px;padding:0 5px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;">Auf</div><div style="height:14px;padding:0 5px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;">Zu</div></div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Fenster (Tile)"
+        data-vis-attrs="oid_fenster_auf/id;oid_fenster_zu/id;name/text;badge/text;btn_open_label/text;btn_close_label/text;size/select,small,medium,large;width/number;height/number">
+<%
+var fnSize = this.data.attr('size') || 'medium';
+var fnDefW = fnSize === 'small' ? 150 : fnSize === 'large' ? 220 : 180;
+var fnDefH = fnSize === 'small' ? 150 : fnSize === 'large' ? 200 : 170;
+var fnW = parseInt(this.data.attr('width'), 10);
+var fnH = parseInt(this.data.attr('height'), 10);
+var fnCustomW = isFinite(fnW) && fnW > 0;
+var fnCustomH = isFinite(fnH) && fnH > 0;
+var fnCustom = fnCustomW || fnCustomH;
+if (fnCustom && !fnCustomW) fnW = fnDefW;
+if (fnCustom && !fnCustomH) fnH = fnDefH;
+if (fnCustom && fnW < 150) fnW = 150;
+if (fnCustom && fnH < 130) fnH = 130;
+var fnSizeClass = fnCustom ? '' : ('vis-newborn-window-size-' + fnSize);
+var fnStyle = fnCustom ? ('width:' + fnW + 'px !important;height:' + fnH + 'px !important;') : 'width:180px;height:170px;';
+var fnBadge = this.data.attr('badge');
+var fnBadgeText = (fnBadge === undefined || fnBadge === null) ? 'Zu' : fnBadge;
+var fnBtnOpen  = this.data.attr('btn_open_label')  || 'Auf';
+var fnBtnClose = this.data.attr('btn_close_label') || 'Zu';
+%>
+<div class="vis-widget vis-newborn-window-wrap <%= fnSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= fnStyle %> padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid-fenster-auf="<%= this.data.attr('oid_fenster_auf') %>"
+     data-oid-fenster-zu="<%= this.data.attr('oid_fenster_zu') %>"
+     <%= (el) -> vis.binds['newborn'].fenster(el) %>>
+  <div class="vis-newborn-window-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="group"
+       aria-label="Fenster">
+    <div class="fn-top">
+      <div class="fn-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="16" rx="1.5"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="12" y1="4" x2="12" y2="20"/>
+        </svg>
+      </div>
+      <div class="fn-badge<%= fnBadgeText ? ' is-shown' : '' %>"><%= fnBadgeText %></div>
+    </div>
+
+    <div class="fn-name"><%= this.data.attr('name') || 'Fenster' %></div>
+
+    <div class="fn-row">
+      <span class="fn-row-label">Fenster</span>
+      <button type="button" class="fn-btn" data-fn-oid="oid-fenster-auf"><%= fnBtnOpen %></button>
+      <button type="button" class="fn-btn" data-fn-oid="oid-fenster-zu"><%= fnBtnClose %></button>
+    </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Fenster-Öffner + Rollo template (4 buttons)
+     4 OIDs: oid_fenster_auf, oid_fenster_zu, oid_rollo_auf, oid_rollo_zu.
+     Same fire-and-forget logic. Row 2 label (default "Rollo") editable
+     so user can switch to "Jalousie" or anything else.
+     ==================================================================== -->
+<script id="tplNewbornFensterRollo"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:120px;height:140px;"><div style="width:110px;height:130px;border-radius:14px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:8px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;justify-content:space-between;"><div style="width:16px;height:16px;border-radius:999px;background:rgba(0,0,0,0.05);color:#6e6e74;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="1.5"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="4" x2="12" y2="20"/></svg></div><div style="font-size:7px;font-weight:700;padding:2px 6px;border-radius:999px;background:#3ec168;color:#fff;text-transform:uppercase;">Zu</div></div><div style="font-weight:700;font-size:9px;line-height:1.2;">Fenster</div><div style="display:grid;grid-template-columns:1fr auto auto;gap:3px;align-items:center;"><span style="font-size:7px;color:#6e6e74;font-weight:700;">Fenster</span><div style="height:13px;padding:0 5px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">Auf</div><div style="height:13px;padding:0 5px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">Zu</div></div><div style="display:grid;grid-template-columns:1fr auto auto;gap:3px;align-items:center;margin-top:auto;"><span style="font-size:7px;color:#6e6e74;font-weight:700;">Rollo</span><div style="height:13px;padding:0 5px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">Auf</div><div style="height:13px;padding:0 5px;border-radius:4px;background:#fff;border:1px solid rgba(0,0,0,0.08);font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;">Zu</div></div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Fenster + Rollo (Tile)"
+        data-vis-attrs="oid_fenster_auf/id;oid_fenster_zu/id;oid_rollo_auf/id;oid_rollo_zu/id;name/text;badge/text;row2_label/text;btn_open_label/text;btn_close_label/text;size/select,small,medium,large;width/number;height/number">
+<%
+var frSize = this.data.attr('size') || 'medium';
+var frDefW = frSize === 'small' ? 150 : frSize === 'large' ? 220 : 180;
+var frDefH = frSize === 'small' ? 190 : frSize === 'large' ? 250 : 215;
+var frW = parseInt(this.data.attr('width'), 10);
+var frH = parseInt(this.data.attr('height'), 10);
+var frCustomW = isFinite(frW) && frW > 0;
+var frCustomH = isFinite(frH) && frH > 0;
+var frCustom = frCustomW || frCustomH;
+if (frCustom && !frCustomW) frW = frDefW;
+if (frCustom && !frCustomH) frH = frDefH;
+if (frCustom && frW < 150) frW = 150;
+if (frCustom && frH < 170) frH = 170;
+var frSizeClass = frCustom ? '' : ('vis-newborn-window-rollo-size-' + frSize);
+var frStyle = frCustom ? ('width:' + frW + 'px !important;height:' + frH + 'px !important;') : 'width:180px;height:215px;';
+var frBadge = this.data.attr('badge');
+var frBadgeText = (frBadge === undefined || frBadge === null) ? 'Zu' : frBadge;
+var frBtnOpen  = this.data.attr('btn_open_label')  || 'Auf';
+var frBtnClose = this.data.attr('btn_close_label') || 'Zu';
+var frRow2     = this.data.attr('row2_label')      || 'Rollo';
+%>
+<div class="vis-widget vis-newborn-window-wrap <%= frSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= frStyle %> padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid-fenster-auf="<%= this.data.attr('oid_fenster_auf') %>"
+     data-oid-fenster-zu="<%= this.data.attr('oid_fenster_zu') %>"
+     data-oid-rollo-auf="<%= this.data.attr('oid_rollo_auf') %>"
+     data-oid-rollo-zu="<%= this.data.attr('oid_rollo_zu') %>"
+     <%= (el) -> vis.binds['newborn'].fenster(el) %>>
+  <div class="vis-newborn-window-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="group"
+       aria-label="Fenster + Rollo">
+    <div class="fn-top">
+      <div class="fn-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="16" rx="1.5"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="12" y1="4" x2="12" y2="20"/>
+        </svg>
+      </div>
+      <div class="fn-badge<%= frBadgeText ? ' is-shown' : '' %>"><%= frBadgeText %></div>
+    </div>
+
+    <div class="fn-name"><%= this.data.attr('name') || 'Fenster' %></div>
+
+    <div class="fn-row">
+      <span class="fn-row-label">Fenster</span>
+      <button type="button" class="fn-btn" data-fn-oid="oid-fenster-auf"><%= frBtnOpen %></button>
+      <button type="button" class="fn-btn" data-fn-oid="oid-fenster-zu"><%= frBtnClose %></button>
+    </div>
+    <div class="fn-row">
+      <span class="fn-row-label"><%= frRow2 %></span>
+      <button type="button" class="fn-btn" data-fn-oid="oid-rollo-auf"><%= frBtnOpen %></button>
+      <button type="button" class="fn-btn" data-fn-oid="oid-rollo-zu"><%= frBtnClose %></button>
     </div>
   </div>
 </div>
@@ -3199,8 +3535,45 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       });
     };
 
+    // ===== Fenster-Öffner (2- and 4-button variants share this) =====
+    /**
+     * Both Fenster templates render <button data-fn-oid="..."> elements.
+     * The data-fn-oid value is the kebab-case of the corresponding
+     * data-oid-* attribute on the wrap div (e.g. "oid-fenster-auf").
+     * Each button click writes `true` to that OID — no read, no toggle,
+     * no status. If a button's OID is empty, the button is disabled.
+     */
+    ns.fenster = function (el) {
+      var $this = $(el);
+      if (vis.editMode) {
+        return;
+      }
+
+      $this.find("[data-fn-oid]").each(function () {
+        var $btn = $(this);
+        var oidKey = $btn.attr("data-fn-oid"); // e.g. "oid-fenster-auf"
+        var oid = $this.data(oidKey);          // resolves via jQuery data() camelCase mapping
+        if (!oid) {
+          $btn.prop("disabled", true);
+          return;
+        }
+        $btn.on("click.newbornFenster", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+            return;
+          }
+          vis.setValue(oid, true);
+        });
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).find("[data-fn-oid]").off(".newbornFenster");
+      });
+    };
+
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.14 ready");
+      console.log("vis-newborn 0.1.15 ready");
       ns._versionLogged = true;
     }
   })();

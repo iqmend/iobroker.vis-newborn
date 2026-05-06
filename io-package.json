@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "news": {
+      "0.1.15": {
+        "en": "Two new widgets — window opener tiles. (1) 'Newborn Fenster (Tile)': two buttons (default 'Auf' / 'Zu') with two datapoints (oid_fenster_auf / oid_fenster_zu). Each click writes boolean true to its DP — no status, no toggle, no read. (2) 'Newborn Fenster + Rollo (Tile)': same idea with an additional row for a Rollo/Jalousie (4 buttons / 4 DPs). All texts are editable: title (default 'Fenster'), top-right badge (default 'Zu'), button labels (default 'Auf' / 'Zu'), and the row-2 label of the rollo variant (default 'Rollo' — set it to 'Jalousie' or anything else). The first row label 'Fenster' is hardcoded. Same neutral light tile style as Jalousie/Heizung.",
+        "de": "Zwei neue Widgets — Fenster-Öffner-Kacheln. (1) 'Newborn Fenster (Tile)': zwei Buttons (Default 'Auf' / 'Zu') mit zwei Datenpunkten (oid_fenster_auf / oid_fenster_zu). Jeder Klick schreibt Boolean true auf seinen DP — kein Status, kein Toggle, kein Lesen. (2) 'Newborn Fenster + Rollo (Tile)': gleiches Prinzip plus eine zusätzliche Zeile für Rollo/Jalousie (4 Buttons / 4 DPs). Alle Texte editierbar: Titel (Default 'Fenster'), Badge oben rechts (Default 'Zu'), Button-Beschriftungen (Default 'Auf' / 'Zu'), und das Zeile-2-Label der Rollo-Variante (Default 'Rollo' — auf 'Jalousie' oder beliebig anderes setzbar). Die 'Fenster'-Beschriftung der ersten Zeile ist hardcoded. Gleicher heller Neutral-Stil wie Jalousie/Heizung."
+      },
       "0.1.14": {
         "en": "Newborn Jalousie: Stop button is now neutral grey instead of red — both on the tile and inside the long-press popup. Same neutral palette as the regular up/down buttons; visually present but no longer alarming.",
         "de": "Newborn Jalousie: Stop-Button ist jetzt neutral grau statt rot — sowohl auf der Kachel als auch im Long-Press-Popup. Gleiche Neutral-Palette wie die normalen Auf/Ab-Buttons; sichtbar, aber nicht mehr alarmierend."
