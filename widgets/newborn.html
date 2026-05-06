@@ -9,6 +9,52 @@
   <script class="vis-tpl"> blocks (canonical pattern, see basic.html).
 -->
 
+<!-- ====================================================================
+     Editor-Attribut-Labels (VIS 1.x).
+     VIS resolves each attribute label via _(attrName) against
+     systemDictionary. Without an entry, the raw attribute name shows
+     in the editor (e.g. "oid_switch_cmd:"). We register friendly de/en
+     labels here for every attribute used by the Newborn widgets.
+     ==================================================================== -->
+<script type="text/javascript">
+  if (typeof systemDictionary === 'undefined') {
+    window.systemDictionary = {};
+  }
+  Object.assign(systemDictionary, {
+    // ---- shared attrs ----
+    'oid':               { 'en': 'Object',                'de': 'Objekt' },
+    'oid_status':        { 'en': 'Object Status',         'de': 'Objekt Status' },
+    'invert_status':     { 'en': 'Invert Status',         'de': 'Status invertieren' },
+    'name':              { 'en': 'Name',                  'de': 'Name' },
+    'size':              { 'en': 'Size',                  'de': 'Größe' },
+    'width':             { 'en': 'Width',                 'de': 'Breite' },
+    'height':            { 'en': 'Height',                'de': 'Höhe' },
+
+    // ---- Dimmer ----
+    'oid_switch_cmd':    { 'en': 'Light switch',          'de': 'Licht schalten' },
+    'oid_switch_state':  { 'en': 'Light status',          'de': 'Licht status' },
+    'oid_dim_cmd':       { 'en': 'Light abs. dim',        'de': 'Licht abs. dimmen' },
+    'oid_dim_state':     { 'en': 'Light dim status',      'de': 'Licht dimmen-status' },
+    'oid_rel_dim_cmd':   { 'en': 'Light rel. dim',        'de': 'Licht rel. dimmen' },
+    'oid_rel_dim_state': { 'en': 'Light rel. dim status', 'de': 'Licht rel. dimmen-status' },
+
+    // ---- Jalousie ----
+    'oid_blinds_cmd':       { 'en': 'Blind',           'de': 'Jalousie' },
+    'oid_slats_cmd':        { 'en': 'Slats',           'de': 'Lamellen' },
+    'oid_blinds_pos_cmd':   { 'en': 'Blind abs. pos',  'de': 'Jalousie abs. pos' },
+    'oid_slats_pos_cmd':    { 'en': 'Slats abs. pos',  'de': 'Lamellen abs. pos' },
+    'oid_blinds_pos_state': { 'en': 'Blind status',    'de': 'Jalousien Status' },
+    'oid_slats_pos_state':  { 'en': 'Slats status',    'de': 'Lamellen Status' },
+    'oid_window_state':     { 'en': 'Window status',   'de': 'Fenster Status' },
+
+    // ---- Heizung ----
+    'oid_set_abs_cmd':   { 'en': 'Setpoint abs.',         'de': 'Soll abs. setzen' },
+    'oid_set_abs_state': { 'en': 'Setpoint status',       'de': 'Soll Status' },
+    'oid_set_rel_cmd':   { 'en': 'Setpoint rel. (+/-)',   'de': 'Soll rel. (+/-)' },
+    'oid_actual_state':  { 'en': 'Actual temperature',    'de': 'Ist Temperatur' }
+  });
+</script>
+
 <style>
   /* ============================================================== */
   /*  Toggle widget (vis-newborn-toggle-*)                          */
@@ -1520,7 +1566,7 @@
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:90px;height:60px;"><div class="vis-newborn-toggle size-small is-on"><span class="vis-newborn-toggle-label is-off">aus</span><span class="vis-newborn-toggle-label is-on">an</span><span class="vis-newborn-toggle-handle"></span></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Toggle (Slide)"
-        data-vis-attrs="oid/id;size/select,small,medium,large;knx/checkbox;oid_status/id;invert_status/checkbox;width/number;height/number">
+        data-vis-attrs="oid/id;oid_status/id;invert_status/checkbox;size/select,small,medium,large;width/number;height/number">
 <%
 var tcSize = this.data.attr('size') || 'medium';
 var tcDefW = tcSize === 'small' ? 110 : tcSize === 'large' ? 200 : 150;
@@ -1542,7 +1588,6 @@ var tcStyle = tcCustom ? ('width:' + tcW + 'px !important;height:' + tcH + 'px !
      id="<%= this.data.attr('wid') %>"
      data-oid="<%= this.data.attr('oid') %>"
      data-oid-status="<%= this.data.attr('oid_status') %>"
-     data-knx="<%= this.data.attr('knx') %>"
      data-invert="<%= this.data.attr('invert_status') %>"
      <%= (el) -> vis.binds['newborn'].toggle(el) %>>
   <div class="vis-newborn-toggle-inner">
@@ -1856,6 +1901,11 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
      * Bound per element via CanJS arrow syntax inside the EJS template:
      *   <%= (el) -> vis.binds['newborn'].toggle(el) %>
      *
+     * Auto-detect KNX-mode (same convention as the Light widget):
+     *   - oid_status set   → 2-DP mode (write to oid, read from oid_status)
+     *   - oid_status empty → 1-DP mode (oid bidirectional)
+     * invert_status only applies when oid_status is set.
+     *
      * State subscription is automatic: visUtils.getUsedObjectIDs picks up
      * any widget.data attribute matching /^oid/ (also `oid_status`).
      */
@@ -1863,20 +1913,19 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
       var $this = $(el);
       var oid       = $this.data("oid");
       var oidStatus = $this.data("oid-status");
-      var knx       = ($this.data("knx") === true || $this.data("knx") === "true");
       var invert    = ($this.data("invert") === true || $this.data("invert") === "true");
 
       if (!oid || vis.editMode) {
         return;
       }
 
-      var oidRead = (knx && oidStatus) ? oidStatus : oid;
+      var oidRead = oidStatus || oid;
       var $tgl = $this.find(".vis-newborn-toggle");
       var moved = false;
 
       function applyState(rawVal) {
         var on = isOn(rawVal);
-        if (knx && invert) {
+        if (oidStatus && invert) {
           on = !on;
         }
         $tgl.toggleClass("is-on", on);
@@ -1900,11 +1949,11 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
 
         var current = vis.states[oidRead + ".val"];
         var on = isOn(current);
-        if (knx && invert) {
+        if (oidStatus && invert) {
           on = !on;
         }
         var next = !on;
-        var writeValue = (knx && invert) ? !next : next;
+        var writeValue = (oidStatus && invert) ? !next : next;
 
         vis.setValue(oid, writeValue);
       });
@@ -3151,7 +3200,7 @@ var bcStyle = bcCustom ? ('width:' + bcW + 'px !important;height:' + bcH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.12 ready");
+      console.log("vis-newborn 0.1.13 ready");
       ns._versionLogged = true;
     }
   })();
