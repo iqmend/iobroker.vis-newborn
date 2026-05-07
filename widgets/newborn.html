@@ -3294,7 +3294,17 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           <circle cx="16.5" cy="17" r="1.5"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot" type="button" data-slot="3" aria-label="Licht">
+      <button class="vis-newborn-camera__slot" type="button"
+              data-slot="3"
+              data-slot-oid="<%= this.data.attr('slot3_oid') %>"
+              data-slot-state-oid="<%= this.data.attr('slot3_state_oid') %>"
+              data-slot-type="<%= this.data.attr('slot3_type') %>"
+              data-slot-pulse-ms="<%= this.data.attr('slot3_pulse_ms') %>"
+              data-slot-label="<%= this.data.attr('slot3_label') %>"
+              data-slot-icon="<%= this.data.attr('slot3_icon') %>"
+              data-slot-active-color="<%= this.data.attr('slot3_active_color') %>"
+              data-slot-invert-state="<%= this.data.attr('slot3_invert_state') %>"
+              aria-label="Licht">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3a6 6 0 0 1 4 10.4c-.9 1-1.5 1.6-1.5 3.6h-5c0-2-.6-2.6-1.5-3.6A6 6 0 0 1 12 3z"/>
           <line x1="9.5" y1="20" x2="14.5" y2="20"/>
@@ -5404,7 +5414,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.2.9 ready");
+      console.log("vis-newborn 0.2.10 ready");
       ns._versionLogged = true;
     }
   })();

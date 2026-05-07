@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.2.9",
+    "version": "0.2.10",
     "news": {
+      "0.2.10": {
+        "en": "Bisect step. v0.2.9 (slots 1+2 with data-*) renders. This step adds slot 3's data-* substitutions; slot 4 still bare. If v0.2.10 renders, only the full set of 4 slots breaks (32 substitutions threshold somewhere) and we accept that v0.3.0 must use a different architecture (read slot config in JS via vis.widgets[wid].data instead of EJS-substituting per-slot data-*). If v0.2.10 is invisible, 3 slots is the actual breaking point — bisect stays in attrs.",
+        "de": "Bisect-Schritt. v0.2.9 (Slots 1+2 mit data-*) rendert. Dieser Schritt fuegt Slot 3's data-* Substitutionen hinzu; Slot 4 bleibt nackt. Wenn v0.2.10 rendert, bricht erst die volle 4er-Menge (irgendwo bei 32 Substitutionen eine Schwelle) und v0.3.0 muss eine andere Architektur nutzen (Slot-Konfig im JS via vis.widgets[wid].data lesen statt EJS-Substitution pro Slot). Wenn v0.2.10 unsichtbar ist, sind 3 Slots der echte Bruchpunkt — Bisect bleibt in den attrs."
+      },
       "0.2.9": {
         "en": "Bisect step. v0.2.8 (slot 1 only with all 8 data-*) renders. Bug needs multiple slots together. v0.2.9 puts the same 8 data-* on slot 2 too, so slots 1+2 both have substitutions and slots 3+4 stay without. If v0.2.9 renders, the breakage starts at 3+ slots. If v0.2.9 breaks, 2 slots are enough and the next step bisects which specific data-* attribute interaction kills the parser.",
         "de": "Bisect-Schritt. v0.2.8 (Slot 1 mit allen 8 data-*) rendert. Bug braucht mehrere Slots zusammen. v0.2.9 setzt dieselben 8 data-* auch auf Slot 2, sodass Slots 1+2 beide Substitutionen haben und Slots 3+4 ohne bleiben. Wenn v0.2.9 rendert, startet der Bruch erst ab 3+ Slots. Wenn v0.2.9 bricht, reichen 2 Slots, und der naechste Schritt bisectet welches spezifische data-* Attribut den Parser killt."
