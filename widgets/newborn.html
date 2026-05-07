@@ -3235,8 +3235,8 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:90px;"><div style="position:relative;width:120px;height:80px;border-radius:10px;background:linear-gradient(135deg,#3a4a5a,#1f2a35);overflow:hidden;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:6px;left:6px;width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.4);color:#fff;font-size:9px;line-height:14px;text-align:center;">⛶</div><div style="position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;"><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div><div style="width:14px;height:14px;border-radius:4px;background:#ffc857;box-shadow:0 0 4px #ffc857;"></div><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Camera Tile"
-        data-vis-attrs="name/text;camera_url/text;refresh_seconds/number;width/number;height/number;group.slot1;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label/text;slot1_icon/text;slot1_active_color/text;slot1_invert_state/checkbox;group.slot2;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label/text;slot2_icon/text;slot2_active_color/text;slot2_invert_state/checkbox"
-        data-vis-attrs0="group.slot3;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label/text;slot3_icon/text;slot3_active_color/text;slot3_invert_state/checkbox;group.slot4;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label/text;slot4_icon/text;slot4_active_color/text;slot4_invert_state/checkbox">
+        data-vis-attrs="name/text;camera_url/text;refresh_seconds/number;width/number;height/number;group.slot1;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label/text;slot1_icon/text;slot1_active_color/text;slot1_invert_state/checkbox;group.slot2;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label/text;slot2_icon/text;slot2_active_color/text;slot2_invert_state/checkbox;"
+        data-vis-attrs0="group.slot3;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label/text;slot3_icon/text;slot3_active_color/text;slot3_invert_state/checkbox;group.slot4;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label/text;slot4_icon/text;slot4_active_color/text;slot4_invert_state/checkbox;">
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
      style="width: 380px; height: 260px;"
      id="<%= this.data.attr('wid') %>"
@@ -5212,37 +5212,41 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       camLightbox = box;
     }
 
-    function camApplyCamera(el, data) {
+    function camApplyCamera($this, data) {
       var url = camDataAttr(data, "camera_url");
       var refresh = parseInt(camDataAttr(data, "refresh_seconds"), 10);
       if (!isFinite(refresh) || refresh < 0) {
         refresh = 0;
       }
-      var img = el.querySelector(".vis-newborn-camera__img");
-      var placeholder = el.querySelector(".vis-newborn-camera__placeholder");
-
-      // Clear any leftover interval from a prior render.
-      if (el._newbornCameraInterval) {
-        clearInterval(el._newbornCameraInterval);
-        el._newbornCameraInterval = null;
-      }
-
-      if (!url) {
-        img.classList.add("is-hidden");
-        img.removeAttribute("src");
-        placeholder.classList.add("is-shown");
+      var $img = $this.find(".vis-newborn-camera__img");
+      var $placeholder = $this.find(".vis-newborn-camera__placeholder");
+      if (!$img.length || !$placeholder.length) {
         return;
       }
 
-      placeholder.classList.remove("is-shown");
-      img.classList.remove("is-hidden");
-      img.src = url;
+      // Clear any leftover interval from a prior render.
+      var prior = $this.data("camera-interval");
+      if (prior) {
+        clearInterval(prior);
+        $this.data("camera-interval", null);
+      }
+
+      if (!url) {
+        $img.addClass("is-hidden").removeAttr("src");
+        $placeholder.addClass("is-shown");
+        return;
+      }
+
+      $placeholder.removeClass("is-shown");
+      $img.removeClass("is-hidden").attr("src", url);
 
       if (refresh > 0) {
-        el._newbornCameraInterval = setInterval(function () {
+        var imgEl = $img[0];
+        var interval = setInterval(function () {
           var sep = url.indexOf("?") >= 0 ? "&" : "?";
-          img.src = url + sep + "_t=" + Date.now();
+          imgEl.src = url + sep + "_t=" + Date.now();
         }, refresh * 1000);
+        $this.data("camera-interval", interval);
       }
     }
 
@@ -5268,22 +5272,16 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
      * the literal text/emoji as a <span>. When the user supplies no
      * icon, the default SVG already in the slot's HTML is left alone.
      */
-    function camSetSlotIcon(slot, icon) {
+    function camSetSlotIcon($slot, icon) {
       var v = (icon || "").trim();
       if (!v) {
         return;
       }
-      slot.innerHTML = "";
       if (v.indexOf("http://") === 0 || v.indexOf("https://") === 0 || v.charAt(0) === "/" || v.indexOf("./") === 0) {
-        var img = document.createElement("img");
-        img.src = v;
-        img.alt = "";
-        slot.appendChild(img);
-        return;
+        $slot.html('<img src="' + v.replace(/"/g, "&quot;") + '" alt="">');
+      } else {
+        $slot.text(v);
       }
-      var span = document.createElement("span");
-      span.textContent = v;
-      slot.appendChild(span);
     }
 
     /**
@@ -5297,12 +5295,11 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
      * destroy hook calls. Empty oid leaves the slot in its --hidden
      * default so the column stays free of placeholder buttons.
      */
-    function camSetupSlot(el, slotEl, slotIdx, data) {
+    function camSetupSlot($slot, slotIdx, data) {
       var oid = camDataAttr(data, "slot" + slotIdx + "_oid");
       if (!oid) {
         return camNoop;
       }
-      var $slot = $(slotEl);
       var stateOid = camDataAttr(data, "slot" + slotIdx + "_state_oid") || oid;
       var type = camDataAttr(data, "slot" + slotIdx + "_type") || "toggle";
       var pulseMs = parseInt(camDataAttr(data, "slot" + slotIdx + "_pulse_ms"), 10);
@@ -5315,13 +5312,13 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       var invert = camDataAttr(data, "slot" + slotIdx + "_invert_state");
       invert = (invert === true || invert === "true");
 
-      slotEl.classList.remove("vis-newborn-camera__slot--hidden");
-      slotEl.style.setProperty("--slot-color", activeColor);
-      slotEl.setAttribute("aria-label", label || oid);
+      $slot.removeClass("vis-newborn-camera__slot--hidden");
+      $slot.css("--slot-color", activeColor);
+      $slot.attr("aria-label", label || oid);
       if (label) {
-        slotEl.setAttribute("title", label);
+        $slot.attr("title", label);
       }
-      camSetSlotIcon(slotEl, icon);
+      camSetSlotIcon($slot, icon);
 
       var onStateChange = null;
 
@@ -5331,8 +5328,8 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           if (invert) {
             on = !on;
           }
-          slotEl.classList.toggle("is-active", on);
-          slotEl.setAttribute("aria-pressed", on ? "true" : "false");
+          $slot.toggleClass("is-active", on);
+          $slot.attr("aria-pressed", on ? "true" : "false");
         };
         applyState(vis.states[stateOid + ".val"]);
         if (!vis.editMode) {
@@ -5342,7 +5339,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           vis.states.bind(stateOid + ".val", onStateChange);
         }
       } else {
-        slotEl.setAttribute("role", "button");
+        $slot.attr("role", "button");
       }
 
       $slot.on("click.newbornCamera touchend.newbornCamera", function (e) {
@@ -5358,11 +5355,11 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           var cur = isOn(vis.states[stateOid + ".val"]);
           vis.setValue(oid, !cur);
         } else {
-          slotEl.classList.add("is-pulsing");
+          $slot.addClass("is-pulsing");
           vis.setValue(oid, true);
           setTimeout(function () {
             vis.setValue(oid, false);
-            slotEl.classList.remove("is-pulsing");
+            $slot.removeClass("is-pulsing");
           }, pulseMs);
         }
       });
@@ -5385,7 +5382,21 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
      * substitutions.
      */
     ns.camera = function (el) {
+      // CanJS arrow callbacks fire for any node — including text and
+      // comment nodes during template processing. el.querySelector is
+      // only valid on Element nodes (nodeType === 1), so we bail for
+      // anything else. Without this guard the throw rolls back the
+      // entire render and the widget stays invisible.
+      if (!el || el.nodeType !== 1) {
+        return;
+      }
       var $this = $(el);
+      // Make sure we are on the wrap div (the same el the EJS arrow
+      // is meant to fire on); not some inner node we don't own.
+      if (!$this.hasClass("vis-newborn-camera-wrap")) {
+        return;
+      }
+
       var view = vis.activeView;
       var widget = (view && vis.views && vis.views[view] && vis.views[view].widgets) ? vis.views[view].widgets[el.id] : null;
       var data = widget ? widget.data : null;
@@ -5393,19 +5404,16 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       // Title from widget data — set once, no live binding (rename
       // requires a view reload, like the rest of the visual config).
       var title = camDataAttr(data, "name");
-      var titleEl = el.querySelector(".vis-newborn-camera__title");
-      if (titleEl) {
-        titleEl.textContent = title;
-      }
+      $this.find(".vis-newborn-camera__title").text(title);
 
-      camApplyCamera(el, data);
+      camApplyCamera($this, data);
 
       var slotCleanups = [];
-      var slotEls = el.querySelectorAll(".vis-newborn-camera__slot");
-      for (var i = 0; i < slotEls.length; i++) {
-        var slotIdx = parseInt(slotEls[i].getAttribute("data-slot"), 10) || (i + 1);
-        slotCleanups.push(camSetupSlot(el, slotEls[i], slotIdx, data));
-      }
+      $this.find(".vis-newborn-camera__slot").each(function (i, slotNode) {
+        var $slot = $(slotNode);
+        var slotIdx = parseInt($slot.attr("data-slot"), 10) || (i + 1);
+        slotCleanups.push(camSetupSlot($slot, slotIdx, data));
+      });
 
       var $max = $this.find(".vis-newborn-camera__max");
       $max.on("click.newbornCamera touchend.newbornCamera", function (e) {
@@ -5427,15 +5435,16 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
             // swallow — cleanup must not throw
           }
         }
-        if (el._newbornCameraInterval) {
-          clearInterval(el._newbornCameraInterval);
-          el._newbornCameraInterval = null;
+        var prior = $this.data("camera-interval");
+        if (prior) {
+          clearInterval(prior);
+          $this.data("camera-interval", null);
         }
       });
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.4 ready");
+      console.log("vis-newborn 0.3.5 ready");
       ns._versionLogged = true;
     }
   })();
