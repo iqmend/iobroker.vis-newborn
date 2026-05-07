@@ -3240,7 +3240,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
      style="width: 380px; height: 260px;"
      id="<%= this.data.attr('wid') %>"
-     <%= (el) -> vis.binds['newborn'].camera(el, data) %>>
+     <%= (el) -> vis.binds['newborn'].camera(el) %>>
   <div class="vis-newborn-camera">
     <img class="vis-newborn-camera__img is-hidden" alt="" />
     <div class="vis-newborn-camera__placeholder is-shown">
@@ -5401,7 +5401,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
      * up in JS at handler time keeps the template body free of
      * substitutions.
      */
-    ns.camera = function (el, data) {
+    ns.camera = function (el) {
       // CanJS arrow callbacks fire for any node — including text and
       // comment nodes during template processing. el.querySelector is
       // only valid on Element nodes (nodeType === 1), so we bail for
@@ -5417,11 +5417,13 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         return;
       }
 
-      // `data` is passed in via the arrow `(el, data) -> ns.camera(el, data)`.
-      // This is the CanJS observable wrapping widget.data — the same pattern
-      // iobroker.vis basic.html uses for imgRefresh (basic.html line ~2408).
-      // Fall back to the active-view lookup if it's missing for any reason
-      // (e.g. callback fired in a context where data wasn't bound).
+      // Resolve widget data. vis.widgets[wid].data is a CanJS Map
+      // wrapping widget.data — verified live: hasAttr=true, all
+      // user-set values readable via data.attr('camera_url') etc.
+      // vis.views[view].widgets[wid].data is the raw views-JSON
+      // object (no .attr but plain dot access works) — used as
+      // fallback if the runtime CanJS map is not yet present.
+      var data = (vis.widgets && vis.widgets[el.id]) ? vis.widgets[el.id].data : null;
       if (!data) {
         var view = vis.activeView;
         var widget = (view && vis.views && vis.views[view] && vis.views[view].widgets) ? vis.views[view].widgets[el.id] : null;
@@ -5471,7 +5473,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.7 ready");
+      console.log("vis-newborn 0.3.8 ready");
       ns._versionLogged = true;
     }
   })();
