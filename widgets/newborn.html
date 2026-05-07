@@ -3202,7 +3202,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:90px;"><div style="position:relative;width:120px;height:80px;border-radius:10px;background:linear-gradient(135deg,#3a4a5a,#1f2a35);overflow:hidden;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:6px;left:6px;width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.4);color:#fff;font-size:9px;line-height:14px;text-align:center;">⛶</div><div style="position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;"><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div><div style="width:14px;height:14px;border-radius:4px;background:#ffc857;box-shadow:0 0 4px #ffc857;"></div><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Camera Tile"
-        data-vis-attrs="name/text;camera_url/text;refresh_seconds[0]/number;slot1_oid/id;slot1_state_oid/id;slot1_type[toggle]/select,toggle,action;slot1_pulse_ms[500]/number;slot1_label/text;slot1_icon/text;slot1_active_color[#ffc857]/color;slot1_invert_state/checkbox;slot2_oid/id;slot2_state_oid/id;slot2_type[toggle]/select,toggle,action;slot2_pulse_ms[500]/number;slot2_label/text;slot2_icon/text;slot2_active_color[#ffc857]/color;slot2_invert_state/checkbox;slot3_oid/id;slot3_state_oid/id;slot3_type[toggle]/select,toggle,action;slot3_pulse_ms[500]/number;slot3_label/text;slot3_icon/text;slot3_active_color[#ffc857]/color;slot3_invert_state/checkbox;slot4_oid/id;slot4_state_oid/id;slot4_type[toggle]/select,toggle,action;slot4_pulse_ms[500]/number;slot4_label/text;slot4_icon/text;slot4_active_color[#ffc857]/color;slot4_invert_state/checkbox;width/number;height/number">
+        data-vis-attrs="name/text;camera_url/text;refresh_seconds/number;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label/text;slot1_icon/text;slot1_active_color/text;slot1_invert_state/checkbox;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label/text;slot2_icon/text;slot2_active_color/text;slot2_invert_state/checkbox;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label/text;slot3_icon/text;slot3_active_color/text;slot3_invert_state/checkbox;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label/text;slot4_icon/text;slot4_active_color/text;slot4_invert_state/checkbox;width/number;height/number">
 <%
 var camDefW = 380, camDefH = 260;
 var camW = parseInt(this.data.attr('width'), 10);
@@ -3228,19 +3228,50 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
       <span class="vis-newborn-camera__title"><%= this.data.attr('name') %></span>
     </div>
     <div class="vis-newborn-camera__slots">
-      <% for (var i = 1; i <= 4; i++) { %>
       <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden"
               type="button"
-              data-slot="<%= i %>"
-              data-slot-oid="<%= this.data.attr('slot' + i + '_oid') %>"
-              data-slot-state-oid="<%= this.data.attr('slot' + i + '_state_oid') %>"
-              data-slot-type="<%= this.data.attr('slot' + i + '_type') %>"
-              data-slot-pulse-ms="<%= this.data.attr('slot' + i + '_pulse_ms') %>"
-              data-slot-label="<%= this.data.attr('slot' + i + '_label') %>"
-              data-slot-icon="<%= this.data.attr('slot' + i + '_icon') %>"
-              data-slot-active-color="<%= this.data.attr('slot' + i + '_active_color') %>"
-              data-slot-invert-state="<%= this.data.attr('slot' + i + '_invert_state') %>"></button>
-      <% } %>
+              data-slot="1"
+              data-slot-oid="<%= this.data.attr('slot1_oid') %>"
+              data-slot-state-oid="<%= this.data.attr('slot1_state_oid') %>"
+              data-slot-type="<%= this.data.attr('slot1_type') %>"
+              data-slot-pulse-ms="<%= this.data.attr('slot1_pulse_ms') %>"
+              data-slot-label="<%= this.data.attr('slot1_label') %>"
+              data-slot-icon="<%= this.data.attr('slot1_icon') %>"
+              data-slot-active-color="<%= this.data.attr('slot1_active_color') %>"
+              data-slot-invert-state="<%= this.data.attr('slot1_invert_state') %>"></button>
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden"
+              type="button"
+              data-slot="2"
+              data-slot-oid="<%= this.data.attr('slot2_oid') %>"
+              data-slot-state-oid="<%= this.data.attr('slot2_state_oid') %>"
+              data-slot-type="<%= this.data.attr('slot2_type') %>"
+              data-slot-pulse-ms="<%= this.data.attr('slot2_pulse_ms') %>"
+              data-slot-label="<%= this.data.attr('slot2_label') %>"
+              data-slot-icon="<%= this.data.attr('slot2_icon') %>"
+              data-slot-active-color="<%= this.data.attr('slot2_active_color') %>"
+              data-slot-invert-state="<%= this.data.attr('slot2_invert_state') %>"></button>
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden"
+              type="button"
+              data-slot="3"
+              data-slot-oid="<%= this.data.attr('slot3_oid') %>"
+              data-slot-state-oid="<%= this.data.attr('slot3_state_oid') %>"
+              data-slot-type="<%= this.data.attr('slot3_type') %>"
+              data-slot-pulse-ms="<%= this.data.attr('slot3_pulse_ms') %>"
+              data-slot-label="<%= this.data.attr('slot3_label') %>"
+              data-slot-icon="<%= this.data.attr('slot3_icon') %>"
+              data-slot-active-color="<%= this.data.attr('slot3_active_color') %>"
+              data-slot-invert-state="<%= this.data.attr('slot3_invert_state') %>"></button>
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden"
+              type="button"
+              data-slot="4"
+              data-slot-oid="<%= this.data.attr('slot4_oid') %>"
+              data-slot-state-oid="<%= this.data.attr('slot4_state_oid') %>"
+              data-slot-type="<%= this.data.attr('slot4_type') %>"
+              data-slot-pulse-ms="<%= this.data.attr('slot4_pulse_ms') %>"
+              data-slot-label="<%= this.data.attr('slot4_label') %>"
+              data-slot-icon="<%= this.data.attr('slot4_icon') %>"
+              data-slot-active-color="<%= this.data.attr('slot4_active_color') %>"
+              data-slot-invert-state="<%= this.data.attr('slot4_invert_state') %>"></button>
     </div>
   </div>
 </div>
@@ -5338,7 +5369,7 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.2.1 ready");
+      console.log("vis-newborn 0.2.2 ready");
       ns._versionLogged = true;
     }
   })();
