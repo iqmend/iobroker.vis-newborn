@@ -5181,9 +5181,115 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
       }
     }
 
+    /**
+     * Slot icon rendering. Auto-detects whether the value is a URL
+     * (http://, https://, /, ./) and renders <img>; otherwise renders
+     * the literal text/emoji as a <span>. Empty falls back to label
+     * first character so the button is never visually blank.
+     */
+    function camSetSlotIcon(slot, icon, label) {
+      slot.innerHTML = "";
+      var v = (icon || "").trim();
+      if (v && (v.indexOf("http://") === 0 || v.indexOf("https://") === 0 || v.charAt(0) === "/" || v.indexOf("./") === 0)) {
+        var img = document.createElement("img");
+        img.src = v;
+        img.alt = "";
+        slot.appendChild(img);
+        return;
+      }
+      var span = document.createElement("span");
+      span.textContent = v || ((label || "").charAt(0) || "?");
+      slot.appendChild(span);
+    }
+
+    /**
+     * Wire one slot button. Returns a cleanup function the destroy
+     * hook calls. Empty oid → slot stays hidden, cleanup is a no-op.
+     */
+    function camSetupSlot(el, slotEl) {
+      var $slot = $(slotEl);
+      var oid = $slot.data("slot-oid");
+      if (!oid) {
+        return function () {};
+      }
+      var stateOid = $slot.data("slot-state-oid") || oid;
+      var type = $slot.data("slot-type") || "toggle";
+      var pulseMs = parseInt($slot.data("slot-pulse-ms"), 10);
+      if (!isFinite(pulseMs) || pulseMs < 0) {
+        pulseMs = 500;
+      }
+      var label = $slot.data("slot-label") || "";
+      var icon = $slot.data("slot-icon") || "";
+      var activeColor = $slot.data("slot-active-color") || "#ffc857";
+      var invert = ($slot.data("slot-invert-state") === true || $slot.data("slot-invert-state") === "true");
+
+      slotEl.classList.remove("vis-newborn-camera__slot--hidden");
+      slotEl.style.setProperty("--slot-color", activeColor);
+      slotEl.setAttribute("aria-label", label || oid);
+      if (label) {
+        slotEl.setAttribute("title", label);
+      }
+      camSetSlotIcon(slotEl, icon, label);
+
+      var onStateChange = null;
+
+      if (type === "toggle") {
+        var applyState = function (rawVal) {
+          var on = isOn(rawVal);
+          if (invert) {
+            on = !on;
+          }
+          slotEl.classList.toggle("is-active", on);
+          slotEl.setAttribute("aria-pressed", on ? "true" : "false");
+        };
+        applyState(vis.states[stateOid + ".val"]);
+        if (!vis.editMode) {
+          onStateChange = function (e, newVal) { applyState(newVal); };
+          vis.states.bind(stateOid + ".val", onStateChange);
+        }
+      } else {
+        slotEl.setAttribute("role", "button");
+      }
+
+      $slot.on("click.newbornCamera touchend.newbornCamera", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (vis.editMode) {
+          return;
+        }
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        if (type === "toggle") {
+          var cur = isOn(vis.states[stateOid + ".val"]);
+          vis.setValue(oid, !cur);
+        } else {
+          slotEl.classList.add("is-pulsing");
+          vis.setValue(oid, true);
+          setTimeout(function () {
+            vis.setValue(oid, false);
+            slotEl.classList.remove("is-pulsing");
+          }, pulseMs);
+        }
+      });
+
+      return function cleanup() {
+        $slot.off(".newbornCamera");
+        if (onStateChange && vis.states.unbind) {
+          vis.states.unbind(stateOid + ".val", onStateChange);
+        }
+      };
+    }
+
     ns.camera = function (el) {
       var $this = $(el);
       camApplyCamera(el, $this);
+
+      var slotCleanups = [];
+      var slotEls = el.querySelectorAll(".vis-newborn-camera__slot");
+      for (var i = 0; i < slotEls.length; i++) {
+        slotCleanups.push(camSetupSlot(el, slotEls[i]));
+      }
 
       var $max = $this.find(".vis-newborn-camera__max");
       $max.on("click.newbornCamera touchend.newbornCamera", function (e) {
@@ -5198,6 +5304,13 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
       $this.data("destroy", function (id, $widget) {
         var $w = $widget || $this;
         $w.find(".vis-newborn-camera__max").off(".newbornCamera");
+        for (var j = 0; j < slotCleanups.length; j++) {
+          try {
+            slotCleanups[j]();
+          } catch (err) {
+            // swallow — cleanup must not throw
+          }
+        }
         if (el._newbornCameraInterval) {
           clearInterval(el._newbornCameraInterval);
           el._newbornCameraInterval = null;
