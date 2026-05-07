@@ -3235,8 +3235,8 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:90px;"><div style="position:relative;width:120px;height:80px;border-radius:10px;background:linear-gradient(135deg,#3a4a5a,#1f2a35);overflow:hidden;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:6px;left:6px;width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.4);color:#fff;font-size:9px;line-height:14px;text-align:center;">⛶</div><div style="position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;"><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div><div style="width:14px;height:14px;border-radius:4px;background:#ffc857;box-shadow:0 0 4px #ffc857;"></div><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Camera Tile"
-        data-vis-attrs="name/text;camera_url/text;refresh_seconds/number;width/number;height/number;group.slot1;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label/text;slot1_icon/text;slot1_active_color/text;slot1_invert_state/checkbox;group.slot2;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label/text;slot2_icon/text;slot2_active_color/text;slot2_invert_state/checkbox;"
-        data-vis-attrs0="group.slot3;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label/text;slot3_icon/text;slot3_active_color/text;slot3_invert_state/checkbox;group.slot4;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label/text;slot4_icon/text;slot4_active_color/text;slot4_invert_state/checkbox;">
+        data-vis-attrs="name;camera_url/image;refresh_seconds/number;width/number;height/number;group.slot1;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label;slot1_icon/image;slot1_active_color;slot1_invert_state/checkbox;group.slot2;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label;slot2_icon/image;slot2_active_color;slot2_invert_state/checkbox;"
+        data-vis-attrs0="group.slot3;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label;slot3_icon/image;slot3_active_color;slot3_invert_state/checkbox;group.slot4;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label;slot4_icon/image;slot4_active_color;slot4_invert_state/checkbox;">
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
      style="width: 380px; height: 260px;"
      id="<%= this.data.attr('wid') %>"
@@ -5212,8 +5212,25 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       camLightbox = box;
     }
 
+    // Defensive URL cleanup: the iobroker.vis editor may pop up its
+    // Multi-Line text-edit dialog for `text`-typed attrs and silently
+    // append `"/>` and a newline at the end if it parses the URL as
+    // HTML. Strip those plus any surrounding whitespace so the user
+    // sees the camera even if the editor mangled the value.
+    function camCleanUrl(raw) {
+      if (!raw) {
+        return "";
+      }
+      var s = String(raw).trim();
+      // Strip trailing `\n`, `"`, `'`, `>`, `/`, `<` repeatedly
+      while (s.length && /[\s"'\/<>]$/.test(s)) {
+        s = s.slice(0, -1);
+      }
+      return s;
+    }
+
     function camApplyCamera($this, data) {
-      var url = camDataAttr(data, "camera_url");
+      var url = camCleanUrl(camDataAttr(data, "camera_url"));
       var refresh = parseInt(camDataAttr(data, "refresh_seconds"), 10);
       if (!isFinite(refresh) || refresh < 0) {
         refresh = 0;
@@ -5432,7 +5449,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
           return;
         }
-        camOpenLightbox(camDataAttr(data, "camera_url"), camDataAttr(data, "name"));
+        camOpenLightbox(camCleanUrl(camDataAttr(data, "camera_url")), camDataAttr(data, "name"));
       });
 
       $this.data("destroy", function (id, $widget) {
@@ -5454,7 +5471,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.6 ready");
+      console.log("vis-newborn 0.3.7 ready");
       ns._versionLogged = true;
     }
   })();
