@@ -3232,13 +3232,24 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
 <script id="tplNewbornCamera"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:90px;"><div style="width:120px;height:80px;border-radius:10px;background:#ff5722;color:#fff;display:flex;align-items:center;justify-content:center;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;font-weight:700;font-size:13px;">CAMERA</div></div>'
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:90px;"><div style="position:relative;width:120px;height:80px;border-radius:10px;background:linear-gradient(135deg,#3a4a5a,#1f2a35);overflow:hidden;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:6px;left:6px;width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.4);color:#fff;font-size:9px;line-height:14px;text-align:center;">⛶</div><div style="position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;"><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div><div style="width:14px;height:14px;border-radius:4px;background:#ffc857;box-shadow:0 0 4px #ffc857;"></div><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn Camera Tile"
         data-vis-attrs="name/text;camera_url/text;refresh_seconds/number;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label/text;slot1_icon/text;slot1_active_color/text;slot1_invert_state/checkbox;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label/text;slot2_icon/text;slot2_active_color/text;slot2_invert_state/checkbox;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label/text;slot3_icon/text;slot3_active_color/text;slot3_invert_state/checkbox;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label/text;slot4_icon/text;slot4_active_color/text;slot4_invert_state/checkbox;width/number;height/number">
+<%
+var camDefW = 380, camDefH = 260;
+var camW = parseInt(this.data.attr('width'), 10);
+var camH = parseInt(this.data.attr('height'), 10);
+if (!isFinite(camW) || camW <= 0) camW = camDefW;
+if (!isFinite(camH) || camH <= 0) camH = camDefH;
+%>
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
-     style="width: 380px; height: 260px;"
-     id="<%= this.data.attr('wid') %>">
+     style="width: <%= camW %>px; height: <%= camH %>px;"
+     id="<%= this.data.attr('wid') %>"
+     data-camera-url="<%= this.data.attr('camera_url') %>"
+     data-refresh-seconds="<%= this.data.attr('refresh_seconds') %>"
+     data-name="<%= this.data.attr('name') %>"
+     <%= (el) -> vis.binds['newborn'].camera(el, data) %>>
   <div class="vis-newborn-camera">
     <img class="vis-newborn-camera__img is-hidden" alt="" />
     <div class="vis-newborn-camera__placeholder is-shown">
@@ -3257,62 +3268,32 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           <path d="M20 15v4a1 1 0 0 1-1 1h-4"/>
         </svg>
       </button>
-      <span class="vis-newborn-camera__title">Eingang</span>
+      <span class="vis-newborn-camera__title"><%= this.data.attr('name') %></span>
     </div>
     <div class="vis-newborn-camera__slots">
-      <button class="vis-newborn-camera__slot" type="button"
-              data-slot="1"
-              data-slot-oid="<%= this.data.attr('slot1_oid') %>"
-              data-slot-state-oid="<%= this.data.attr('slot1_state_oid') %>"
-              data-slot-type="<%= this.data.attr('slot1_type') %>"
-              data-slot-pulse-ms="<%= this.data.attr('slot1_pulse_ms') %>"
-              data-slot-label="<%= this.data.attr('slot1_label') %>"
-              data-slot-icon="<%= this.data.attr('slot1_icon') %>"
-              data-slot-active-color="<%= this.data.attr('slot1_active_color') %>"
-              data-slot-invert-state="<%= this.data.attr('slot1_invert_state') %>"
-              aria-label="Haustür">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="1">
+        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="1" viewBox="0 0 24 24" aria-hidden="true">
           <rect x="5" y="3" width="14" height="18" rx="1"/>
           <circle cx="15.5" cy="12.5" r="0.9" fill="currentColor" stroke="none"/>
           <line x1="5" y1="21" x2="19" y2="21"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot is-active" type="button"
-              data-slot="2"
-              data-slot-oid="<%= this.data.attr('slot2_oid') %>"
-              data-slot-state-oid="<%= this.data.attr('slot2_state_oid') %>"
-              data-slot-type="<%= this.data.attr('slot2_type') %>"
-              data-slot-pulse-ms="<%= this.data.attr('slot2_pulse_ms') %>"
-              data-slot-label="<%= this.data.attr('slot2_label') %>"
-              data-slot-icon="<%= this.data.attr('slot2_icon') %>"
-              data-slot-active-color="<%= this.data.attr('slot2_active_color') %>"
-              data-slot-invert-state="<%= this.data.attr('slot2_invert_state') %>"
-              aria-label="Garage">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="2">
+        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="2" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 13l2.2-6h13.6L21 13v5a1 1 0 0 1-1 1h-1.5v-2H5.5v2H4a1 1 0 0 1-1-1v-5z"/>
           <circle cx="7.5" cy="17" r="1.5"/>
           <circle cx="16.5" cy="17" r="1.5"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot" type="button"
-              data-slot="3"
-              data-slot-oid="<%= this.data.attr('slot3_oid') %>"
-              data-slot-state-oid="<%= this.data.attr('slot3_state_oid') %>"
-              data-slot-type="<%= this.data.attr('slot3_type') %>"
-              data-slot-pulse-ms="<%= this.data.attr('slot3_pulse_ms') %>"
-              data-slot-label="<%= this.data.attr('slot3_label') %>"
-              data-slot-icon="<%= this.data.attr('slot3_icon') %>"
-              data-slot-active-color="<%= this.data.attr('slot3_active_color') %>"
-              data-slot-invert-state="<%= this.data.attr('slot3_invert_state') %>"
-              aria-label="Licht">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="3">
+        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="3" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3a6 6 0 0 1 4 10.4c-.9 1-1.5 1.6-1.5 3.6h-5c0-2-.6-2.6-1.5-3.6A6 6 0 0 1 12 3z"/>
           <line x1="9.5" y1="20" x2="14.5" y2="20"/>
           <line x1="10.5" y1="22" x2="13.5" y2="22"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot" type="button" data-slot="4" aria-label="Alarm">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="4">
+        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="4" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9z"/>
           <path d="M10 20a2 2 0 0 0 4 0"/>
         </svg>
@@ -5275,15 +5256,34 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     }
 
     /**
+     * Read a slot attribute from the CanJS widget-data observable.
+     * Returns undefined when the data object is not available, the
+     * empty-string default for missing keys, otherwise the value.
+     */
+    function camDataAttr(data, key) {
+      if (!data) {
+        return "";
+      }
+      if (typeof data.attr === "function") {
+        var v = data.attr(key);
+        return (v === undefined || v === null) ? "" : v;
+      }
+      return data[key] == null ? "" : data[key];
+    }
+
+    /**
      * Slot icon rendering. Auto-detects whether the value is a URL
      * (http://, https://, /, ./) and renders <img>; otherwise renders
-     * the literal text/emoji as a <span>. Empty falls back to label
-     * first character so the button is never visually blank.
+     * the literal text/emoji as a <span>. When the user supplies no
+     * icon, the default SVG already in the slot's HTML is left alone.
      */
-    function camSetSlotIcon(slot, icon, label) {
-      slot.innerHTML = "";
+    function camSetSlotIcon(slot, icon) {
       var v = (icon || "").trim();
-      if (v && (v.indexOf("http://") === 0 || v.indexOf("https://") === 0 || v.charAt(0) === "/" || v.indexOf("./") === 0)) {
+      if (!v) {
+        return;
+      }
+      slot.innerHTML = "";
+      if (v.indexOf("http://") === 0 || v.indexOf("https://") === 0 || v.charAt(0) === "/" || v.indexOf("./") === 0) {
         var img = document.createElement("img");
         img.src = v;
         img.alt = "";
@@ -5291,30 +5291,38 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         return;
       }
       var span = document.createElement("span");
-      span.textContent = v || ((label || "").charAt(0) || "?");
+      span.textContent = v;
       slot.appendChild(span);
     }
 
     /**
-     * Wire one slot button. Returns a cleanup function the destroy
-     * hook calls. Empty oid → slot stays hidden, cleanup is a no-op.
+     * Wire one slot button. The slot config (oid, type, etc.) is read
+     * from the widget's data observable rather than per-slot HTML
+     * data-* attributes. EJS-substituting eight data-* per slot times
+     * four slots = 32 substitutions and exceeded a can.view.ejs limit
+     * in iobroker.vis 1.5.6, which silently produced empty HTML and
+     * an invisible widget. Reading from the observable in JS avoids
+     * the substitution layer entirely. Returns a cleanup function the
+     * destroy hook calls. Empty oid leaves the slot in its --hidden
+     * default so the column stays free of placeholder buttons.
      */
-    function camSetupSlot(el, slotEl) {
-      var $slot = $(slotEl);
-      var oid = $slot.data("slot-oid");
+    function camSetupSlot(el, slotEl, slotIdx, data) {
+      var oid = camDataAttr(data, "slot" + slotIdx + "_oid");
       if (!oid) {
         return camNoop;
       }
-      var stateOid = $slot.data("slot-state-oid") || oid;
-      var type = $slot.data("slot-type") || "toggle";
-      var pulseMs = parseInt($slot.data("slot-pulse-ms"), 10);
+      var $slot = $(slotEl);
+      var stateOid = camDataAttr(data, "slot" + slotIdx + "_state_oid") || oid;
+      var type = camDataAttr(data, "slot" + slotIdx + "_type") || "toggle";
+      var pulseMs = parseInt(camDataAttr(data, "slot" + slotIdx + "_pulse_ms"), 10);
       if (!isFinite(pulseMs) || pulseMs < 0) {
         pulseMs = 500;
       }
-      var label = $slot.data("slot-label") || "";
-      var icon = $slot.data("slot-icon") || "";
-      var activeColor = $slot.data("slot-active-color") || "#ffc857";
-      var invert = ($slot.data("slot-invert-state") === true || $slot.data("slot-invert-state") === "true");
+      var label = camDataAttr(data, "slot" + slotIdx + "_label");
+      var icon = camDataAttr(data, "slot" + slotIdx + "_icon");
+      var activeColor = camDataAttr(data, "slot" + slotIdx + "_active_color") || "#ffc857";
+      var invert = camDataAttr(data, "slot" + slotIdx + "_invert_state");
+      invert = (invert === true || invert === "true");
 
       slotEl.classList.remove("vis-newborn-camera__slot--hidden");
       slotEl.style.setProperty("--slot-color", activeColor);
@@ -5322,7 +5330,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       if (label) {
         slotEl.setAttribute("title", label);
       }
-      camSetSlotIcon(slotEl, icon, label);
+      camSetSlotIcon(slotEl, icon);
 
       var onStateChange = null;
 
@@ -5376,14 +5384,21 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       };
     }
 
-    ns.camera = function (el) {
+    /**
+     * data is the CanJS widget-data observable, passed in via the
+     * arrow `<%= (el) -> vis.binds['newborn'].camera(el, data) %>`.
+     * It's the same pattern iobroker.vis basic.html uses for imgRefresh
+     * (basic.html:2309: `(el) -> vis.binds.basic.imgRefresh(el, data, this.view)`).
+     */
+    ns.camera = function (el, data) {
       var $this = $(el);
       camApplyCamera(el, $this);
 
       var slotCleanups = [];
       var slotEls = el.querySelectorAll(".vis-newborn-camera__slot");
       for (var i = 0; i < slotEls.length; i++) {
-        slotCleanups.push(camSetupSlot(el, slotEls[i]));
+        var slotIdx = parseInt(slotEls[i].getAttribute("data-slot"), 10) || (i + 1);
+        slotCleanups.push(camSetupSlot(el, slotEls[i], slotIdx, data));
       }
 
       var $max = $this.find(".vis-newborn-camera__max");
@@ -5414,7 +5429,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.2.10 ready");
+      console.log("vis-newborn 0.3.0 ready");
       ns._versionLogged = true;
     }
   })();
