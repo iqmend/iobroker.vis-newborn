@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "news": {
+      "0.2.4": {
+        "en": "Diagnostic step 2 of N. v0.2.3 (a literal orange box) renders, so the bug must be in something v0.2.2 had but v0.2.3 didn't. This step adds back only the inner DOM (camera image layer + placeholder + topbar with max button + title + slot column with 4 hardcoded emoji buttons) — still no EJS prep block, no dynamic style, no (el) -> ns.camera arrow bind, no per-slot data-* attributes. If this still renders, structural HTML and CSS are fine and the bug must be in the EJS prep / arrow bind / per-slot data-* layer. If it does not render, the bug is in the inner DOM or CSS.",
+        "de": "Diagnostik-Schritt 2 von N. v0.2.3 (eine literale orange Kachel) rendert, also muss der Bug in etwas liegen das v0.2.2 hatte und v0.2.3 nicht. Dieser Schritt baut nur das innere DOM zurueck (Kamera-Image-Layer + Placeholder + Topbar mit Max-Button + Title + Slot-Spalte mit 4 hardcoded Emoji-Buttons) — noch kein EJS-Prep-Block, kein dynamisches style, kein (el) -> ns.camera-Arrow-Bind, keine per-Slot data-* Attribute. Wenn das weiter rendert, sind HTML-Struktur und CSS in Ordnung und der Bug liegt im EJS-Prep / Arrow-Bind / per-Slot data-* Layer. Wenn nicht, liegt der Bug im inneren DOM oder CSS."
+      },
       "0.2.3": {
         "en": "Diagnostic build for the still-invisible Camera Tile. Strips the template down to a literal 380x260 orange box that says 'CAMERA TILE OK', drops every EJS prep block, every <%= ...attr() %> in style, every slot, the inner img, and the (el) -> ns.camera(el) bind. If THIS renders, the bug is in one of those pieces and we add them back step by step. If even THIS does not render, the bug is at the load/cache/install layer (browser cache, vis adapter not picking up the new widgets/newborn.html, or something else outside the template). The full feature set will return in 0.2.4 once the actual root cause is identified.",
         "de": "Diagnostischer Build fuer das weiterhin unsichtbare Camera Tile. Reduziert das Template auf eine literale 380x260 orange Kachel mit Text 'CAMERA TILE OK', wirft jeden EJS-Prep-Block raus, jeden <%= ...attr() %> im style, alle Slots, das innere img und den (el) -> ns.camera(el)-Bind. Wenn DAS rendert, liegt der Bug in einem dieser Bausteine und wir bauen sie Stueck fuer Stueck wieder ein. Wenn selbst DAS nicht rendert, liegt der Bug auf der Lade/Cache/Install-Ebene (Browser-Cache, vis-Adapter zieht das neue widgets/newborn.html nicht oder etwas ausserhalb des Templates). Der volle Funktionsumfang kommt in 0.2.4 zurueck, sobald die echte Ursache identifiziert ist."

@@ -3206,8 +3206,22 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
      style="width: 380px; height: 260px;"
      id="<%= this.data.attr('wid') %>">
-  <div style="width:100%;height:100%;background:#ff5722;color:#fff;display:flex;align-items:center;justify-content:center;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;font-weight:700;font-size:18px;">
-    CAMERA TILE OK
+  <div class="vis-newborn-camera">
+    <img class="vis-newborn-camera__img is-hidden" alt="" />
+    <div class="vis-newborn-camera__placeholder is-shown">
+      <span class="vis-newborn-camera__placeholder-icon">📷</span>
+      <span>Keine Kamera</span>
+    </div>
+    <div class="vis-newborn-camera__topbar">
+      <button class="vis-newborn-camera__max" type="button" aria-label="Vergrößern">⛶</button>
+      <span class="vis-newborn-camera__title">Eingang</span>
+    </div>
+    <div class="vis-newborn-camera__slots">
+      <button class="vis-newborn-camera__slot" type="button" data-slot="1">🚪</button>
+      <button class="vis-newborn-camera__slot is-active" type="button" data-slot="2">🚗</button>
+      <button class="vis-newborn-camera__slot" type="button" data-slot="3">💡</button>
+      <button class="vis-newborn-camera__slot" type="button" data-slot="4">🔔</button>
+    </div>
   </div>
 </div>
 </script>
@@ -5304,7 +5318,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.2.3 ready");
+      console.log("vis-newborn 0.2.4 ready");
       ns._versionLogged = true;
     }
   })();
