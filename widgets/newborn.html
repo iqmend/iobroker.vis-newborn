@@ -3258,32 +3258,32 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           <path d="M20 15v4a1 1 0 0 1-1 1h-4"/>
         </svg>
       </button>
-      <span class="vis-newborn-camera__title"></span>
+      <span class="vis-newborn-camera__title">Eingang</span>
     </div>
     <div class="vis-newborn-camera__slots">
-      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="1">
-        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="1" viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot" type="button" data-slot="1" aria-label="Haustür">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <rect x="5" y="3" width="14" height="18" rx="1"/>
           <circle cx="15.5" cy="12.5" r="0.9" fill="currentColor" stroke="none"/>
           <line x1="5" y1="21" x2="19" y2="21"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="2">
-        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="2" viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot is-active" type="button" data-slot="2" aria-label="Garage">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 13l2.2-6h13.6L21 13v5a1 1 0 0 1-1 1h-1.5v-2H5.5v2H4a1 1 0 0 1-1-1v-5z"/>
           <circle cx="7.5" cy="17" r="1.5"/>
           <circle cx="16.5" cy="17" r="1.5"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="3">
-        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="3" viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot" type="button" data-slot="3" aria-label="Licht">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3a6 6 0 0 1 4 10.4c-.9 1-1.5 1.6-1.5 3.6h-5c0-2-.6-2.6-1.5-3.6A6 6 0 0 1 12 3z"/>
           <line x1="9.5" y1="20" x2="14.5" y2="20"/>
           <line x1="10.5" y1="22" x2="13.5" y2="22"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="4">
-        <svg class="vis-newborn-camera__slot-default-icon" data-default-for="4" viewBox="0 0 24 24" aria-hidden="true">
+      <button class="vis-newborn-camera__slot" type="button" data-slot="4" aria-label="Alarm">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9z"/>
           <path d="M10 20a2 2 0 0 0 4 0"/>
         </svg>
@@ -5434,7 +5434,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.1 ready");
+      console.log("vis-newborn 0.3.2 ready");
       ns._versionLogged = true;
     }
   })();
