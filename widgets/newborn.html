@@ -3236,20 +3236,10 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         data-vis-set="newborn"
         data-vis-name="Newborn Camera Tile"
         data-vis-attrs="name/text;camera_url/text;refresh_seconds/number;slot1_oid/id;slot1_state_oid/id;slot1_type/select,toggle,action;slot1_pulse_ms/number;slot1_label/text;slot1_icon/text;slot1_active_color/text;slot1_invert_state/checkbox;slot2_oid/id;slot2_state_oid/id;slot2_type/select,toggle,action;slot2_pulse_ms/number;slot2_label/text;slot2_icon/text;slot2_active_color/text;slot2_invert_state/checkbox;slot3_oid/id;slot3_state_oid/id;slot3_type/select,toggle,action;slot3_pulse_ms/number;slot3_label/text;slot3_icon/text;slot3_active_color/text;slot3_invert_state/checkbox;slot4_oid/id;slot4_state_oid/id;slot4_type/select,toggle,action;slot4_pulse_ms/number;slot4_label/text;slot4_icon/text;slot4_active_color/text;slot4_invert_state/checkbox;width/number;height/number">
-<%
-var camDefW = 380, camDefH = 260;
-var camW = parseInt(this.data.attr('width'), 10);
-var camH = parseInt(this.data.attr('height'), 10);
-if (!isFinite(camW) || camW <= 0) camW = camDefW;
-if (!isFinite(camH) || camH <= 0) camH = camDefH;
-%>
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
-     style="width: <%= camW %>px; height: <%= camH %>px;"
+     style="width: 380px; height: 260px;"
      id="<%= this.data.attr('wid') %>"
-     data-camera-url="<%= this.data.attr('camera_url') %>"
-     data-refresh-seconds="<%= this.data.attr('refresh_seconds') %>"
-     data-name="<%= this.data.attr('name') %>"
-     <%= (el) -> vis.binds['newborn'].camera(el, data) %>>
+     <%= (el) -> vis.binds['newborn'].camera(el) %>>
   <div class="vis-newborn-camera">
     <img class="vis-newborn-camera__img is-hidden" alt="" />
     <div class="vis-newborn-camera__placeholder is-shown">
@@ -3268,7 +3258,7 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
           <path d="M20 15v4a1 1 0 0 1-1 1h-4"/>
         </svg>
       </button>
-      <span class="vis-newborn-camera__title"><%= this.data.attr('name') %></span>
+      <span class="vis-newborn-camera__title"></span>
     </div>
     <div class="vis-newborn-camera__slots">
       <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="1">
@@ -5221,9 +5211,9 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
       camLightbox = box;
     }
 
-    function camApplyCamera(el, $this) {
-      var url = $this.data("camera-url") || "";
-      var refresh = parseInt($this.data("refresh-seconds"), 10);
+    function camApplyCamera(el, data) {
+      var url = camDataAttr(data, "camera_url");
+      var refresh = parseInt(camDataAttr(data, "refresh_seconds"), 10);
       if (!isFinite(refresh) || refresh < 0) {
         refresh = 0;
       }
@@ -5385,14 +5375,29 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
     }
 
     /**
-     * data is the CanJS widget-data observable, passed in via the
-     * arrow `<%= (el) -> vis.binds['newborn'].camera(el, data) %>`.
-     * It's the same pattern iobroker.vis basic.html uses for imgRefresh
-     * (basic.html:2309: `(el) -> vis.binds.basic.imgRefresh(el, data, this.view)`).
+     * Resolve the widget's data object from the active view rather than
+     * passing it via the arrow. Earlier attempts to put camera_url /
+     * refresh_seconds / name as data-* attributes on the wrap div, and
+     * to pass `data` as an arrow argument, made the entire EJS template
+     * render as empty HTML in this VIS 1.5.6 setup. Looking the data
+     * up in JS at handler time keeps the template body free of
+     * substitutions.
      */
-    ns.camera = function (el, data) {
+    ns.camera = function (el) {
       var $this = $(el);
-      camApplyCamera(el, $this);
+      var view = vis.activeView;
+      var widget = (view && vis.views && vis.views[view] && vis.views[view].widgets) ? vis.views[view].widgets[el.id] : null;
+      var data = widget ? widget.data : null;
+
+      // Title from widget data — set once, no live binding (rename
+      // requires a view reload, like the rest of the visual config).
+      var title = camDataAttr(data, "name");
+      var titleEl = el.querySelector(".vis-newborn-camera__title");
+      if (titleEl) {
+        titleEl.textContent = title;
+      }
+
+      camApplyCamera(el, data);
 
       var slotCleanups = [];
       var slotEls = el.querySelectorAll(".vis-newborn-camera__slot");
@@ -5408,7 +5413,7 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
           return;
         }
-        camOpenLightbox($this.data("camera-url") || "", $this.data("name") || "");
+        camOpenLightbox(camDataAttr(data, "camera_url"), camDataAttr(data, "name"));
       });
 
       $this.data("destroy", function (id, $widget) {
@@ -5429,7 +5434,7 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.0 ready");
+      console.log("vis-newborn 0.3.1 ready");
       ns._versionLogged = true;
     }
   })();
