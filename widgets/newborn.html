@@ -67,7 +67,43 @@
     'on_label':          { 'en': 'On label (default "an")', 'de': 'An-Label (Default "an")' },
     'icon':              { 'en': 'Icon (square ~64x64 PNG/SVG)', 'de': 'Icon (quadratisch, ca. 64×64 PNG/SVG)' },
     'font_family':       { 'en': 'Font family (e.g. Arial)',  'de': 'Schriftart (z.B. Arial)' },
-    'font_size':         { 'en': 'Title font size (px)',      'de': 'Titel-Schriftgröße (px)' }
+    'font_size':         { 'en': 'Title font size (px)',      'de': 'Titel-Schriftgröße (px)' },
+
+    // ---- Camera Tile ----
+    'camera_url':        { 'en': 'Camera URL (MJPEG or JPEG snapshot)', 'de': 'Kamera-URL (MJPEG oder JPEG-Snapshot)' },
+    'refresh_seconds':   { 'en': 'Refresh interval (s, 0 = off for MJPEG)', 'de': 'Refresh-Intervall (s, 0 = aus für MJPEG)' },
+    'slot1_oid':         { 'en': 'Slot 1 — Datapoint',     'de': 'Slot 1 — Datenpunkt' },
+    'slot1_state_oid':   { 'en': 'Slot 1 — State datapoint (toggle)', 'de': 'Slot 1 — Status-Datenpunkt (Toggle)' },
+    'slot1_type':        { 'en': 'Slot 1 — Type',          'de': 'Slot 1 — Typ' },
+    'slot1_pulse_ms':    { 'en': 'Slot 1 — Pulse duration (ms, action only)', 'de': 'Slot 1 — Puls-Dauer (ms, nur Action)' },
+    'slot1_label':       { 'en': 'Slot 1 — Label / aria',  'de': 'Slot 1 — Label / aria' },
+    'slot1_icon':        { 'en': 'Slot 1 — Icon (URL or emoji)', 'de': 'Slot 1 — Icon (URL oder Emoji)' },
+    'slot1_active_color':{ 'en': 'Slot 1 — Active color (glow)', 'de': 'Slot 1 — Aktiv-Farbe (Glow)' },
+    'slot1_invert_state':{ 'en': 'Slot 1 — Invert state',  'de': 'Slot 1 — Status invertieren' },
+    'slot2_oid':         { 'en': 'Slot 2 — Datapoint',     'de': 'Slot 2 — Datenpunkt' },
+    'slot2_state_oid':   { 'en': 'Slot 2 — State datapoint (toggle)', 'de': 'Slot 2 — Status-Datenpunkt (Toggle)' },
+    'slot2_type':        { 'en': 'Slot 2 — Type',          'de': 'Slot 2 — Typ' },
+    'slot2_pulse_ms':    { 'en': 'Slot 2 — Pulse duration (ms, action only)', 'de': 'Slot 2 — Puls-Dauer (ms, nur Action)' },
+    'slot2_label':       { 'en': 'Slot 2 — Label / aria',  'de': 'Slot 2 — Label / aria' },
+    'slot2_icon':        { 'en': 'Slot 2 — Icon (URL or emoji)', 'de': 'Slot 2 — Icon (URL oder Emoji)' },
+    'slot2_active_color':{ 'en': 'Slot 2 — Active color (glow)', 'de': 'Slot 2 — Aktiv-Farbe (Glow)' },
+    'slot2_invert_state':{ 'en': 'Slot 2 — Invert state',  'de': 'Slot 2 — Status invertieren' },
+    'slot3_oid':         { 'en': 'Slot 3 — Datapoint',     'de': 'Slot 3 — Datenpunkt' },
+    'slot3_state_oid':   { 'en': 'Slot 3 — State datapoint (toggle)', 'de': 'Slot 3 — Status-Datenpunkt (Toggle)' },
+    'slot3_type':        { 'en': 'Slot 3 — Type',          'de': 'Slot 3 — Typ' },
+    'slot3_pulse_ms':    { 'en': 'Slot 3 — Pulse duration (ms, action only)', 'de': 'Slot 3 — Puls-Dauer (ms, nur Action)' },
+    'slot3_label':       { 'en': 'Slot 3 — Label / aria',  'de': 'Slot 3 — Label / aria' },
+    'slot3_icon':        { 'en': 'Slot 3 — Icon (URL or emoji)', 'de': 'Slot 3 — Icon (URL oder Emoji)' },
+    'slot3_active_color':{ 'en': 'Slot 3 — Active color (glow)', 'de': 'Slot 3 — Aktiv-Farbe (Glow)' },
+    'slot3_invert_state':{ 'en': 'Slot 3 — Invert state',  'de': 'Slot 3 — Status invertieren' },
+    'slot4_oid':         { 'en': 'Slot 4 — Datapoint',     'de': 'Slot 4 — Datenpunkt' },
+    'slot4_state_oid':   { 'en': 'Slot 4 — State datapoint (toggle)', 'de': 'Slot 4 — Status-Datenpunkt (Toggle)' },
+    'slot4_type':        { 'en': 'Slot 4 — Type',          'de': 'Slot 4 — Typ' },
+    'slot4_pulse_ms':    { 'en': 'Slot 4 — Pulse duration (ms, action only)', 'de': 'Slot 4 — Puls-Dauer (ms, nur Action)' },
+    'slot4_label':       { 'en': 'Slot 4 — Label / aria',  'de': 'Slot 4 — Label / aria' },
+    'slot4_icon':        { 'en': 'Slot 4 — Icon (URL or emoji)', 'de': 'Slot 4 — Icon (URL oder Emoji)' },
+    'slot4_active_color':{ 'en': 'Slot 4 — Active color (glow)', 'de': 'Slot 4 — Aktiv-Farbe (Glow)' },
+    'slot4_invert_state':{ 'en': 'Slot 4 — Invert state',  'de': 'Slot 4 — Status invertieren' }
   });
 </script>
 
@@ -2284,6 +2320,246 @@
   .vis-newborn-time-popup .tm-popup-btn.is-primary:hover {
     background: #0070e0;
   }
+
+  /* ============================================================== */
+  /*  Camera Tile widget (vis-newborn-camera-*)                     */
+  /* ============================================================== */
+  .vis-newborn-camera-wrap,
+  .vis-newborn-camera-wrap *,
+  .vis-newborn-camera-wrap *::before,
+  .vis-newborn-camera-wrap *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-camera {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #1a1c22;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+  }
+
+  .vis-newborn-camera__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .vis-newborn-camera__img.is-hidden {
+    display: none;
+  }
+
+  .vis-newborn-camera__placeholder {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    background: linear-gradient(135deg, #2a2c34, #1a1c22);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .vis-newborn-camera__placeholder.is-shown {
+    display: flex;
+  }
+  .vis-newborn-camera__placeholder-icon {
+    font-size: 32px;
+  }
+
+  .vis-newborn-camera__topbar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .vis-newborn-camera__topbar > * {
+    pointer-events: auto;
+  }
+
+  .vis-newborn-camera__max {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    background: rgba(20, 22, 28, 0.45);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .vis-newborn-camera__max:hover {
+    background: rgba(20, 22, 28, 0.65);
+  }
+  .vis-newborn-camera__max:active {
+    transform: scale(0.94);
+  }
+
+  .vis-newborn-camera__title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(20, 22, 28, 0.45);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    max-width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vis-newborn-camera__title:empty {
+    display: none;
+  }
+
+  .vis-newborn-camera__slots {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2;
+    max-height: calc(100% - 20px);
+  }
+
+  .vis-newborn-camera__slot {
+    --slot-color: #ffc857;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.1s ease, color 0.18s ease;
+  }
+  .vis-newborn-camera__slot--hidden {
+    display: none !important;
+  }
+  .vis-newborn-camera__slot:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .vis-newborn-camera__slot:active,
+  .vis-newborn-camera__slot.is-pulsing {
+    transform: scale(0.94);
+    background: var(--slot-color);
+    color: #1a1c22;
+    box-shadow: 0 0 18px var(--slot-color);
+  }
+  .vis-newborn-camera__slot.is-active {
+    background: var(--slot-color);
+    color: #1a1c22;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 18px var(--slot-color);
+  }
+  .vis-newborn-camera__slot img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+  }
+  .vis-newborn-camera__slot.is-active img {
+    filter: none;
+  }
+
+  /* ----- Lightbox overlay ----- */
+  .vis-newborn-camera-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    animation: vnCameraLightboxFade 0.18s ease-out;
+  }
+  @keyframes vnCameraLightboxFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .vis-newborn-camera-lightbox__title {
+    font-size: 16px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  .vis-newborn-camera-lightbox__title:empty {
+    display: none;
+  }
+  .vis-newborn-camera-lightbox__inner {
+    max-width: 95vw;
+    max-height: 85vh;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  }
+  .vis-newborn-camera-lightbox__img {
+    display: block;
+    max-width: 95vw;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .vis-newborn-camera-lightbox__close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .vis-newborn-camera-lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
 </style>
 
 <!-- ====================================================================
@@ -2906,6 +3182,62 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       <div class="tm-title">Time</div>
     </div>
     <div class="tm-value is-empty">--:--</div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Camera Tile template — camera image (MJPEG/JPEG snapshot) +
+     up to 4 toggle/action slots floating on the right edge +
+     maximize button (lightbox overlay) at top-left.
+     Slots auto-hide when slotN_oid is empty.
+     ==================================================================== -->
+<script id="tplNewbornCamera"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:130px;height:90px;"><div style="position:relative;width:120px;height:80px;border-radius:10px;background:linear-gradient(135deg,#3a4a5a,#1f2a35);overflow:hidden;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;"><div style="position:absolute;top:6px;left:6px;width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.4);color:#fff;font-size:9px;line-height:14px;text-align:center;">⛶</div><div style="position:absolute;right:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;"><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div><div style="width:14px;height:14px;border-radius:4px;background:#ffc857;box-shadow:0 0 4px #ffc857;"></div><div style="width:14px;height:14px;border-radius:4px;background:rgba(255,255,255,0.22);border:1px solid rgba(255,255,255,0.35);"></div></div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Camera Tile"
+        data-vis-attrs="name/text;camera_url/text;refresh_seconds[0]/number;slot1_oid/id;slot1_state_oid/id;slot1_type[toggle]/select,toggle,action;slot1_pulse_ms[500]/number;slot1_label/text;slot1_icon/text;slot1_active_color[#ffc857]/color;slot1_invert_state/checkbox;slot2_oid/id;slot2_state_oid/id;slot2_type[toggle]/select,toggle,action;slot2_pulse_ms[500]/number;slot2_label/text;slot2_icon/text;slot2_active_color[#ffc857]/color;slot2_invert_state/checkbox;slot3_oid/id;slot3_state_oid/id;slot3_type[toggle]/select,toggle,action;slot3_pulse_ms[500]/number;slot3_label/text;slot3_icon/text;slot3_active_color[#ffc857]/color;slot3_invert_state/checkbox;slot4_oid/id;slot4_state_oid/id;slot4_type[toggle]/select,toggle,action;slot4_pulse_ms[500]/number;slot4_label/text;slot4_icon/text;slot4_active_color[#ffc857]/color;slot4_invert_state/checkbox;width/number;height/number">
+<%
+var camDefW = 380, camDefH = 260;
+var camW = parseInt(this.data.attr('width'), 10);
+var camH = parseInt(this.data.attr('height'), 10);
+if (!isFinite(camW) || camW <= 0) camW = camDefW;
+if (!isFinite(camH) || camH <= 0) camH = camDefH;
+%>
+<div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
+     style="width: <%= camW %>px !important; height: <%= camH %>px !important; padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-camera-url="<%= this.data.attr('camera_url') %>"
+     data-refresh-seconds="<%= this.data.attr('refresh_seconds') %>"
+     data-name="<%= this.data.attr('name') %>"
+     <%= (el) -> vis.binds['newborn'].camera(el) %>>
+  <div class="vis-newborn-camera">
+    <img class="vis-newborn-camera__img is-hidden" alt="" />
+    <div class="vis-newborn-camera__placeholder">
+      <span class="vis-newborn-camera__placeholder-icon">📷</span>
+      <span>Keine Kamera</span>
+    </div>
+    <div class="vis-newborn-camera__topbar">
+      <button class="vis-newborn-camera__max" type="button" aria-label="Vergrößern">⛶</button>
+      <span class="vis-newborn-camera__title"><%= this.data.attr('name') %></span>
+    </div>
+    <div class="vis-newborn-camera__slots">
+      <% for (var i = 1; i <= 4; i++) { %>
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden"
+              type="button"
+              data-slot="<%= i %>"
+              data-slot-oid="<%= this.data.attr('slot' + i + '_oid') %>"
+              data-slot-state-oid="<%= this.data.attr('slot' + i + '_state_oid') %>"
+              data-slot-type="<%= this.data.attr('slot' + i + '_type') %>"
+              data-slot-pulse-ms="<%= this.data.attr('slot' + i + '_pulse_ms') %>"
+              data-slot-label="<%= this.data.attr('slot' + i + '_label') %>"
+              data-slot-icon="<%= this.data.attr('slot' + i + '_icon') %>"
+              data-slot-active-color="<%= this.data.attr('slot' + i + '_active_color') %>"
+              data-slot-invert-state="<%= this.data.attr('slot' + i + '_invert_state') %>"></button>
+      <% } %>
+    </div>
   </div>
 </div>
 </script>
@@ -4751,6 +5083,16 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           vis.states.unbind(oid + ".val", onStateChange);
         }
       });
+    };
+
+    // ===== Camera Tile =====
+    /**
+     * Phase 1 stub — full implementation lands in Phase 2 (camera +
+     * maximize lightbox) and Phase 3 (slots, toggle/action handlers).
+     * For now this just verifies the EJS bind works in the editor.
+     */
+    ns.camera = function (el) {
+      // intentionally empty for the skeleton commit
     };
 
     if (!ns._versionLogged) {
