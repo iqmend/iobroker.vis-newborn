@@ -2513,8 +2513,12 @@
     animation: vnCameraLightboxFade 0.18s ease-out;
   }
   @keyframes vnCameraLightboxFade {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   .vis-newborn-camera-lightbox__title {
     font-size: 16px;
@@ -5097,7 +5101,20 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
      *                   that the browser keeps connected.
      *   - refresh > 0 → setInterval re-sets img.src with a cache-bust
      *                   timestamp param. Suits static JPEG snapshots.
+     *
+     * Style note: any single-line brace block (CSS keyframe stop, JS
+     * function body) inside this widget is parsed by the VIS state
+     * substitution as a state-id pattern and breaks the widget. Always
+     * write such blocks across multiple lines. Details and examples
+     * are in docs/rules/frontend.md.
      */
+
+    // No-op cleanup for slots that have no oid set. Defined as a named
+    // multi-line function so the VIS state substitution does not match
+    // a single-line empty function body.
+    function camNoop() {
+      return;
+    }
 
     // Lightbox: only one open at a time, shared across all camera tiles.
     var camLightbox = null;
@@ -5210,7 +5227,7 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
       var $slot = $(slotEl);
       var oid = $slot.data("slot-oid");
       if (!oid) {
-        return function () {};
+        return camNoop;
       }
       var stateOid = $slot.data("slot-state-oid") || oid;
       var type = $slot.data("slot-type") || "toggle";
@@ -5244,7 +5261,9 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
         };
         applyState(vis.states[stateOid + ".val"]);
         if (!vis.editMode) {
-          onStateChange = function (e, newVal) { applyState(newVal); };
+          onStateChange = function (e, newVal) {
+            applyState(newVal);
+          };
           vis.states.bind(stateOid + ".val", onStateChange);
         }
       } else {
@@ -5319,7 +5338,7 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.2.0 ready");
+      console.log("vis-newborn 0.2.1 ready");
       ns._versionLogged = true;
     }
   })();
