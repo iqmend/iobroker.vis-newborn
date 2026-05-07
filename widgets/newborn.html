@@ -3240,7 +3240,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
 <div class="vis-widget vis-newborn-camera-wrap <%== this.data.attr('class') %>"
      style="width: 380px; height: 260px;"
      id="<%= this.data.attr('wid') %>"
-     <%= (el) -> vis.binds['newborn'].camera(el) %>>
+     <%= (el) -> vis.binds['newborn'].camera(el, data) %>>
   <div class="vis-newborn-camera">
     <img class="vis-newborn-camera__img is-hidden" alt="" />
     <div class="vis-newborn-camera__placeholder is-shown">
@@ -3259,31 +3259,31 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           <path d="M20 15v4a1 1 0 0 1-1 1h-4"/>
         </svg>
       </button>
-      <span class="vis-newborn-camera__title">Eingang</span>
+      <span class="vis-newborn-camera__title"></span>
     </div>
     <div class="vis-newborn-camera__slots">
-      <button class="vis-newborn-camera__slot" type="button" data-slot="1" aria-label="Haustür">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="1">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <rect x="5" y="3" width="14" height="18" rx="1"/>
           <circle cx="15.5" cy="12.5" r="0.9" fill="currentColor" stroke="none"/>
           <line x1="5" y1="21" x2="19" y2="21"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot is-active" type="button" data-slot="2" aria-label="Garage">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="2">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 13l2.2-6h13.6L21 13v5a1 1 0 0 1-1 1h-1.5v-2H5.5v2H4a1 1 0 0 1-1-1v-5z"/>
           <circle cx="7.5" cy="17" r="1.5"/>
           <circle cx="16.5" cy="17" r="1.5"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot" type="button" data-slot="3" aria-label="Licht">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="3">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 3a6 6 0 0 1 4 10.4c-.9 1-1.5 1.6-1.5 3.6h-5c0-2-.6-2.6-1.5-3.6A6 6 0 0 1 12 3z"/>
           <line x1="9.5" y1="20" x2="14.5" y2="20"/>
           <line x1="10.5" y1="22" x2="13.5" y2="22"/>
         </svg>
       </button>
-      <button class="vis-newborn-camera__slot" type="button" data-slot="4" aria-label="Alarm">
+      <button class="vis-newborn-camera__slot vis-newborn-camera__slot--hidden" type="button" data-slot="4">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9z"/>
           <path d="M10 20a2 2 0 0 0 4 0"/>
@@ -5339,6 +5339,9 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           vis.states.bind(stateOid + ".val", onStateChange);
         }
       } else {
+        // Action slot: no state, no glow. Remove any stale is-active
+        // class that an earlier render or hardcoded HTML may have left.
+        $slot.removeClass("is-active");
         $slot.attr("role", "button");
       }
 
@@ -5381,7 +5384,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
      * up in JS at handler time keeps the template body free of
      * substitutions.
      */
-    ns.camera = function (el) {
+    ns.camera = function (el, data) {
       // CanJS arrow callbacks fire for any node — including text and
       // comment nodes during template processing. el.querySelector is
       // only valid on Element nodes (nodeType === 1), so we bail for
@@ -5397,9 +5400,16 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         return;
       }
 
-      var view = vis.activeView;
-      var widget = (view && vis.views && vis.views[view] && vis.views[view].widgets) ? vis.views[view].widgets[el.id] : null;
-      var data = widget ? widget.data : null;
+      // `data` is passed in via the arrow `(el, data) -> ns.camera(el, data)`.
+      // This is the CanJS observable wrapping widget.data — the same pattern
+      // iobroker.vis basic.html uses for imgRefresh (basic.html line ~2408).
+      // Fall back to the active-view lookup if it's missing for any reason
+      // (e.g. callback fired in a context where data wasn't bound).
+      if (!data) {
+        var view = vis.activeView;
+        var widget = (view && vis.views && vis.views[view] && vis.views[view].widgets) ? vis.views[view].widgets[el.id] : null;
+        data = widget ? widget.data : null;
+      }
 
       // Title from widget data — set once, no live binding (rename
       // requires a view reload, like the rest of the visual config).
@@ -5444,7 +5454,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.5 ready");
+      console.log("vis-newborn 0.3.6 ready");
       ns._versionLogged = true;
     }
   })();
