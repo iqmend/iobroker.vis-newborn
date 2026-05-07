@@ -5087,12 +5087,122 @@ if (!isFinite(camH) || camH <= 0) camH = camDefH;
 
     // ===== Camera Tile =====
     /**
-     * Phase 1 stub — full implementation lands in Phase 2 (camera +
-     * maximize lightbox) and Phase 3 (slots, toggle/action handlers).
-     * For now this just verifies the EJS bind works in the editor.
+     * Camera image (MJPEG stream or JPEG snapshot) + maximize lightbox.
+     * Slot logic (toggle/action buttons) is added in a separate function
+     * below; ns.camera composes both.
+     *
+     * Camera-URL handling:
+     *   - empty       → placeholder shown, no img, no listeners
+     *   - refresh = 0 → set img.src once. Suits MJPEG multipart streams
+     *                   that the browser keeps connected.
+     *   - refresh > 0 → setInterval re-sets img.src with a cache-bust
+     *                   timestamp param. Suits static JPEG snapshots.
      */
+
+    // Lightbox: only one open at a time, shared across all camera tiles.
+    var camLightbox = null;
+
+    function camOpenLightbox(url, title) {
+      if (!url || camLightbox) {
+        return;
+      }
+      var box = document.createElement("div");
+      box.className = "vis-newborn-camera-lightbox";
+      box.innerHTML = [
+        '<div class="vis-newborn-camera-lightbox__title"></div>',
+        '<div class="vis-newborn-camera-lightbox__inner">',
+        '  <img class="vis-newborn-camera-lightbox__img" alt="" />',
+        '</div>',
+        '<button class="vis-newborn-camera-lightbox__close" type="button" aria-label="Schliessen">&times;</button>'
+      ].join("");
+      var titleEl = box.querySelector(".vis-newborn-camera-lightbox__title");
+      var imgEl   = box.querySelector(".vis-newborn-camera-lightbox__img");
+      var closeBtn = box.querySelector(".vis-newborn-camera-lightbox__close");
+
+      titleEl.textContent = title || "";
+      imgEl.src = url;
+
+      function close() {
+        document.removeEventListener("keydown", onKey);
+        if (box.parentNode) {
+          box.parentNode.removeChild(box);
+        }
+        camLightbox = null;
+      }
+      function onKey(e) {
+        if (e.key === "Escape") {
+          close();
+        }
+      }
+      function onBackdrop(e) {
+        if (e.target === box) {
+          close();
+        }
+      }
+      closeBtn.addEventListener("click", close);
+      box.addEventListener("click", onBackdrop);
+      document.addEventListener("keydown", onKey);
+
+      document.body.appendChild(box);
+      camLightbox = box;
+    }
+
+    function camApplyCamera(el, $this) {
+      var url = $this.data("camera-url") || "";
+      var refresh = parseInt($this.data("refresh-seconds"), 10);
+      if (!isFinite(refresh) || refresh < 0) {
+        refresh = 0;
+      }
+      var img = el.querySelector(".vis-newborn-camera__img");
+      var placeholder = el.querySelector(".vis-newborn-camera__placeholder");
+
+      // Clear any leftover interval from a prior render.
+      if (el._newbornCameraInterval) {
+        clearInterval(el._newbornCameraInterval);
+        el._newbornCameraInterval = null;
+      }
+
+      if (!url) {
+        img.classList.add("is-hidden");
+        img.removeAttribute("src");
+        placeholder.classList.add("is-shown");
+        return;
+      }
+
+      placeholder.classList.remove("is-shown");
+      img.classList.remove("is-hidden");
+      img.src = url;
+
+      if (refresh > 0) {
+        el._newbornCameraInterval = setInterval(function () {
+          var sep = url.indexOf("?") >= 0 ? "&" : "?";
+          img.src = url + sep + "_t=" + Date.now();
+        }, refresh * 1000);
+      }
+    }
+
     ns.camera = function (el) {
-      // intentionally empty for the skeleton commit
+      var $this = $(el);
+      camApplyCamera(el, $this);
+
+      var $max = $this.find(".vis-newborn-camera__max");
+      $max.on("click.newbornCamera touchend.newbornCamera", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        camOpenLightbox($this.data("camera-url") || "", $this.data("name") || "");
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        var $w = $widget || $this;
+        $w.find(".vis-newborn-camera__max").off(".newbornCamera");
+        if (el._newbornCameraInterval) {
+          clearInterval(el._newbornCameraInterval);
+          el._newbornCameraInterval = null;
+        }
+      });
     };
 
     if (!ns._versionLogged) {
