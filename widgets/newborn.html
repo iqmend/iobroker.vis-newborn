@@ -2016,6 +2016,274 @@
   body.vis-edit-active .vis-widget.vis-newborn-taster-wrap .vis-newborn-switch-tile * {
     pointer-events: none !important;
   }
+
+  /* ============================================================== */
+  /*  Time-setter widget (vis-newborn-time-*)                       */
+  /*  Rectangular tile. Click opens a popup with a native           */
+  /*  <input type="time"> picker. OK writes "HH:MM" string to oid.  */
+  /*  Title is hardcoded to "Time" (per spec). Currently stored     */
+  /*  value is shown on the right side of the tile.                 */
+  /* ============================================================== */
+  .vis-newborn-time-tile,
+  .vis-newborn-time-tile *,
+  .vis-newborn-time-tile *::before,
+  .vis-newborn-time-tile *::after,
+  .vis-newborn-time-popup,
+  .vis-newborn-time-popup *,
+  .vis-newborn-time-popup *::before,
+  .vis-newborn-time-popup *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-time-tile {
+    --tm-radius: 14px;
+    --tm-bg-1: #ffffff;
+    --tm-bg-2: #f5f5f8;
+    --tm-text: #1c1c1e;
+    --tm-text-muted: #6e6e74;
+    --tm-icon-color: #6e6e74;
+    --tm-accent: #0a84ff;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--tm-radius);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    background: linear-gradient(160deg, var(--tm-bg-1) 0%, var(--tm-bg-2) 100%);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 0 0 1px rgba(0,0,0,0.04) inset,
+      0 4px 14px -4px rgba(0,0,0,0.10);
+    color: var(--tm-text);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    transition: background 160ms ease, transform 100ms ease;
+  }
+  .vis-newborn-time-tile:hover {
+    background: linear-gradient(160deg, #fafafd 0%, #f0f0f3 100%);
+  }
+  .vis-newborn-time-tile:active {
+    transform: scale(0.98);
+  }
+
+  .vis-newborn-time-tile .tm-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+  .vis-newborn-time-tile .tm-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tm-icon-color);
+    flex-shrink: 0;
+  }
+  .vis-newborn-time-tile .tm-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .vis-newborn-time-tile .tm-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: var(--tm-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .vis-newborn-time-tile .tm-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--tm-text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .vis-newborn-time-tile .tm-value.is-empty {
+    color: var(--tm-text-muted);
+    font-weight: 500;
+  }
+
+  /* sizes */
+  .vis-widget.vis-newborn-time-size-small  { width: 150px !important; height: 55px !important; }
+  .vis-widget.vis-newborn-time-size-medium { width: 180px !important; height: 65px !important; }
+  .vis-widget.vis-newborn-time-size-large  { width: 220px !important; height: 80px !important; }
+
+  .vis-newborn-time-tile.size-small {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .vis-newborn-time-tile.size-small .tm-icon { width: 18px; height: 18px; }
+  .vis-newborn-time-tile.size-small .tm-icon svg { width: 14px; height: 14px; }
+  .vis-newborn-time-tile.size-small .tm-title { font-size: 12px; }
+  .vis-newborn-time-tile.size-small .tm-value { font-size: 16px; }
+
+  .vis-newborn-time-tile.size-large {
+    padding: 0 20px;
+    gap: 12px;
+    border-radius: 18px;
+  }
+  .vis-newborn-time-tile.size-large .tm-icon { width: 28px; height: 28px; }
+  .vis-newborn-time-tile.size-large .tm-icon svg { width: 22px; height: 22px; }
+  .vis-newborn-time-tile.size-large .tm-title { font-size: 16px; }
+  .vis-newborn-time-tile.size-large .tm-value { font-size: 22px; }
+
+  body.vis-edit-active .vis-widget.vis-newborn-time-wrap .vis-newborn-time-tile,
+  body.vis-edit-active .vis-widget.vis-newborn-time-wrap .vis-newborn-time-tile * {
+    pointer-events: none !important;
+  }
+
+  /* ===== Time popup ===== */
+  .vis-newborn-time-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0);
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    transition:
+      background 220ms cubic-bezier(.65,.05,.36,1),
+      backdrop-filter 220ms cubic-bezier(.65,.05,.36,1),
+      -webkit-backdrop-filter 220ms cubic-bezier(.65,.05,.36,1);
+    pointer-events: none;
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+  .vis-newborn-time-popup.is-open {
+    background: rgba(0,0,0,0.55);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    pointer-events: auto;
+  }
+
+  .vis-newborn-time-popup .tm-popup-card {
+    position: relative;
+    width: 280px;
+    background: #ffffff;
+    color: #1c1c1e;
+    border-radius: 24px;
+    padding: 20px 22px 22px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    transition:
+      transform 280ms cubic-bezier(.2,.9,.3,1.2),
+      opacity 220ms cubic-bezier(.65,.05,.36,1);
+  }
+  .vis-newborn-time-popup.is-open .tm-popup-card {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .vis-newborn-time-popup .tm-popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f2f2f7;
+    color: #6e6e74;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.18s ease, color 0.18s ease;
+    font-family: inherit;
+  }
+  .vis-newborn-time-popup .tm-popup-close:hover {
+    background: #e5e5ea;
+    color: #1c1c1e;
+  }
+
+  .vis-newborn-time-popup .tm-popup-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 30px 14px 0;
+    letter-spacing: -0.2px;
+  }
+
+  .vis-newborn-time-popup .tm-popup-input-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .vis-newborn-time-popup .tm-popup-input {
+    font-family: inherit;
+    font-size: 32px;
+    font-weight: 300;
+    color: #1c1c1e;
+    background: #f2f2f7;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: center;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+    -moz-appearance: textfield;
+  }
+  .vis-newborn-time-popup .tm-popup-input:focus {
+    outline: none;
+    border-color: #0a84ff;
+    background: #fff;
+  }
+
+  .vis-newborn-time-popup .tm-popup-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .vis-newborn-time-popup .tm-popup-btn {
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: #f2f2f7;
+    color: #1c1c1e;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 160ms ease, transform 100ms ease;
+  }
+  .vis-newborn-time-popup .tm-popup-btn:hover {
+    background: #e5e5ea;
+  }
+  .vis-newborn-time-popup .tm-popup-btn:active {
+    transform: scale(0.97);
+  }
+  .vis-newborn-time-popup .tm-popup-btn.is-primary {
+    background: #0a84ff;
+    color: #fff;
+    border-color: #0a84ff;
+  }
+  .vis-newborn-time-popup .tm-popup-btn.is-primary:hover {
+    background: #0070e0;
+  }
 </style>
 
 <!-- ====================================================================
@@ -2587,6 +2855,57 @@ var tsIconHTML = tsIcon
         <span class="sw-pill-handle"></span>
       </div>
     </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     Time-setter template — rectangular tile, click opens popup with a
+     native <input type="time"> picker. OK writes "HH:MM" string to OID.
+     Title is hardcoded ("Time"); only the OID and size are configurable.
+     1 OID. No name / no room / no font controls per spec.
+     ==================================================================== -->
+<script id="tplNewbornTime"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:180px;height:65px;"><div style="width:170px;height:60px;border-radius:14px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0 14px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;align-items:center;justify-content:space-between;gap:8px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:18px;height:18px;color:#6e6e74;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div><div style="font-weight:700;font-size:12px;">Time</div></div><div style="font-weight:600;font-size:16px;font-variant-numeric:tabular-nums;">11:20</div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn Time-Setter (Tile)"
+        data-vis-attrs="oid/id;size/select,small,medium,large;width/number;height/number">
+<%
+var tmSize = this.data.attr('size') || 'medium';
+var tmDefW = tmSize === 'small' ? 150 : tmSize === 'large' ? 220 : 180;
+var tmDefH = tmSize === 'small' ?  55 : tmSize === 'large' ?  80 :  65;
+var tmW = parseInt(this.data.attr('width'), 10);
+var tmH = parseInt(this.data.attr('height'), 10);
+var tmCustomW = isFinite(tmW) && tmW > 0;
+var tmCustomH = isFinite(tmH) && tmH > 0;
+var tmCustom = tmCustomW || tmCustomH;
+if (tmCustom && !tmCustomW) tmW = tmDefW;
+if (tmCustom && !tmCustomH) tmH = tmDefH;
+if (tmCustom && tmW < 130) tmW = 130;
+if (tmCustom && tmH <  44) tmH =  44;
+var tmSizeClass = tmCustom ? '' : ('vis-newborn-time-size-' + tmSize);
+var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !important;') : 'width:180px;height:65px;';
+%>
+<div class="vis-widget vis-newborn-time-wrap <%= tmSizeClass %> <%== this.data.attr('class') %>"
+     style="<%= tmStyle %> padding: 0px;"
+     id="<%= this.data.attr('wid') %>"
+     data-oid="<%= this.data.attr('oid') %>"
+     <%= (el) -> vis.binds['newborn'].timeSetter(el) %>>
+  <div class="vis-newborn-time-tile size-<%= (this.data.attr('size') || 'medium') %>"
+       role="button"
+       aria-label="Time setter">
+    <div class="tm-left">
+      <div class="tm-icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"/>
+          <polyline points="12 7 12 12 15 14"/>
+        </svg>
+      </div>
+      <div class="tm-title">Time</div>
+    </div>
+    <div class="tm-value is-empty">--:--</div>
   </div>
 </div>
 </script>
@@ -4026,7 +4345,7 @@ var tsIconHTML = tsIcon
         $wrap.css("font-family", "");
       }
       var fs = parseInt($wrap.data("font-size"), 10);
-      if (isFinite(fs) && fs > 4 && fs <= 72) {
+      if (isFinite(fs) && fs >= 1 && fs <= 96) {
         $name.css("--sw-name-base-size", fs + "px");
       } else {
         $name.css("--sw-name-base-size", "");
@@ -4084,17 +4403,40 @@ var tsIconHTML = tsIcon
       var oidStatus = $this.data("oid-status");
       var invert    = ($this.data("invert") === true || $this.data("invert") === "true");
 
-      if (!oid || vis.editMode) {
-        return;
-      }
-
-      var oidRead = oidStatus || oid;
       var $tile = $this.find(".vis-newborn-switch-tile");
       var $pill = $this.find(".sw-pill");
       var $name = $this.find(".sw-name");
-      var moved = false;
 
+      // ---- Cosmetic setup (must run in BOTH edit + runtime mode) ----
+      // applyTileFont and autofit don't bind events or subscribe to states,
+      // they just adjust inline styles. Doing them up front guarantees the
+      // editor preview correctly reflects font_family / font_size /
+      // shrink-to-fit instead of falling back to the size-class defaults.
       applyTileFont($this, $name);
+
+      function fitName() { autoFitSwitchName($name); }
+      fitName();
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(fitName);
+      }
+      var fitTimer = setTimeout(fitName, 60);
+
+      // In editor mode (or with no OID configured) we skip the interactive
+      // wiring but still register a destroy handler so the autofit timer
+      // doesn't leak when the user re-renders the widget.
+      if (vis.editMode || !oid) {
+        $this.data("destroy", function () {
+          if (fitTimer) {
+            clearTimeout(fitTimer);
+            fitTimer = null;
+          }
+        });
+        return;
+      }
+
+      // ---- Runtime: state binding + click toggle ----
+      var oidRead = oidStatus || oid;
+      var moved = false;
 
       function applyState(rawVal) {
         var on = isOn(rawVal);
@@ -4112,16 +4454,6 @@ var tsIconHTML = tsIcon
 
       applyState(vis.states[oidRead + ".val"]);
       vis.states.bind(oidRead + ".val", onStateChange);
-
-      // Run autofit after the browser has had a chance to lay out the tile
-      // so clientWidth is meaningful. rAF + a 60ms safety net cover the
-      // case where the widget is initially in a hidden view.
-      function fitName() { autoFitSwitchName($name); }
-      fitName();
-      if (typeof requestAnimationFrame === "function") {
-        requestAnimationFrame(fitName);
-      }
-      var fitTimer = setTimeout(fitName, 60);
 
       $this.on("click.newbornSwitch touchend.newbornSwitch", function () {
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
@@ -4171,15 +4503,30 @@ var tsIconHTML = tsIcon
       var $this = $(el);
       var oid   = $this.data("oid");
 
-      if (!oid || vis.editMode) {
-        return;
-      }
-
       var $tile = $this.find(".vis-newborn-switch-tile");
       var $pill = $this.find(".sw-pill");
       var $name = $this.find(".sw-name");
 
+      // Cosmetic setup runs in BOTH edit + runtime mode (see ns.schalter
+      // for rationale — same applies here).
       applyTileFont($this, $name);
+
+      function fitName() { autoFitSwitchName($name); }
+      fitName();
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(fitName);
+      }
+      var fitTimer = setTimeout(fitName, 60);
+
+      if (vis.editMode || !oid) {
+        $this.data("destroy", function () {
+          if (fitTimer) {
+            clearTimeout(fitTimer);
+            fitTimer = null;
+          }
+        });
+        return;
+      }
 
       var pressed = false;
 
@@ -4227,12 +4574,6 @@ var tsIconHTML = tsIcon
       var blurNs = ".newbornTaster_" + (oid || "_").replace(/[^a-zA-Z0-9_]/g, "_");
       $(window).on("blur" + blurNs, onPressEnd);
 
-      function fitName() { autoFitSwitchName($name); }
-      fitName();
-      if (typeof requestAnimationFrame === "function") {
-        requestAnimationFrame(fitName);
-      }
-      var fitTimer = setTimeout(fitName, 60);
 
       $this.data("destroy", function (id, $widget) {
         ($widget || $this).off(".newbornTaster");
@@ -4249,8 +4590,171 @@ var tsIconHTML = tsIcon
       });
     };
 
+    // ===== Time-setter (popup with native <input type="time">) =====
+    var sharedTimePopup = null;
+
+    function ensureTimePopup() {
+      if (sharedTimePopup) {
+        return sharedTimePopup;
+      }
+      var popup = document.createElement("div");
+      popup.className = "vis-newborn-time-popup";
+      popup.innerHTML = [
+        '<div class="tm-popup-card">',
+        '  <button type="button" class="tm-popup-close" aria-label="Schliessen">&times;</button>',
+        '  <div class="tm-popup-title">Time</div>',
+        '  <div class="tm-popup-input-wrap">',
+        '    <input type="time" class="tm-popup-input" step="60">',
+        '  </div>',
+        '  <div class="tm-popup-actions">',
+        '    <button type="button" class="tm-popup-btn tm-popup-cancel">Abbrechen</button>',
+        '    <button type="button" class="tm-popup-btn is-primary tm-popup-ok">OK</button>',
+        '  </div>',
+        '</div>'
+      ].join("");
+      document.body.appendChild(popup);
+      sharedTimePopup = popup;
+      return popup;
+    }
+
+    /**
+     * Normalize whatever the OID currently holds into "HH:MM" 24h
+     * format suitable for <input type="time">. Accepts strings like
+     * "11:20", "11:20:00", "1:5", numbers like 1120 (HHMM) or seconds
+     * since midnight, and falls back to "12:00" if nothing parseable.
+     */
+    function normalizeHHMM(raw) {
+      if (raw === null || raw === undefined || raw === "") {
+        return "12:00";
+      }
+      var s = String(raw).trim();
+      var m = s.match(/^(\d{1,2})\s*[:\.h]\s*(\d{1,2})/);
+      if (m) {
+        var h = parseInt(m[1], 10);
+        var mn = parseInt(m[2], 10);
+        if (h >= 0 && h < 24 && mn >= 0 && mn < 60) {
+          return (h < 10 ? "0" + h : "" + h) + ":" + (mn < 10 ? "0" + mn : "" + mn);
+        }
+      }
+      var n = parseInt(s, 10);
+      if (isFinite(n)) {
+        // HHMM as integer (e.g. 1120 → 11:20)
+        if (n >= 0 && n <= 2359) {
+          var hh = Math.floor(n / 100);
+          var mm = n % 100;
+          if (hh < 24 && mm < 60) {
+            return (hh < 10 ? "0" + hh : "" + hh) + ":" + (mm < 10 ? "0" + mm : "" + mm);
+          }
+        }
+      }
+      return "12:00";
+    }
+
+    function openTimePopup(ctx) {
+      var popup = ensureTimePopup();
+      var input    = popup.querySelector(".tm-popup-input");
+      var okBtn    = popup.querySelector(".tm-popup-ok");
+      var cancelBtn= popup.querySelector(".tm-popup-cancel");
+      var closeBtn = popup.querySelector(".tm-popup-close");
+
+      input.value = normalizeHHMM(vis.states[ctx.oid + ".val"]);
+
+      function close() {
+        popup.classList.remove("is-open");
+        okBtn.removeEventListener("click", onOk);
+        cancelBtn.removeEventListener("click", onCancel);
+        closeBtn.removeEventListener("click", onCancel);
+        popup.removeEventListener("click", onBackdrop);
+        input.removeEventListener("keydown", onKey);
+      }
+      function onOk(e) {
+        e.stopPropagation();
+        var v = input.value;
+        if (/^\d{1,2}:\d{2}$/.test(v)) {
+          // Pad to HH:MM
+          var parts = v.split(":");
+          var hh = parseInt(parts[0], 10);
+          var mm = parseInt(parts[1], 10);
+          var out = (hh < 10 ? "0" + hh : "" + hh) + ":" + (mm < 10 ? "0" + mm : "" + mm);
+          vis.setValue(ctx.oid, out);
+        }
+        close();
+      }
+      function onCancel(e) {
+        e.stopPropagation();
+        close();
+      }
+      function onBackdrop(e) {
+        if (e.target === popup) {
+          close();
+        }
+      }
+      function onKey(e) {
+        if (e.key === "Enter") { onOk(e); }
+        else if (e.key === "Escape") { onCancel(e); }
+      }
+
+      okBtn.addEventListener("click", onOk);
+      cancelBtn.addEventListener("click", onCancel);
+      closeBtn.addEventListener("click", onCancel);
+      popup.addEventListener("click", onBackdrop);
+      input.addEventListener("keydown", onKey);
+
+      requestAnimationFrame(function () {
+        popup.classList.add("is-open");
+        // Best effort: focus the input after the open transition starts.
+        try { input.focus(); } catch (e) { /* ignore */ }
+      });
+    }
+
+    /**
+     * Tile click → popup. Reads OID for the current value display.
+     * No status bind side-effects beyond updating .tm-value text.
+     */
+    ns.timeSetter = function (el) {
+      var $this = $(el);
+      var oid   = $this.data("oid");
+      var $value = $this.find(".tm-value");
+
+      function applyState() {
+        var raw = oid ? vis.states[oid + ".val"] : null;
+        if (raw === null || raw === undefined || raw === "") {
+          $value.addClass("is-empty").text("--:--");
+        } else {
+          $value.removeClass("is-empty").text(String(raw));
+        }
+      }
+      function onStateChange() { applyState(); }
+
+      applyState();
+
+      if (vis.editMode || !oid) {
+        return;
+      }
+
+      vis.states.bind(oid + ".val", onStateChange);
+
+      $this.on("click.newbornTime touchend.newbornTime", function (e) {
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        // Avoid double-fire from click after touchend (mobile)
+        if (e.type === "touchend") {
+          e.preventDefault();
+        }
+        openTimePopup({ oid: oid });
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornTime");
+        if (vis.states.unbind) {
+          vis.states.unbind(oid + ".val", onStateChange);
+        }
+      });
+    };
+
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.1.21 ready");
+      console.log("vis-newborn 0.1.22 ready");
       ns._versionLogged = true;
     }
   })();
