@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "news": {
+      "0.2.5": {
+        "en": "Polish on the v0.2.4 diagnostic build. Replaces all emojis with proper inline line-art SVG icons matching the visual style of the existing Schalter / Heizung / Time-Setter widgets: maximize button (corner brackets), placeholder camera (camera body + lens), and the four hardcoded test slot icons (door, garage, lightbulb, bell). Also fixes the topbar truncating the title to 'Ein...' — the topbar now spans from left:10px to right:70px so there is room for the title before the slot column starts. Slot SVGs inherit currentColor so the active-state inversion (dark icon on yellow glow background) still works automatically.",
+        "de": "Politur auf dem v0.2.4 Diagnose-Build. Ersetzt alle Emojis durch sauberes Inline-Line-Art-SVG im Stil der existierenden Schalter / Heizung / Time-Setter Widgets: Maximize-Button (Eck-Klammern), Placeholder-Kamera (Kamerabody + Linse) und die vier hardcoded Test-Slot-Icons (Tuer, Garage, Gluehbirne, Glocke). Fixt zusaetzlich die Topbar-Truncation 'Ein...' statt 'Eingang' — die Topbar geht jetzt von left:10px bis right:70px, sodass Platz fuer den Titel vor der Slot-Spalte ist. Slot-SVGs erben currentColor, damit die Aktiv-Zustand-Invertierung (dunkles Icon auf gelbem Glow-Background) automatisch funktioniert."
+      },
       "0.2.4": {
         "en": "Diagnostic step 2 of N. v0.2.3 (a literal orange box) renders, so the bug must be in something v0.2.2 had but v0.2.3 didn't. This step adds back only the inner DOM (camera image layer + placeholder + topbar with max button + title + slot column with 4 hardcoded emoji buttons) — still no EJS prep block, no dynamic style, no (el) -> ns.camera arrow bind, no per-slot data-* attributes. If this still renders, structural HTML and CSS are fine and the bug must be in the EJS prep / arrow bind / per-slot data-* layer. If it does not render, the bug is in the inner DOM or CSS.",
         "de": "Diagnostik-Schritt 2 von N. v0.2.3 (eine literale orange Kachel) rendert, also muss der Bug in etwas liegen das v0.2.2 hatte und v0.2.3 nicht. Dieser Schritt baut nur das innere DOM zurueck (Kamera-Image-Layer + Placeholder + Topbar mit Max-Button + Title + Slot-Spalte mit 4 hardcoded Emoji-Buttons) — noch kein EJS-Prep-Block, kein dynamisches style, kein (el) -> ns.camera-Arrow-Bind, keine per-Slot data-* Attribute. Wenn das weiter rendert, sind HTML-Struktur und CSS in Ordnung und der Bug liegt im EJS-Prep / Arrow-Bind / per-Slot data-* Layer. Wenn nicht, liegt der Bug im inneren DOM oder CSS."
