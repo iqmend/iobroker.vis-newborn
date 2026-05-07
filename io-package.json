@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "vis-newborn",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "news": {
+      "0.2.9": {
+        "en": "Bisect step. v0.2.8 (slot 1 only with all 8 data-*) renders. Bug needs multiple slots together. v0.2.9 puts the same 8 data-* on slot 2 too, so slots 1+2 both have substitutions and slots 3+4 stay without. If v0.2.9 renders, the breakage starts at 3+ slots. If v0.2.9 breaks, 2 slots are enough and the next step bisects which specific data-* attribute interaction kills the parser.",
+        "de": "Bisect-Schritt. v0.2.8 (Slot 1 mit allen 8 data-*) rendert. Bug braucht mehrere Slots zusammen. v0.2.9 setzt dieselben 8 data-* auch auf Slot 2, sodass Slots 1+2 beide Substitutionen haben und Slots 3+4 ohne bleiben. Wenn v0.2.9 rendert, startet der Bruch erst ab 3+ Slots. Wenn v0.2.9 bricht, reichen 2 Slots, und der naechste Schritt bisectet welches spezifische data-* Attribut den Parser killt."
+      },
       "0.2.8": {
         "en": "Bisect step. v0.2.7 (long data-vis-attrs only, no per-slot data-*) renders, so the per-slot data-* substitutions are the cause of the v0.2.6 invisibility. This step adds back ALL eight data-* attributes only on slot 1 (data-slot-oid, data-slot-state-oid, data-slot-type, data-slot-pulse-ms, data-slot-label, data-slot-icon, data-slot-active-color, data-slot-invert-state, each via <%= this.data.attr('slot1_xxx') %>). Slots 2-4 stay without data-*. If v0.2.8 still renders, multiple slots together break it (volume / parser limit) and v0.2.9 will use slots 1+2. If v0.2.8 already breaks, one slot's substitution is enough — bisect within slot 1's eight attrs to find which specific one is poison.",
         "de": "Bisect-Schritt. v0.2.7 (nur langer data-vis-attrs, keine per-Slot data-*) rendert, also sind die per-Slot data-* Substitutionen die Ursache der v0.2.6-Unsichtbarkeit. Dieser Schritt baut ALLE acht data-* Attribute nur auf Slot 1 zurueck (data-slot-oid, data-slot-state-oid, data-slot-type, data-slot-pulse-ms, data-slot-label, data-slot-icon, data-slot-active-color, data-slot-invert-state, jeweils via <%= this.data.attr('slot1_xxx') %>). Slots 2-4 bleiben ohne data-*. Wenn v0.2.8 weiter rendert, brechen es mehrere Slots zusammen (Volumen / Parser-Limit) und v0.2.9 nimmt Slots 1+2. Wenn v0.2.8 schon bricht, reicht ein Slot — bisect dann innerhalb der acht Attrs von Slot 1 um das spezifische Gift zu finden."
