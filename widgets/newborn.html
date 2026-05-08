@@ -5030,92 +5030,64 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       $this.on("mousedown.newbornTaster", onMouseDown);
       $this.on("mouseup.newbornTaster mouseleave.newbornTaster", onMouseUpOrLeave);
 
-      // Touch path: defer the press by a 100 ms grace window. If the
-      // finger moves more than 15 px during that window, treat the
-      // gesture as a scroll and never fire the press at all. If
-      // touchend hits while we're still in the grace window without
-      // movement, fire a brief press+release pulse for the tap.
-      // We deliberately do NOT preventDefault on touchstart — that
-      // lets the browser handle vertical scrolling normally.
-      var TASTER_GRACE_MS = 100;
-      var TASTER_MOVE_PX = 15;
-      var pressTimer = null;
+      // Touch path: same scroll-aware moved-flag pattern the Newborn
+      // Toggle and Camera-slot handlers use. Any touchmove disqualifies
+      // the gesture as a scroll. On touchend without movement, fire a
+      // brief press+release pulse so the OID sees a true→false edge
+      // and the 1-second blue flash plays. Mouse path keeps its
+      // press-and-hold semantics — mouse has no scroll-by-finger
+      // problem, so a held-down mouse button can still run the relay
+      // for as long as it is held.
       var pressMoved = false;
-      var startX = 0;
-      var startY = 0;
+      var pulseTimer = null;
 
-      function clearPressTimer() {
-        if (pressTimer) {
-          clearTimeout(pressTimer);
-          pressTimer = null;
+      function clearPulseTimer() {
+        if (pulseTimer) {
+          clearTimeout(pulseTimer);
+          pulseTimer = null;
         }
       }
 
-      function onTouchStart(e) {
-        var touches = e.originalEvent ? e.originalEvent.touches : e.touches;
-        if (!touches || !touches.length) {
-          return;
-        }
-        startX = touches[0].clientX;
-        startY = touches[0].clientY;
+      function onTouchStart() {
         pressMoved = false;
-        clearPressTimer();
-        pressTimer = setTimeout(function () {
-          pressTimer = null;
-          if (!pressMoved) {
-            setPressed(true);
-          }
-        }, TASTER_GRACE_MS);
       }
 
-      function onTouchMove(e) {
+      function onTouchMove() {
+        pressMoved = true;
+      }
+
+      function onTouchEnd(e) {
         if (pressMoved) {
           return;
         }
-        var touches = e.originalEvent ? e.originalEvent.touches : e.touches;
-        if (!touches || !touches.length) {
-          return;
+        if (e && e.cancelable) {
+          e.preventDefault();
         }
-        var dx = Math.abs(touches[0].clientX - startX);
-        var dy = Math.abs(touches[0].clientY - startY);
-        if (dx > TASTER_MOVE_PX || dy > TASTER_MOVE_PX) {
-          pressMoved = true;
-          clearPressTimer();
+        clearPulseTimer();
+        setPressed(true);
+        pulseTimer = setTimeout(function () {
+          pulseTimer = null;
           if (pressed) {
             setPressed(false);
           }
-        }
-      }
-
-      function onTouchEnd() {
-        if (pressTimer) {
-          // touchend before grace window expired and no scroll detected
-          // — treat as a tap: fire press, then release after a short
-          // moment so the visual flash registers.
-          clearPressTimer();
-          if (!pressMoved) {
-            setPressed(true);
-            setTimeout(function () {
-              if (pressed) {
-                setPressed(false);
-              }
-            }, 80);
-          }
-          return;
-        }
-        if (pressed) {
-          setPressed(false);
-        }
+        }, 80);
       }
 
       $this.on("touchstart.newbornTaster", onTouchStart);
       $this.on("touchmove.newbornTaster", onTouchMove);
-      $this.on("touchend.newbornTaster touchcancel.newbornTaster", onTouchEnd);
+      $this.on("touchend.newbornTaster", onTouchEnd);
+      $this.on("touchcancel.newbornTaster", function () {
+        pressMoved = true;
+        clearPulseTimer();
+        if (pressed) {
+          setPressed(false);
+        }
+      });
 
       // Safety: if the user alt-tabs / switches app while holding the
-      // button, release programmatically so we don't strand the DP at true.
+      // mouse, release programmatically so we don't strand the DP at true.
       function onBlurRelease() {
-        clearPressTimer();
+        clearPulseTimer();
         if (pressed) {
           setPressed(false);
         }
@@ -5127,7 +5099,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       $this.data("destroy", function (id, $widget) {
         ($widget || $this).off(".newbornTaster");
         $(window).off("blur" + blurNs);
-        clearPressTimer();
+        clearPulseTimer();
         if (fitTimer) {
           clearTimeout(fitTimer);
           fitTimer = null;
@@ -5673,7 +5645,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.11 ready");
+      console.log("vis-newborn 0.3.12 ready");
       ns._versionLogged = true;
     }
   })();
