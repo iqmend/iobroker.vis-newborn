@@ -2102,10 +2102,22 @@
     color: #fff;
     transform: scale(0.94);
   }
-  .vis-newborn-switch-tile.size-small  .sw-action { width: 30px; height: 30px; }
-  .vis-newborn-switch-tile.size-small  .sw-action svg { width: 15px; height: 15px; }
-  .vis-newborn-switch-tile.size-large  .sw-action { width: 42px; height: 42px; }
-  .vis-newborn-switch-tile.size-large  .sw-action svg { width: 22px; height: 22px; }
+  .vis-newborn-switch-tile.size-small .sw-action {
+    width: 30px;
+    height: 30px;
+  }
+  .vis-newborn-switch-tile.size-small .sw-action svg {
+    width: 15px;
+    height: 15px;
+  }
+  .vis-newborn-switch-tile.size-large .sw-action {
+    width: 42px;
+    height: 42px;
+  }
+  .vis-newborn-switch-tile.size-large .sw-action svg {
+    width: 22px;
+    height: 22px;
+  }
 
   /* Press feedback: 1-second blue flash on the whole tile.
      Multi-line keyframe stops are mandatory — single-line `{ ... }`
@@ -6176,7 +6188,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.4.3 ready");
+      console.log("vis-newborn 0.4.4 ready");
       ns._versionLogged = true;
     }
   })();
