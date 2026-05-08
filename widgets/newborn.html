@@ -113,7 +113,10 @@
     'dp1_unit':          { 'en': 'Datapoint 1 — unit',    'de': 'Datenpunkt 1 — Einheit' },
     'dp2_oid':           { 'en': 'Datapoint 2',           'de': 'Datenpunkt 2' },
     'dp2_label':         { 'en': 'Datapoint 2 — label',   'de': 'Datenpunkt 2 — Label' },
-    'dp2_unit':          { 'en': 'Datapoint 2 — unit',    'de': 'Datenpunkt 2 — Einheit' }
+    'dp2_unit':          { 'en': 'Datapoint 2 — unit',    'de': 'Datenpunkt 2 — Einheit' },
+    'dp3_oid':           { 'en': 'Datapoint 3',           'de': 'Datenpunkt 3' },
+    'dp3_label':         { 'en': 'Datapoint 3 — label',   'de': 'Datenpunkt 3 — Label' },
+    'dp3_unit':          { 'en': 'Datapoint 3 — unit',    'de': 'Datenpunkt 3 — Einheit' }
   });
 </script>
 
@@ -2840,9 +2843,10 @@
     background: rgba(255, 255, 255, 0.22);
   }
   .vis-newborn-popup-modal__inner {
-    width: 95vw;
-    max-width: 1100px;
-    height: 85vh;
+    /* Width and height are set inline by ns.popup from the target
+       view's vis.views[X].settings.sizex / sizey, capped via the
+       inline maxWidth: 95vw / maxHeight: 90vh. The default fallback
+       (when the view has no size configured) is 600x400, set in JS. */
     border-radius: 14px;
     overflow: hidden;
     background: #fff;
@@ -3564,9 +3568,9 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:160px;height:80px;"><div style="width:150px;height:70px;border-radius:12px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:8px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(0,0,0,0.05);font-size:11px;display:flex;align-items:center;justify-content:center;">⊞</div><div style="font-weight:700;font-size:9px;line-height:1.1;flex:1;">PopUp</div></div><div style="display:flex;justify-content:space-between;font-size:7px;margin-top:auto;"><span style="color:#8e8e93;">Status</span><span style="font-weight:700;">An</span></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn PopUp (Tile)"
-        data-vis-attrs="name;subtitle;icon;target_view;dp1_oid/id;dp1_label;dp1_unit;dp2_oid/id;dp2_label;dp2_unit;width/number;height/number">
+        data-vis-attrs="name;subtitle;icon;target_view;dp1_oid/id;dp1_label;dp1_unit;dp2_oid/id;dp2_label;dp2_unit;dp3_oid/id;dp3_label;dp3_unit;width/number;height/number">
 <%
-var pDefW = 320, pDefH = 130;
+var pDefW = 320, pDefH = 160;
 var pW = parseInt(this.data.attr('width'), 10);
 var pH = parseInt(this.data.attr('height'), 10);
 if (!isFinite(pW) || pW <= 0) pW = pDefW;
@@ -3590,6 +3594,10 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
         <span class="vis-newborn-popup__value"></span>
       </div>
       <div class="vis-newborn-popup__row is-hidden" data-row="2">
+        <span class="vis-newborn-popup__label"></span>
+        <span class="vis-newborn-popup__value"></span>
+      </div>
+      <div class="vis-newborn-popup__row is-hidden" data-row="3">
         <span class="vis-newborn-popup__label"></span>
         <span class="vis-newborn-popup__value"></span>
       </div>
@@ -5572,9 +5580,30 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       ].join("");
       var titleEl = box.querySelector(".vis-newborn-popup-modal__title");
       var iframe  = box.querySelector(".vis-newborn-popup-modal__iframe");
+      var inner   = box.querySelector(".vis-newborn-popup-modal__inner");
       var closeBtn = box.querySelector(".vis-newborn-popup-modal__close");
 
       titleEl.textContent = title || "";
+
+      // Auto-size the modal to the target view's configured dimensions
+      // (the same numbers VIS uses for the resolution display in the
+      // editor, vis.js:1779). Cap at 95vw / 90vh so it never overflows
+      // the screen. If the view has no explicit size the inner panel
+      // falls back to a reasonable 600x400.
+      var viewSettings = (vis.views && vis.views[viewName] && vis.views[viewName].settings) ? vis.views[viewName].settings : null;
+      var sx = viewSettings ? parseInt(viewSettings.sizex, 10) : NaN;
+      var sy = viewSettings ? parseInt(viewSettings.sizey, 10) : NaN;
+      if (!isFinite(sx) || sx <= 0) {
+        sx = 600;
+      }
+      if (!isFinite(sy) || sy <= 0) {
+        sy = 400;
+      }
+      inner.style.width = sx + "px";
+      inner.style.height = sy + "px";
+      inner.style.maxWidth = "95vw";
+      inner.style.maxHeight = "90vh";
+
       // Same project as current page; replace the view (hash) with target.
       var url = window.location.pathname + window.location.search + "#" + encodeURIComponent(viewName);
       iframe.src = url;
@@ -5693,6 +5722,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       var rowCleanups = [];
       rowCleanups.push(popSetupRow($this, 1, data));
       rowCleanups.push(popSetupRow($this, 2, data));
+      rowCleanups.push(popSetupRow($this, 3, data));
 
       // Click → open modal. Same scroll-aware moved-flag pattern as
       // the Camera slot buttons: any touchmove cancels the tap so a
@@ -6100,7 +6130,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.4.0 ready");
+      console.log("vis-newborn 0.4.1 ready");
       ns._versionLogged = true;
     }
   })();
