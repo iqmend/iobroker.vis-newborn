@@ -5012,39 +5012,122 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         }
       }
 
-      function onPressStart(e) {
-        if (e.type === "mousedown" && e.button !== undefined && e.button !== 0) {
+      // Mouse path: instant press on mousedown, release on mouseup.
+      // Mouse has no scroll-by-finger problem, so no grace period.
+      function onMouseDown(e) {
+        if (e.button !== undefined && e.button !== 0) {
           return;
-        }
-        if (e.cancelable) {
-          e.preventDefault();
         }
         setPressed(true);
       }
 
-      function onPressEnd() {
-        if (!pressed) {
-          return;
+      function onMouseUpOrLeave() {
+        if (pressed) {
+          setPressed(false);
         }
-        setPressed(false);
       }
 
-      $this.on("mousedown.newbornTaster touchstart.newbornTaster", onPressStart);
-      $this.on(
-        "mouseup.newbornTaster mouseleave.newbornTaster " +
-        "touchend.newbornTaster touchcancel.newbornTaster",
-        onPressEnd
-      );
+      $this.on("mousedown.newbornTaster", onMouseDown);
+      $this.on("mouseup.newbornTaster mouseleave.newbornTaster", onMouseUpOrLeave);
+
+      // Touch path: defer the press by a 100 ms grace window. If the
+      // finger moves more than 15 px during that window, treat the
+      // gesture as a scroll and never fire the press at all. If
+      // touchend hits while we're still in the grace window without
+      // movement, fire a brief press+release pulse for the tap.
+      // We deliberately do NOT preventDefault on touchstart — that
+      // lets the browser handle vertical scrolling normally.
+      var TASTER_GRACE_MS = 100;
+      var TASTER_MOVE_PX = 15;
+      var pressTimer = null;
+      var pressMoved = false;
+      var startX = 0;
+      var startY = 0;
+
+      function clearPressTimer() {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      }
+
+      function onTouchStart(e) {
+        var touches = e.originalEvent ? e.originalEvent.touches : e.touches;
+        if (!touches || !touches.length) {
+          return;
+        }
+        startX = touches[0].clientX;
+        startY = touches[0].clientY;
+        pressMoved = false;
+        clearPressTimer();
+        pressTimer = setTimeout(function () {
+          pressTimer = null;
+          if (!pressMoved) {
+            setPressed(true);
+          }
+        }, TASTER_GRACE_MS);
+      }
+
+      function onTouchMove(e) {
+        if (pressMoved) {
+          return;
+        }
+        var touches = e.originalEvent ? e.originalEvent.touches : e.touches;
+        if (!touches || !touches.length) {
+          return;
+        }
+        var dx = Math.abs(touches[0].clientX - startX);
+        var dy = Math.abs(touches[0].clientY - startY);
+        if (dx > TASTER_MOVE_PX || dy > TASTER_MOVE_PX) {
+          pressMoved = true;
+          clearPressTimer();
+          if (pressed) {
+            setPressed(false);
+          }
+        }
+      }
+
+      function onTouchEnd() {
+        if (pressTimer) {
+          // touchend before grace window expired and no scroll detected
+          // — treat as a tap: fire press, then release after a short
+          // moment so the visual flash registers.
+          clearPressTimer();
+          if (!pressMoved) {
+            setPressed(true);
+            setTimeout(function () {
+              if (pressed) {
+                setPressed(false);
+              }
+            }, 80);
+          }
+          return;
+        }
+        if (pressed) {
+          setPressed(false);
+        }
+      }
+
+      $this.on("touchstart.newbornTaster", onTouchStart);
+      $this.on("touchmove.newbornTaster", onTouchMove);
+      $this.on("touchend.newbornTaster touchcancel.newbornTaster", onTouchEnd);
 
       // Safety: if the user alt-tabs / switches app while holding the
       // button, release programmatically so we don't strand the DP at true.
+      function onBlurRelease() {
+        clearPressTimer();
+        if (pressed) {
+          setPressed(false);
+        }
+      }
       var blurNs = ".newbornTaster_" + (oid || "_").replace(/[^a-zA-Z0-9_]/g, "_");
-      $(window).on("blur" + blurNs, onPressEnd);
+      $(window).on("blur" + blurNs, onBlurRelease);
 
 
       $this.data("destroy", function (id, $widget) {
         ($widget || $this).off(".newbornTaster");
         $(window).off("blur" + blurNs);
+        clearPressTimer();
         if (fitTimer) {
           clearTimeout(fitTimer);
           fitTimer = null;
@@ -5557,7 +5640,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.9 ready");
+      console.log("vis-newborn 0.3.10 ready");
       ns._versionLogged = true;
     }
   })();
