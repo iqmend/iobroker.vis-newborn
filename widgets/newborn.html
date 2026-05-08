@@ -5460,6 +5460,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
         closeBtn.removeEventListener("click", onCancel);
         popup.removeEventListener("click", onBackdrop);
         input.removeEventListener("keydown", onKey);
+        input.removeEventListener("click", onInputClick);
       }
       function onOk(e) {
         e.stopPropagation();
@@ -5494,10 +5495,34 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       popup.addEventListener("click", onBackdrop);
       input.addEventListener("keydown", onKey);
 
+      // Explicitly open the native picker on user-click. Modern
+      // browsers expose input.showPicker() (Chrome 99+, Safari 16+,
+      // Firefox 101+) which is the reliable way to trigger the
+      // platform's time chooser from JS. The earlier code relied on
+      // a programmatic input.focus() right after the popup opened —
+      // on some mobile browsers that pre-focus actually PREVENTED
+      // the user's subsequent tap from triggering the picker (focus
+      // event would not fire again, and some mobile builds gate the
+      // picker on a fresh focus event). Now we leave the user to
+      // tap, and on that click we call showPicker() if available.
+      function onInputClick() {
+        if (typeof input.showPicker === "function") {
+          try {
+            input.showPicker();
+          } catch (e) {
+            // Some browsers throw if the call is not in a user
+            // gesture context — silently ignore so the click event
+            // can still bubble to native handling.
+          }
+        }
+      }
+      input.addEventListener("click", onInputClick);
+
       requestAnimationFrame(function () {
         popup.classList.add("is-open");
-        // Best effort: focus the input after the open transition starts.
-        try { input.focus(); } catch (e) { /* ignore */ }
+        // No programmatic input.focus() — the user's tap on the
+        // input triggers focus + click naturally and the click
+        // handler above explicitly fires the native picker.
       });
     }
 
@@ -6188,7 +6213,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.4.4 ready");
+      console.log("vis-newborn 0.4.5 ready");
       ns._versionLogged = true;
     }
   })();
