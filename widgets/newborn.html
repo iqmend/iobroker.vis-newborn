@@ -2274,138 +2274,35 @@
     pointer-events: none !important;
   }
 
-  /* ===== Time popup ===== */
-  .vis-newborn-time-popup {
-    position: fixed;
-    inset: 0;
-    z-index: 999999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0);
-    -webkit-backdrop-filter: blur(0px);
-    backdrop-filter: blur(0px);
-    transition:
-      background 220ms cubic-bezier(.65,.05,.36,1),
-      backdrop-filter 220ms cubic-bezier(.65,.05,.36,1),
-      -webkit-backdrop-filter 220ms cubic-bezier(.65,.05,.36,1);
-    pointer-events: none;
-    font-family: 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
-  }
-  .vis-newborn-time-popup.is-open {
-    background: rgba(0,0,0,0.55);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    pointer-events: auto;
-  }
-
-  .vis-newborn-time-popup .tm-popup-card {
+  /* ===== Time native input overlay =====
+     Invisible <input type="time"> covers the entire tile. Tap on
+     the tile = tap on the input → browser opens the platform's
+     native time picker (iOS rolling drum, Android clock dialog,
+     desktop dropdown). No custom popup, no programmatic focus,
+     no double-tap, just the platform UX. */
+  .vis-newborn-time-tile {
     position: relative;
-    width: 280px;
-    background: #ffffff;
-    color: #1c1c1e;
-    border-radius: 24px;
-    padding: 20px 22px 22px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-    transform: translateY(20px) scale(0.96);
-    opacity: 0;
-    transition:
-      transform 280ms cubic-bezier(.2,.9,.3,1.2),
-      opacity 220ms cubic-bezier(.65,.05,.36,1);
   }
-  .vis-newborn-time-popup.is-open .tm-popup-card {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-
-  .vis-newborn-time-popup .tm-popup-close {
+  .vis-newborn-time-tile .tm-native {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: #f2f2f7;
-    color: #6e6e74;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    line-height: 1;
-    padding: 0;
-    transition: background 0.18s ease, color 0.18s ease;
-    font-family: inherit;
-  }
-  .vis-newborn-time-popup .tm-popup-close:hover {
-    background: #e5e5ea;
-    color: #1c1c1e;
-  }
-
-  .vis-newborn-time-popup .tm-popup-title {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0 30px 14px 0;
-    letter-spacing: -0.2px;
-  }
-
-  .vis-newborn-time-popup .tm-popup-input-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 18px;
-  }
-  .vis-newborn-time-popup .tm-popup-input {
-    font-family: inherit;
-    font-size: 32px;
-    font-weight: 300;
-    color: #1c1c1e;
-    background: #f2f2f7;
-    border: 1px solid rgba(0,0,0,0.06);
-    border-radius: 12px;
-    padding: 10px 14px;
-    text-align: center;
+    inset: 0;
     width: 100%;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.5px;
-    -moz-appearance: textfield;
-  }
-  .vis-newborn-time-popup .tm-popup-input:focus {
-    outline: none;
-    border-color: #0a84ff;
-    background: #fff;
-  }
-
-  .vis-newborn-time-popup .tm-popup-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .vis-newborn-time-popup .tm-popup-btn {
-    height: 38px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.08);
-    background: #f2f2f7;
-    color: #1c1c1e;
-    font-size: 13px;
-    font-weight: 700;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: transparent;
+    opacity: 0;
     cursor: pointer;
-    font-family: inherit;
-    transition: background 160ms ease, transform 100ms ease;
+    z-index: 2;
+    -webkit-appearance: none;
+    appearance: none;
+    font: inherit;
   }
-  .vis-newborn-time-popup .tm-popup-btn:hover {
-    background: #e5e5ea;
-  }
-  .vis-newborn-time-popup .tm-popup-btn:active {
-    transform: scale(0.97);
-  }
-  .vis-newborn-time-popup .tm-popup-btn.is-primary {
-    background: #0a84ff;
-    color: #fff;
-    border-color: #0a84ff;
-  }
-  .vis-newborn-time-popup .tm-popup-btn.is-primary:hover {
-    background: #0070e0;
+  .vis-newborn-time-tile .tm-native::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
   }
 
   /* ============================================================== */
@@ -3482,7 +3379,6 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
      data-oid="<%= this.data.attr('oid') %>"
      <%= (el) -> vis.binds['newborn'].timeSetter(el) %>>
   <div class="vis-newborn-time-tile size-<%= (this.data.attr('size') || 'medium') %>"
-       role="button"
        aria-label="Time setter">
     <div class="tm-left">
       <div class="tm-icon">
@@ -3494,6 +3390,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       <div class="tm-title">Time</div>
     </div>
     <div class="tm-value is-empty">--:--</div>
+    <input type="time" class="tm-native" step="60" aria-label="Time setter input" />
   </div>
 </div>
 </script>
@@ -5384,38 +5281,12 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       });
     };
 
-    // ===== Time-setter (popup with native <input type="time">) =====
-    var sharedTimePopup = null;
-
-    function ensureTimePopup() {
-      if (sharedTimePopup) {
-        return sharedTimePopup;
-      }
-      var popup = document.createElement("div");
-      popup.className = "vis-newborn-time-popup";
-      popup.innerHTML = [
-        '<div class="tm-popup-card">',
-        '  <button type="button" class="tm-popup-close" aria-label="Schliessen">&times;</button>',
-        '  <div class="tm-popup-title">Time</div>',
-        '  <div class="tm-popup-input-wrap">',
-        '    <input type="time" class="tm-popup-input" step="60">',
-        '  </div>',
-        '  <div class="tm-popup-actions">',
-        '    <button type="button" class="tm-popup-btn tm-popup-cancel">Abbrechen</button>',
-        '    <button type="button" class="tm-popup-btn is-primary tm-popup-ok">OK</button>',
-        '  </div>',
-        '</div>'
-      ].join("");
-      document.body.appendChild(popup);
-      sharedTimePopup = popup;
-      return popup;
-    }
-
+    // ===== Time-setter (native <input type="time"> overlay) =====
     /**
      * Normalize whatever the OID currently holds into "HH:MM" 24h
      * format suitable for <input type="time">. Accepts strings like
-     * "11:20", "11:20:00", "1:5", numbers like 1120 (HHMM) or seconds
-     * since midnight, and falls back to "12:00" if nothing parseable.
+     * "11:20", "11:20:00", "1:5", numbers like 1120 (HHMM), and
+     * falls back to "12:00" if nothing parseable.
      */
     function normalizeHHMM(raw) {
       if (raw === null || raw === undefined || raw === "") {
@@ -5432,7 +5303,6 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       }
       var n = parseInt(s, 10);
       if (isFinite(n)) {
-        // HHMM as integer (e.g. 1120 → 11:20)
         if (n >= 0 && n <= 2359) {
           var hh = Math.floor(n / 100);
           var mm = n % 100;
@@ -5444,106 +5314,48 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       return "12:00";
     }
 
-    function openTimePopup(ctx) {
-      var popup = ensureTimePopup();
-      var input    = popup.querySelector(".tm-popup-input");
-      var okBtn    = popup.querySelector(".tm-popup-ok");
-      var cancelBtn= popup.querySelector(".tm-popup-cancel");
-      var closeBtn = popup.querySelector(".tm-popup-close");
-
-      input.value = normalizeHHMM(vis.states[ctx.oid + ".val"]);
-
-      function close() {
-        popup.classList.remove("is-open");
-        okBtn.removeEventListener("click", onOk);
-        cancelBtn.removeEventListener("click", onCancel);
-        closeBtn.removeEventListener("click", onCancel);
-        popup.removeEventListener("click", onBackdrop);
-        input.removeEventListener("keydown", onKey);
-        input.removeEventListener("click", onInputClick);
-      }
-      function onOk(e) {
-        e.stopPropagation();
-        var v = input.value;
-        if (/^\d{1,2}:\d{2}$/.test(v)) {
-          // Pad to HH:MM
-          var parts = v.split(":");
-          var hh = parseInt(parts[0], 10);
-          var mm = parseInt(parts[1], 10);
-          var out = (hh < 10 ? "0" + hh : "" + hh) + ":" + (mm < 10 ? "0" + mm : "" + mm);
-          vis.setValue(ctx.oid, out);
-        }
-        close();
-      }
-      function onCancel(e) {
-        e.stopPropagation();
-        close();
-      }
-      function onBackdrop(e) {
-        if (e.target === popup) {
-          close();
-        }
-      }
-      function onKey(e) {
-        if (e.key === "Enter") { onOk(e); }
-        else if (e.key === "Escape") { onCancel(e); }
-      }
-
-      okBtn.addEventListener("click", onOk);
-      cancelBtn.addEventListener("click", onCancel);
-      closeBtn.addEventListener("click", onCancel);
-      popup.addEventListener("click", onBackdrop);
-      input.addEventListener("keydown", onKey);
-
-      // Explicitly open the native picker on user-click. Modern
-      // browsers expose input.showPicker() (Chrome 99+, Safari 16+,
-      // Firefox 101+) which is the reliable way to trigger the
-      // platform's time chooser from JS. The earlier code relied on
-      // a programmatic input.focus() right after the popup opened —
-      // on some mobile browsers that pre-focus actually PREVENTED
-      // the user's subsequent tap from triggering the picker (focus
-      // event would not fire again, and some mobile builds gate the
-      // picker on a fresh focus event). Now we leave the user to
-      // tap, and on that click we call showPicker() if available.
-      function onInputClick() {
-        if (typeof input.showPicker === "function") {
-          try {
-            input.showPicker();
-          } catch (e) {
-            // Some browsers throw if the call is not in a user
-            // gesture context — silently ignore so the click event
-            // can still bubble to native handling.
-          }
-        }
-      }
-      input.addEventListener("click", onInputClick);
-
-      requestAnimationFrame(function () {
-        popup.classList.add("is-open");
-        // No programmatic input.focus() — the user's tap on the
-        // input triggers focus + click naturally and the click
-        // handler above explicitly fires the native picker.
-      });
-    }
-
     /**
-     * Tile click → popup. Reads OID for the current value display.
-     * No status bind side-effects beyond updating .tm-value text.
+     * Native-direct: the tile contains an invisible
+     *   <input type="time" class="tm-native">
+     * that fills the whole tile via CSS (position: absolute; inset: 0;
+     * opacity: 0). When the user taps the tile they are in fact tapping
+     * the input, so the browser opens its native time picker directly
+     * (iOS rolling drum, Android clock dialog, desktop dropdown).
+     *
+     * State display: the visible .tm-value reflects the current OID
+     * value and updates live via vis.states.bind. The hidden input's
+     * .value is kept in sync so the picker opens with the current time
+     * preselected. Whenever the user picks a new time the input fires
+     * 'change' and we write "HH:MM" back to the OID.
+     *
+     * Earlier versions wrapped the input in a custom popup (own card,
+     * own backdrop, OK/Cancel, programmatic focus). The pre-focus
+     * blocked the picker on several mobile browsers because they gate
+     * the native picker on a fresh focus event from a user gesture.
+     * Native-direct removes the wrapper and lets the platform handle
+     * focus, picker, OK/Cancel — exactly the same UX iOS Calendar and
+     * Google Calendar use for date / time fields.
      */
     ns.timeSetter = function (el) {
       var $this = $(el);
       var oid   = $this.data("oid");
       var $value = $this.find(".tm-value");
+      var $input = $this.find(".tm-native");
 
       function applyState() {
         var raw = oid ? vis.states[oid + ".val"] : null;
         if (raw === null || raw === undefined || raw === "") {
           $value.addClass("is-empty").text("--:--");
+          $input.val(normalizeHHMM(null));
         } else {
-          $value.removeClass("is-empty").text(String(raw));
+          var s = String(raw);
+          $value.removeClass("is-empty").text(s);
+          $input.val(normalizeHHMM(s));
         }
       }
-      function onStateChange() { applyState(); }
+      function onStateChange() {
+        applyState();
+      }
 
       applyState();
 
@@ -5553,19 +5365,28 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
 
       vis.states.bind(oid + ".val", onStateChange);
 
-      $this.on("click.newbornTime touchend.newbornTime", function (e) {
+      // The browser fires 'change' when the user closes the picker
+      // with a new time selected (Done on iOS, OK on Android). We
+      // pad to HH:MM and write back. detectBounce guards against
+      // duplicate writes from rapid changes.
+      function onInputChange() {
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
           return;
         }
-        // Avoid double-fire from click after touchend (mobile)
-        if (e.type === "touchend") {
-          e.preventDefault();
+        var v = $input.val();
+        if (/^\d{1,2}:\d{2}$/.test(v)) {
+          var parts = v.split(":");
+          var hh = parseInt(parts[0], 10);
+          var mm = parseInt(parts[1], 10);
+          var out = (hh < 10 ? "0" + hh : "" + hh) + ":" + (mm < 10 ? "0" + mm : "" + mm);
+          vis.setValue(oid, out);
         }
-        openTimePopup({ oid: oid });
-      });
+      }
+      $input.on("change.newbornTime", onInputChange);
 
       $this.data("destroy", function (id, $widget) {
         ($widget || $this).off(".newbornTime");
+        $input.off(".newbornTime");
         if (vis.states.unbind) {
           vis.states.unbind(oid + ".val", onStateChange);
         }
@@ -6213,7 +6034,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.4.5 ready");
+      console.log("vis-newborn 0.5.0 ready");
       ns._versionLogged = true;
     }
   })();
