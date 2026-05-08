@@ -103,7 +103,17 @@
     'slot4_label':       { 'en': 'Slot 4 — Label / aria',  'de': 'Slot 4 — Label / aria' },
     'slot4_icon':        { 'en': 'Slot 4 — Icon (URL or emoji)', 'de': 'Slot 4 — Icon (URL oder Emoji)' },
     'slot4_active_color':{ 'en': 'Slot 4 — Active color (glow)', 'de': 'Slot 4 — Aktiv-Farbe (Glow)' },
-    'slot4_invert_state':{ 'en': 'Slot 4 — Invert state',  'de': 'Slot 4 — Status invertieren' }
+    'slot4_invert_state':{ 'en': 'Slot 4 — Invert state',  'de': 'Slot 4 — Status invertieren' },
+
+    // ---- PopUp Tile ----
+    'subtitle':          { 'en': 'Subtitle (small text under title)', 'de': 'Untertitel (kleiner Text unter Titel)' },
+    'target_view':       { 'en': 'Target view (opens in popup)', 'de': 'Ziel-View (öffnet im Popup)' },
+    'dp1_oid':           { 'en': 'Datapoint 1',           'de': 'Datenpunkt 1' },
+    'dp1_label':         { 'en': 'Datapoint 1 — label',   'de': 'Datenpunkt 1 — Label' },
+    'dp1_unit':          { 'en': 'Datapoint 1 — unit',    'de': 'Datenpunkt 1 — Einheit' },
+    'dp2_oid':           { 'en': 'Datapoint 2',           'de': 'Datenpunkt 2' },
+    'dp2_label':         { 'en': 'Datapoint 2 — label',   'de': 'Datenpunkt 2 — Label' },
+    'dp2_unit':          { 'en': 'Datapoint 2 — unit',    'de': 'Datenpunkt 2 — Einheit' }
   });
 </script>
 
@@ -2654,6 +2664,196 @@
   .vis-newborn-camera-lightbox__close:hover {
     background: rgba(255, 255, 255, 0.22);
   }
+
+  /* ============================================================== */
+  /*  PopUp Tile widget (vis-newborn-popup-*)                       */
+  /* ============================================================== */
+  .vis-newborn-popup-wrap,
+  .vis-newborn-popup-wrap *,
+  .vis-newborn-popup-wrap *::before,
+  .vis-newborn-popup-wrap *::after {
+    box-sizing: border-box;
+  }
+
+  .vis-newborn-popup {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    background: linear-gradient(160deg, #ffffff 0%, #f5f5f8 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.18s ease;
+    color: #1c1c1e;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+  }
+  .vis-newborn-popup-wrap:hover .vis-newborn-popup {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  .vis-newborn-popup-wrap:active .vis-newborn-popup {
+    transform: scale(0.98);
+  }
+
+  .vis-newborn-popup__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .vis-newborn-popup__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    color: #1c1c1e;
+    overflow: hidden;
+  }
+  .vis-newborn-popup__icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .vis-newborn-popup__icon:empty {
+    display: none;
+  }
+
+  .vis-newborn-popup__titles {
+    flex: 1;
+    min-width: 0;
+  }
+  .vis-newborn-popup__title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vis-newborn-popup__title:empty {
+    display: none;
+  }
+  .vis-newborn-popup__subtitle {
+    font-size: 12px;
+    color: #8e8e93;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vis-newborn-popup__subtitle:empty {
+    display: none;
+  }
+
+  .vis-newborn-popup__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: auto;
+  }
+  .vis-newborn-popup__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    gap: 12px;
+  }
+  .vis-newborn-popup__row.is-hidden {
+    display: none;
+  }
+  .vis-newborn-popup__label {
+    color: #8e8e93;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .vis-newborn-popup__value {
+    font-weight: 700;
+    color: #1c1c1e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+  }
+
+  /* Modal overlay (iframe-based popup) */
+  .vis-newborn-popup-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color: #fff;
+    animation: vnPopupModalFade 0.2s ease-out;
+  }
+  @keyframes vnPopupModalFade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  .vis-newborn-popup-modal__title {
+    font-size: 16px;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  .vis-newborn-popup-modal__title:empty {
+    display: none;
+  }
+  .vis-newborn-popup-modal__close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1;
+  }
+  .vis-newborn-popup-modal__close:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+  .vis-newborn-popup-modal__inner {
+    width: 95vw;
+    max-width: 1100px;
+    height: 85vh;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+  }
+  .vis-newborn-popup-modal__iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
 </style>
 
 <!-- ====================================================================
@@ -3347,6 +3547,52 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
           <path d="M10 20a2 2 0 0 0 4 0"/>
         </svg>
       </button>
+    </div>
+  </div>
+</div>
+</script>
+
+<!-- ====================================================================
+     PopUp Tile template — preview tile (logo + 2 datapoints) that
+     opens another VIS view as a modal overlay (iframe). Lets the
+     user keep big dashboards (washing machine, alarm, weather...)
+     in their own view and surface them on demand.
+     ==================================================================== -->
+<script id="tplNewbornPopup"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:160px;height:80px;"><div style="width:150px;height:70px;border-radius:12px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:8px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(0,0,0,0.05);font-size:11px;display:flex;align-items:center;justify-content:center;">⊞</div><div style="font-weight:700;font-size:9px;line-height:1.1;flex:1;">PopUp</div></div><div style="display:flex;justify-content:space-between;font-size:7px;margin-top:auto;"><span style="color:#8e8e93;">Status</span><span style="font-weight:700;">An</span></div></div></div>'
+        data-vis-set="newborn"
+        data-vis-name="Newborn PopUp (Tile)"
+        data-vis-attrs="name;subtitle;icon;target_view;dp1_oid/id;dp1_label;dp1_unit;dp2_oid/id;dp2_label;dp2_unit;width/number;height/number">
+<%
+var pDefW = 320, pDefH = 130;
+var pW = parseInt(this.data.attr('width'), 10);
+var pH = parseInt(this.data.attr('height'), 10);
+if (!isFinite(pW) || pW <= 0) pW = pDefW;
+if (!isFinite(pH) || pH <= 0) pH = pDefH;
+%>
+<div class="vis-widget vis-newborn-popup-wrap <%== this.data.attr('class') %>"
+     style="width: <%= pW %>px; height: <%= pH %>px;"
+     id="<%= this.data.attr('wid') %>"
+     <%= (el) -> vis.binds['newborn'].popup(el) %>>
+  <div class="vis-newborn-popup">
+    <div class="vis-newborn-popup__header">
+      <div class="vis-newborn-popup__icon"></div>
+      <div class="vis-newborn-popup__titles">
+        <div class="vis-newborn-popup__title"></div>
+        <div class="vis-newborn-popup__subtitle"></div>
+      </div>
+    </div>
+    <div class="vis-newborn-popup__rows">
+      <div class="vis-newborn-popup__row is-hidden" data-row="1">
+        <span class="vis-newborn-popup__label"></span>
+        <span class="vis-newborn-popup__value"></span>
+      </div>
+      <div class="vis-newborn-popup__row is-hidden" data-row="2">
+        <span class="vis-newborn-popup__label"></span>
+        <span class="vis-newborn-popup__value"></span>
+      </div>
     </div>
   </div>
 </div>
@@ -5279,6 +5525,215 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       });
     };
 
+    // ===== PopUp Tile =====
+    /**
+     * Preview tile (logo + 2 datapoints) that opens another VIS view
+     * as a modal-overlay <iframe> on click. The iframe loads the
+     * same VIS instance navigated to the configured target_view via
+     *   /vis/index.html?<currentProject>#<target_view>
+     * derived from window.location, so the project follows the user.
+     *
+     * Style note: any single-line brace block (CSS keyframe stop, JS
+     * function body) inside this widget is parsed by the VIS state
+     * substitution as a state-id pattern and breaks the widget. All
+     * such blocks are written across multiple lines.
+     */
+
+    // Module-scoped: only one popup-modal open at a time across all
+    // PopUp tiles on the view.
+    var popModal = null;
+
+    function popReadDataAttr(d, k) {
+      if (!d) {
+        return "";
+      }
+      if (typeof d.attr === "function") {
+        var v = d.attr(k);
+        return (v === undefined || v === null) ? "" : v;
+      }
+      return d[k] == null ? "" : d[k];
+    }
+
+    function popOpenModal(viewName, title) {
+      if (popModal) {
+        return;
+      }
+      if (!viewName) {
+        return;
+      }
+      var box = document.createElement("div");
+      box.className = "vis-newborn-popup-modal";
+      box.innerHTML = [
+        '<div class="vis-newborn-popup-modal__title"></div>',
+        '<button class="vis-newborn-popup-modal__close" type="button" aria-label="Schliessen">&times;</button>',
+        '<div class="vis-newborn-popup-modal__inner">',
+        '  <iframe class="vis-newborn-popup-modal__iframe" src="" frameborder="0"></iframe>',
+        '</div>'
+      ].join("");
+      var titleEl = box.querySelector(".vis-newborn-popup-modal__title");
+      var iframe  = box.querySelector(".vis-newborn-popup-modal__iframe");
+      var closeBtn = box.querySelector(".vis-newborn-popup-modal__close");
+
+      titleEl.textContent = title || "";
+      // Same project as current page; replace the view (hash) with target.
+      var url = window.location.pathname + window.location.search + "#" + encodeURIComponent(viewName);
+      iframe.src = url;
+
+      function close() {
+        document.removeEventListener("keydown", onKey);
+        if (box.parentNode) {
+          box.parentNode.removeChild(box);
+        }
+        popModal = null;
+      }
+      function onKey(e) {
+        if (e.key === "Escape") {
+          close();
+        }
+      }
+      function onBackdrop(e) {
+        if (e.target === box) {
+          close();
+        }
+      }
+      closeBtn.addEventListener("click", close);
+      box.addEventListener("click", onBackdrop);
+      document.addEventListener("keydown", onKey);
+
+      document.body.appendChild(box);
+      popModal = box;
+    }
+
+    function popSetIcon($icon, raw) {
+      $icon.empty();
+      var v = (raw || "").toString().trim();
+      if (!v) {
+        return;
+      }
+      if (v.indexOf("http://") === 0 || v.indexOf("https://") === 0 || v.charAt(0) === "/" || v.indexOf("./") === 0) {
+        $icon.html('<img src="' + v.replace(/"/g, "&quot;") + '" alt="">');
+      } else {
+        $icon.text(v);
+      }
+    }
+
+    function popSetupRow($wrap, idx, data) {
+      var $row = $wrap.find('.vis-newborn-popup__row[data-row="' + idx + '"]');
+      var oid = popReadDataAttr(data, "dp" + idx + "_oid");
+      var label = popReadDataAttr(data, "dp" + idx + "_label");
+      var unit = popReadDataAttr(data, "dp" + idx + "_unit");
+
+      // Hide the row entirely if neither oid nor label is set.
+      if (!oid && !label) {
+        $row.addClass("is-hidden");
+        return function () {
+          return;
+        };
+      }
+      $row.removeClass("is-hidden");
+      $row.find(".vis-newborn-popup__label").text(label);
+
+      var $value = $row.find(".vis-newborn-popup__value");
+      function applyState(rawVal) {
+        var v = rawVal;
+        if (v && typeof v === "object" && "val" in v) {
+          v = v.val;
+        }
+        if (v === undefined || v === null) {
+          v = "";
+        }
+        $value.text(unit ? (String(v) + " " + unit) : String(v));
+      }
+
+      if (!oid) {
+        applyState("");
+        return function () {
+          return;
+        };
+      }
+
+      applyState(vis.states[oid + ".val"]);
+
+      if (vis.editMode) {
+        return function () {
+          return;
+        };
+      }
+
+      function onStateChange(e, newVal) {
+        applyState(newVal);
+      }
+      vis.states.bind(oid + ".val", onStateChange);
+      return function cleanup() {
+        if (vis.states.unbind) {
+          vis.states.unbind(oid + ".val", onStateChange);
+        }
+      };
+    }
+
+    ns.popup = function (el) {
+      var $this = $(el);
+      if (!$this.length || !$this.hasClass("vis-newborn-popup-wrap")) {
+        return;
+      }
+      var widId = $this.attr("id");
+      var data = (widId && vis.widgets && vis.widgets[widId]) ? vis.widgets[widId].data : null;
+      if (!data) {
+        var view = vis.activeView;
+        var widget = (view && widId && vis.views && vis.views[view] && vis.views[view].widgets) ? vis.views[view].widgets[widId] : null;
+        data = widget ? widget.data : null;
+      }
+
+      // Header
+      $this.find(".vis-newborn-popup__title").text(popReadDataAttr(data, "name"));
+      $this.find(".vis-newborn-popup__subtitle").text(popReadDataAttr(data, "subtitle"));
+      popSetIcon($this.find(".vis-newborn-popup__icon"), popReadDataAttr(data, "icon"));
+
+      // Rows
+      var rowCleanups = [];
+      rowCleanups.push(popSetupRow($this, 1, data));
+      rowCleanups.push(popSetupRow($this, 2, data));
+
+      // Click → open modal. Same scroll-aware moved-flag pattern as
+      // the Camera slot buttons: any touchmove cancels the tap so a
+      // scroll past the tile does not pop open the view.
+      var moved = false;
+      $this.on("touchstart.newbornPopup", function () {
+        moved = false;
+      });
+      $this.on("touchmove.newbornPopup", function () {
+        moved = true;
+      });
+      $this.on("click.newbornPopup touchend.newbornPopup", function (e) {
+        e.stopPropagation();
+        if (vis.editMode) {
+          return;
+        }
+        if (moved) {
+          return;
+        }
+        if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
+          return;
+        }
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+        var targetView = popReadDataAttr(data, "target_view");
+        popOpenModal(targetView, popReadDataAttr(data, "name"));
+      });
+
+      $this.data("destroy", function (id, $widget) {
+        ($widget || $this).off(".newbornPopup");
+        for (var i = 0; i < rowCleanups.length; i++) {
+          try {
+            rowCleanups[i]();
+          } catch (e) {
+            // swallow
+          }
+        }
+      });
+    };
+
     // ===== Camera Tile =====
     /**
      * Camera image (MJPEG stream or JPEG snapshot) + maximize lightbox.
@@ -5645,7 +6100,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.12 ready");
+      console.log("vis-newborn 0.4.0 ready");
       ns._versionLogged = true;
     }
   })();
