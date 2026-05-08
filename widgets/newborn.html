@@ -2786,7 +2786,11 @@
     text-align: right;
   }
 
-  /* Modal overlay (iframe-based popup) */
+  /* Modal overlay (embeds the target view via vis-view-container —
+     no iframe, no full VIS reload). The inner panel is sized inline
+     by ns.popup to vis.views[X].settings.sizex / sizey, capped at
+     calc(100vw - 16px) / calc(100vh - 16px) so the view fills the
+     viewport edge-to-edge minus a thin breathing margin. */
   .vis-newborn-popup-modal {
     position: fixed;
     inset: 0;
@@ -2797,9 +2801,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap: 12px;
-    padding: 24px;
+    padding: 0;
     font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
     color: #fff;
     animation: vnPopupModalFade 0.2s ease-out;
@@ -2813,19 +2815,24 @@
     }
   }
   .vis-newborn-popup-modal__title {
+    position: absolute;
+    top: 14px;
+    left: 18px;
     font-size: 16px;
     font-weight: 600;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    z-index: 2;
+    pointer-events: none;
   }
   .vis-newborn-popup-modal__title:empty {
     display: none;
   }
   .vis-newborn-popup-modal__close {
     position: absolute;
-    top: 18px;
-    right: 18px;
-    width: 44px;
-    height: 44px;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.3);
     background: rgba(255, 255, 255, 0.12);
@@ -2837,26 +2844,29 @@
     justify-content: center;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    z-index: 1;
+    z-index: 3;
   }
   .vis-newborn-popup-modal__close:hover {
     background: rgba(255, 255, 255, 0.22);
   }
   .vis-newborn-popup-modal__inner {
-    /* Width and height are set inline by ns.popup from the target
-       view's vis.views[X].settings.sizex / sizey, capped via the
-       inline maxWidth: 95vw / maxHeight: 90vh. The default fallback
-       (when the view has no size configured) is 600x400, set in JS. */
+    /* Width / height set inline by ns.popup from view.settings;
+       max-* keep it inside the viewport. */
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
     border-radius: 14px;
-    overflow: hidden;
+    overflow: auto;
     background: #fff;
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    position: relative;
   }
-  .vis-newborn-popup-modal__iframe {
+  .vis-newborn-popup-modal__inner .vis-view-container {
     width: 100%;
     height: 100%;
-    border: 0;
-    display: block;
+    overflow: hidden;
+  }
+  .vis-newborn-popup-modal__inner .vis-view-container > .vis-view {
+    position: relative;
   }
 </style>
 
@@ -5575,21 +5585,21 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
         '<div class="vis-newborn-popup-modal__title"></div>',
         '<button class="vis-newborn-popup-modal__close" type="button" aria-label="Schliessen">&times;</button>',
         '<div class="vis-newborn-popup-modal__inner">',
-        '  <iframe class="vis-newborn-popup-modal__iframe" src="" frameborder="0"></iframe>',
+        '  <div class="vis-view-container"></div>',
         '</div>'
       ].join("");
       var titleEl = box.querySelector(".vis-newborn-popup-modal__title");
-      var iframe  = box.querySelector(".vis-newborn-popup-modal__iframe");
       var inner   = box.querySelector(".vis-newborn-popup-modal__inner");
+      var container = box.querySelector(".vis-view-container");
       var closeBtn = box.querySelector(".vis-newborn-popup-modal__close");
 
       titleEl.textContent = title || "";
+      container.setAttribute("data-vis-contains", viewName);
 
-      // Auto-size the modal to the target view's configured dimensions
-      // (the same numbers VIS uses for the resolution display in the
-      // editor, vis.js:1779). Cap at 95vw / 90vh so it never overflows
-      // the screen. If the view has no explicit size the inner panel
-      // falls back to a reasonable 600x400.
+      // Auto-size the inner panel to the target view's configured
+      // sizex/sizey (same data VIS uses for its editor resolution
+      // display in vis.js:1779). The CSS max-* caps cover the
+      // viewport-overflow case.
       var viewSettings = (vis.views && vis.views[viewName] && vis.views[viewName].settings) ? vis.views[viewName].settings : null;
       var sx = viewSettings ? parseInt(viewSettings.sizex, 10) : NaN;
       var sy = viewSettings ? parseInt(viewSettings.sizey, 10) : NaN;
@@ -5601,15 +5611,48 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       }
       inner.style.width = sx + "px";
       inner.style.height = sy + "px";
-      inner.style.maxWidth = "95vw";
-      inner.style.maxHeight = "90vh";
 
-      // Same project as current page; replace the view (hash) with target.
-      var url = window.location.pathname + window.location.search + "#" + encodeURIComponent(viewName);
-      iframe.src = url;
+      // We embed the live VIS view DOM (#visview_<viewName>) into
+      // the container instead of loading it via <iframe>. That
+      // bypasses the full VIS-app boot the iframe would have
+      // triggered on first open. Same pattern iobroker.vis basic.html
+      // uses for tplContainerView (vis.js:7223:
+      //   $('#visview_' + view).appendTo(content).show();
+      // ). On close the view DOM is moved back to its original
+      // parent and hidden so the rest of the app keeps working.
+      var $existing = $("#visview_" + viewName);
+      var originalParent = null;
+
+      function attachView() {
+        var $v = $("#visview_" + viewName);
+        if (!$v.length) {
+          return;
+        }
+        if (originalParent === null) {
+          originalParent = $v.parent();
+        }
+        $v.appendTo(container).show();
+      }
+
+      if ($existing.length) {
+        attachView();
+      } else if (typeof vis.renderView === "function") {
+        // Render the view hidden, then move it into the modal.
+        vis.renderView(viewName, viewName, true, function () {
+          attachView();
+        });
+      } else {
+        // Older VIS without renderView API — best effort: just
+        // ensure container has the data-vis-contains so anything
+        // that scans for it can still attach.
+      }
 
       function close() {
         document.removeEventListener("keydown", onKey);
+        var $v = $("#visview_" + viewName);
+        if ($v.length && originalParent && originalParent.length) {
+          $v.appendTo(originalParent).hide();
+        }
         if (box.parentNode) {
           box.parentNode.removeChild(box);
         }
@@ -6130,7 +6173,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.4.1 ready");
+      console.log("vis-newborn 0.4.2 ready");
       ns._versionLogged = true;
     }
   })();
