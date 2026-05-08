@@ -1,6 +1,6 @@
 {
   "name": "iobroker.vis-newborn",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Newborn widget set for ioBroker VIS / VIS-2 — a growing collection of modern, minimalistic smart home widgets (toggle, dimmer, …).",
   "author": {
     "name": "Armend Aliu",

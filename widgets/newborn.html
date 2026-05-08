@@ -5532,14 +5532,33 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         $slot.attr("role", "button");
       }
 
+      // Scroll-aware tap: track touchmove and skip the action if the
+      // finger moved between touchstart and touchend. Mirrors the
+      // canonical pattern used by Newborn Toggle. Without this,
+      // scrolling past a slot button would fire the action — bad for
+      // toggles, dangerous for action slots that open doors/garages.
+      var slotMoved = false;
+      $slot.on("touchstart.newbornCamera", function () {
+        slotMoved = false;
+      });
+      $slot.on("touchmove.newbornCamera", function () {
+        slotMoved = true;
+      });
       $slot.on("click.newbornCamera touchend.newbornCamera", function (e) {
-        e.preventDefault();
         e.stopPropagation();
         if (vis.editMode) {
           return;
         }
+        if (slotMoved) {
+          return;
+        }
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
           return;
+        }
+        // Only preventDefault once we know it's a real tap, so a
+        // scroll gesture isn't blocked.
+        if (e.cancelable) {
+          e.preventDefault();
         }
         if (type === "toggle") {
           var cur = isOn(vis.states[stateOid + ".val"]);
@@ -5612,11 +5631,25 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
       });
 
       var $max = $this.find(".vis-newborn-camera__max");
+      // Same scroll-aware tap pattern as the slot buttons — track
+      // touchmove and skip the lightbox open if the finger scrolled.
+      var maxMoved = false;
+      $max.on("touchstart.newbornCamera", function () {
+        maxMoved = false;
+      });
+      $max.on("touchmove.newbornCamera", function () {
+        maxMoved = true;
+      });
       $max.on("click.newbornCamera touchend.newbornCamera", function (e) {
-        e.preventDefault();
         e.stopPropagation();
+        if (maxMoved) {
+          return;
+        }
         if (typeof vis.detectBounce === "function" && vis.detectBounce(this)) {
           return;
+        }
+        if (e.cancelable) {
+          e.preventDefault();
         }
         camOpenLightbox(camCleanUrl(camDataAttr(data, "camera_url")), camDataAttr(data, "name"));
       });
@@ -5640,7 +5673,7 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.3.10 ready");
+      console.log("vis-newborn 0.3.11 ready");
       ns._versionLogged = true;
     }
   })();
