@@ -116,7 +116,12 @@
     'dp2_unit':          { 'en': 'Datapoint 2 — unit',    'de': 'Datenpunkt 2 — Einheit' },
     'dp3_oid':           { 'en': 'Datapoint 3',           'de': 'Datenpunkt 3' },
     'dp3_label':         { 'en': 'Datapoint 3 — label',   'de': 'Datenpunkt 3 — Label' },
-    'dp3_unit':          { 'en': 'Datapoint 3 — unit',    'de': 'Datenpunkt 3 — Einheit' }
+    'dp3_unit':          { 'en': 'Datapoint 3 — unit',    'de': 'Datenpunkt 3 — Einheit' },
+    'dialog_modal':      { 'en': 'Modal (block background)', 'de': 'Modal (Hintergrund blockieren)' },
+    'dialog_width':      { 'en': 'Dialog width (px, 0=auto)', 'de': 'Dialog-Breite (px, 0=auto)' },
+    'dialog_height':     { 'en': 'Dialog height (px, 0=auto)', 'de': 'Dialog-Höhe (px, 0=auto)' },
+    'overflowY':         { 'en': 'Vertical scroll (auto/scroll/hidden)', 'de': 'Vertikales Scrollen (auto/scroll/hidden)' },
+    'overflowX':         { 'en': 'Horizontal scroll (auto/scroll/hidden)', 'de': 'Horizontales Scrollen (auto/scroll/hidden)' }
   });
 </script>
 
@@ -2786,87 +2791,73 @@
     text-align: right;
   }
 
-  /* Modal overlay (embeds the target view via vis-view-container —
-     no iframe, no full VIS reload). The inner panel is sized inline
-     by ns.popup to vis.views[X].settings.sizex / sizey, capped at
-     calc(100vw - 16px) / calc(100vh - 16px) so the view fills the
-     viewport edge-to-edge minus a thin breathing margin. */
-  .vis-newborn-popup-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 99998;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
-    color: #fff;
-    animation: vnPopupModalFade 0.2s ease-out;
-  }
-  @keyframes vnPopupModalFade {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .vis-newborn-popup-modal__title {
-    position: absolute;
-    top: 14px;
-    left: 18px;
-    font-size: 16px;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    z-index: 2;
-    pointer-events: none;
-  }
-  .vis-newborn-popup-modal__title:empty {
-    display: none;
-  }
-  .vis-newborn-popup-modal__close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
-    font-size: 22px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 3;
-  }
-  .vis-newborn-popup-modal__close:hover {
-    background: rgba(255, 255, 255, 0.22);
-  }
-  .vis-newborn-popup-modal__inner {
-    /* Width / height set inline by ns.popup from view.settings;
-       max-* keep it inside the viewport. */
-    max-width: calc(100vw - 16px);
-    max-height: calc(100vh - 16px);
+  /* PopUp uses the canonical iobroker.vis dialog mechanism:
+     jQuery UI Dialog (same .dialog() that basic.html / jqui.html
+     tplContainerDialog uses). jQuery UI handles modal backdrop,
+     body-scroll-lock, ESC-to-close, and overflowY:auto inside
+     the content. Below we just polish the default look. */
+  .ui-dialog.vis-newborn-popup-dialog-wrap {
+    border: none;
     border-radius: 14px;
-    overflow: auto;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    padding: 0;
     background: #fff;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
-    position: relative;
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
   }
-  .vis-newborn-popup-modal__inner .vis-view-container {
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-titlebar {
+    background: #1c1c1e;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    padding: 10px 14px;
+    margin: 0;
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-title {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-titlebar-close {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    border-radius: 50%;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    width: 28px;
+    height: 28px;
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-titlebar-close:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-titlebar-close .ui-icon {
+    background-image: none;
+    text-indent: 0;
+    color: #fff;
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-titlebar-close .ui-icon::before {
+    content: "\00d7";
+    font-size: 22px;
+    line-height: 1;
+    display: block;
+    margin: -3px 0 0 0;
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .ui-dialog-content {
+    padding: 0;
+    margin: 0;
+    background: #fff;
+  }
+  .ui-dialog.vis-newborn-popup-dialog-wrap .vis-view-container {
     width: 100%;
     height: 100%;
-    overflow: hidden;
-  }
-  .vis-newborn-popup-modal__inner .vis-view-container > .vis-view {
     position: relative;
+  }
+  /* The modal backdrop jQuery UI itself paints */
+  .ui-widget-overlay.vis-newborn-popup-overlay {
+    background: rgba(0, 0, 0, 0.65);
+    opacity: 1;
   }
 </style>
 
@@ -3578,7 +3569,8 @@ var tmStyle = tmCustom ? ('width:' + tmW + 'px !important;height:' + tmH + 'px !
         data-vis-prev='<div class="vis-widget-prev" style="display:flex;align-items:center;justify-content:center;width:160px;height:80px;"><div style="width:150px;height:70px;border-radius:12px;background:linear-gradient(160deg,#fff 0%,#f5f5f8 100%);box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:8px;box-sizing:border-box;font-family:-apple-system,Helvetica Neue,Arial,sans-serif;color:#1c1c1e;display:flex;flex-direction:column;gap:4px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:20px;height:20px;border-radius:5px;background:rgba(0,0,0,0.05);font-size:11px;display:flex;align-items:center;justify-content:center;">⊞</div><div style="font-weight:700;font-size:9px;line-height:1.1;flex:1;">PopUp</div></div><div style="display:flex;justify-content:space-between;font-size:7px;margin-top:auto;"><span style="color:#8e8e93;">Status</span><span style="font-weight:700;">An</span></div></div></div>'
         data-vis-set="newborn"
         data-vis-name="Newborn PopUp (Tile)"
-        data-vis-attrs="name;subtitle;icon;target_view;dp1_oid/id;dp1_label;dp1_unit;dp2_oid/id;dp2_label;dp2_unit;dp3_oid/id;dp3_label;dp3_unit;width/number;height/number">
+        data-vis-attrs="name;subtitle;icon;target_view;dp1_oid/id;dp1_label;dp1_unit;dp2_oid/id;dp2_label;dp2_unit;dp3_oid/id;dp3_label;dp3_unit;width/number;height/number;"
+        data-vis-attrs0="group.dialog;dialog_modal/checkbox;dialog_width/number;dialog_height/number;overflowY/select,auto,scroll,hidden,visible;overflowX/select,auto,scroll,hidden,visible;">
 <%
 var pDefW = 320, pDefH = 160;
 var pW = parseInt(this.data.attr('width'), 10);
@@ -5572,57 +5564,60 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
       return d[k] == null ? "" : d[k];
     }
 
-    function popOpenModal(viewName, title) {
+    function popOpenDialog(viewName, title, data) {
       if (popModal) {
         return;
       }
       if (!viewName) {
         return;
       }
-      var box = document.createElement("div");
-      box.className = "vis-newborn-popup-modal";
-      box.innerHTML = [
-        '<div class="vis-newborn-popup-modal__title"></div>',
-        '<button class="vis-newborn-popup-modal__close" type="button" aria-label="Schliessen">&times;</button>',
-        '<div class="vis-newborn-popup-modal__inner">',
-        '  <div class="vis-view-container"></div>',
-        '</div>'
-      ].join("");
-      var titleEl = box.querySelector(".vis-newborn-popup-modal__title");
-      var inner   = box.querySelector(".vis-newborn-popup-modal__inner");
-      var container = box.querySelector(".vis-view-container");
-      var closeBtn = box.querySelector(".vis-newborn-popup-modal__close");
+      if (!$.fn || typeof $.fn.dialog !== "function") {
+        // jQuery UI not available — should never happen in vis 1.5.6
+        // but bail safely if it does.
+        return;
+      }
 
-      titleEl.textContent = title || "";
-      container.setAttribute("data-vis-contains", viewName);
+      // Read dialog config from widget data (with sensible defaults)
+      var dlgWAttr = parseInt(popReadDataAttr(data, "dialog_width"), 10);
+      var dlgHAttr = parseInt(popReadDataAttr(data, "dialog_height"), 10);
+      var modalAttr = popReadDataAttr(data, "dialog_modal");
+      var modal = (modalAttr === false || modalAttr === "false") ? false : true;
+      var overflowX = popReadDataAttr(data, "overflowX") || "hidden";
+      var overflowY = popReadDataAttr(data, "overflowY") || "auto";
 
-      // Auto-size the inner panel to the target view's configured
-      // sizex/sizey (same data VIS uses for its editor resolution
-      // display in vis.js:1779). The CSS max-* caps cover the
-      // viewport-overflow case.
+      // Determine panel dimensions: explicit dialog_width / dialog_height
+      // override the target view's configured size; otherwise pull from
+      // vis.views[X].settings.sizex / sizey; fall back to 600 x 400.
       var viewSettings = (vis.views && vis.views[viewName] && vis.views[viewName].settings) ? vis.views[viewName].settings : null;
-      var sx = viewSettings ? parseInt(viewSettings.sizex, 10) : NaN;
-      var sy = viewSettings ? parseInt(viewSettings.sizey, 10) : NaN;
+      var sx = (isFinite(dlgWAttr) && dlgWAttr > 0) ? dlgWAttr : (viewSettings ? parseInt(viewSettings.sizex, 10) : NaN);
+      var sy = (isFinite(dlgHAttr) && dlgHAttr > 0) ? dlgHAttr : (viewSettings ? parseInt(viewSettings.sizey, 10) : NaN);
       if (!isFinite(sx) || sx <= 0) {
         sx = 600;
       }
       if (!isFinite(sy) || sy <= 0) {
         sy = 400;
       }
-      inner.style.width = sx + "px";
-      inner.style.height = sy + "px";
 
-      // We embed the live VIS view DOM (#visview_<viewName>) into
-      // the container instead of loading it via <iframe>. That
-      // bypasses the full VIS-app boot the iframe would have
-      // triggered on first open. Same pattern iobroker.vis basic.html
-      // uses for tplContainerView (vis.js:7223:
-      //   $('#visview_' + view).appendTo(content).show();
-      // ). On close the view DOM is moved back to its original
-      // parent and hidden so the rest of the app keeps working.
-      var $existing = $("#visview_" + viewName);
+      // Build dialog content: a vis-view-container that the embedded
+      // view DOM gets moved into, with the user-chosen overflow.
+      var $dialog = $('<div class="vis-newborn-popup-dialog"></div>');
+      $dialog.attr("title", title || " ");
+      var $container = $('<div class="vis-view-container"></div>');
+      $container.attr("data-vis-contains", viewName);
+      $container.css({
+        width: "100%",
+        height: "100%",
+        overflowX: overflowX,
+        overflowY: overflowY
+      });
+      $dialog.append($container);
+      $("body").append($dialog);
+
+      // Move the live view DOM into the container (same pattern as
+      // iobroker.vis basic.html tplContainerView; no iframe, no app
+      // reload). If the view has not been rendered yet this session,
+      // call vis.renderView in hidden mode and move on its callback.
       var originalParent = null;
-
       function attachView() {
         var $v = $("#visview_" + viewName);
         if (!$v.length) {
@@ -5631,49 +5626,57 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
         if (originalParent === null) {
           originalParent = $v.parent();
         }
-        $v.appendTo(container).show();
+        $v.appendTo($container).show();
       }
-
-      if ($existing.length) {
+      if ($("#visview_" + viewName).length) {
         attachView();
       } else if (typeof vis.renderView === "function") {
-        // Render the view hidden, then move it into the modal.
         vis.renderView(viewName, viewName, true, function () {
           attachView();
         });
-      } else {
-        // Older VIS without renderView API — best effort: just
-        // ensure container has the data-vis-contains so anything
-        // that scans for it can still attach.
       }
 
-      function close() {
-        document.removeEventListener("keydown", onKey);
-        var $v = $("#visview_" + viewName);
-        if ($v.length && originalParent && originalParent.length) {
-          $v.appendTo(originalParent).hide();
+      // jQuery UI Dialog config — same .dialog() that
+      // jqui.html tplContainerDialog uses. jQuery UI handles:
+      //   - modal backdrop (.ui-widget-overlay)
+      //   - body scroll lock when modal:true
+      //   - ESC-to-close via closeOnEscape:true
+      //   - title bar with close button (X)
+      // The dialogClass adds our styling hook; overflow is on the
+      // inner container so VIS-view content scrolls inside the dialog.
+      $dialog.dialog({
+        title: title || "",
+        width: Math.min(sx, window.innerWidth - 8),
+        height: Math.min(sy + 50, window.innerHeight - 8), // +50 for title bar
+        modal: modal,
+        autoOpen: true,
+        closeOnEscape: true,
+        resizable: false,
+        draggable: !modal,
+        dialogClass: "vis-newborn-popup-dialog-wrap",
+        close: function () {
+          // Restore the embedded view to its original parent + hide,
+          // so the rest of the app keeps working unchanged.
+          var $v = $("#visview_" + viewName);
+          if ($v.length && originalParent && originalParent.length) {
+            $v.appendTo(originalParent).hide();
+          }
+          $dialog.dialog("destroy").remove();
+          $(".ui-widget-overlay.vis-newborn-popup-overlay").off(".newbornPopup");
+          popModal = null;
+        },
+        open: function () {
+          // Tag the overlay so our CSS can darken it, and let
+          // backdrop-click close the dialog (jQuery UI does NOT
+          // close on overlay click by default).
+          $(".ui-widget-overlay").last().addClass("vis-newborn-popup-overlay")
+            .on("click.newbornPopup", function () {
+              $dialog.dialog("close");
+            });
         }
-        if (box.parentNode) {
-          box.parentNode.removeChild(box);
-        }
-        popModal = null;
-      }
-      function onKey(e) {
-        if (e.key === "Escape") {
-          close();
-        }
-      }
-      function onBackdrop(e) {
-        if (e.target === box) {
-          close();
-        }
-      }
-      closeBtn.addEventListener("click", close);
-      box.addEventListener("click", onBackdrop);
-      document.addEventListener("keydown", onKey);
+      });
 
-      document.body.appendChild(box);
-      popModal = box;
+      popModal = $dialog;
     }
 
     function popSetIcon($icon, raw) {
@@ -5792,7 +5795,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
           e.preventDefault();
         }
         var targetView = popReadDataAttr(data, "target_view");
-        popOpenModal(targetView, popReadDataAttr(data, "name"));
+        popOpenDialog(targetView, popReadDataAttr(data, "name"), data);
       });
 
       $this.data("destroy", function (id, $widget) {
@@ -6173,7 +6176,7 @@ if (!isFinite(pH) || pH <= 0) pH = pDefH;
     };
 
     if (!ns._versionLogged) {
-      console.log("vis-newborn 0.4.2 ready");
+      console.log("vis-newborn 0.4.3 ready");
       ns._versionLogged = true;
     }
   })();
